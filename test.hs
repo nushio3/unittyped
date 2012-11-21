@@ -1,5 +1,8 @@
 {-# LANGUAGE FlexibleInstances, RankNTypes, MultiParamTypeClasses, ConstraintKinds, DataKinds, UndecidableInstances, FunctionalDependencies, KindSignatures, TypeFamilies, InstanceSigs, ScopedTypeVariables, FlexibleContexts, TypeOperators, OverlappingInstances, ImpredicativeTypes, GADTs #-}
 
+import qualified Prelude
+import Prelude (Show(..), Fractional(..), ($), (.), (++), Double, const, Bool(..))
+
 -- First, type level naturals, and using those, type level integers
 
 data Nat = One | Suc Nat
@@ -117,7 +120,7 @@ instance (Convertable a b, Convertable c d, UnitMerge a c u) => Convertable u (M
 	               left = one
 	               right ::(Fractional f) => Value f c d
 	               right = one
-	           in factor left * factor right
+	           in (Prelude.*) (factor left) (factor right)
 	one = Value { val = 1, unit = constructor }
 	constructor :: Mul a b c d
 	constructor = Mul constructor constructor
@@ -128,7 +131,7 @@ instance (Convertable a b, Convertable c d, UnitMerge a c' u, UnitNeg c c') => C
 	               left = one
 	               right ::(Fractional f) => Value f c d
 	               right = one
-	           in factor left / factor right
+	           in (Prelude./) (factor left) (factor right)
 	one = Value { val = 1, unit = constructor }
 	constructor :: Div a b c d
 	constructor = Div constructor constructor
@@ -140,7 +143,7 @@ class (Convertable a b) => Unit a b where
 
 instance (Convertable a b) => Unit a b where
 	coerce :: (Unit c d, Convertable c d, Fractional f, UnitEq a c True) => Value f a b -> Value f c d
-	coerce u = let result = Value {val = factor u * val u / factor result, unit = constructor} in result
+	coerce u = let result = Value {val = (Prelude./) ((Prelude.*) (factor u) (val u)) (factor result), unit = constructor} in result
 
 data Mul a b c d = Mul {
 	mul_l :: (Unit a b) => b,
@@ -168,24 +171,24 @@ instance (Unit b c, Show a, Show c) => Show (Value a b c) where
 
 -- We currently have 3 operators on values-with-units: division, multiplication and addition
 
-(.*.) :: (Fractional f, Unit a b, Unit c d, Convertable a b, Convertable c d, UnitMerge a c u) => Value f a b -> Value f c d -> Value f u (Mul a b c d)
-a .*. b = Value { val = val a * val b, unit = constructor }
+(*) :: (Fractional f, Unit a b, Unit c d, Convertable a b, Convertable c d, UnitMerge a c u) => Value f a b -> Value f c d -> Value f u (Mul a b c d)
+a * b = Value { val = (Prelude.*) (val a) (val b), unit = constructor }
 
-(./.) :: (Fractional f, Unit a b, Unit c d, Convertable a b, Convertable c d, UnitMerge a c' u, UnitNeg c c') => Value f a b -> Value f c d -> Value f u (Div a b c d)
-a ./. b = Value { val = val a / val b, unit = constructor }
+(/) :: (Fractional f, Unit a b, Unit c d, Convertable a b, Convertable c d, UnitMerge a c' u, UnitNeg c c') => Value f a b -> Value f c d -> Value f u (Div a b c d)
+a / b = Value { val = (Prelude./) (val a) (val b), unit = constructor }
 
 
-(.+.) :: (Fractional f, Unit a b, Unit c d, Convertable a b, Convertable c d, UnitEq c a True) => Value f a b -> Value f c d -> Value f a b
-a .+. b = Value { val = f a (coerce b), unit = constructor }
+(+) :: (Fractional f, Unit a b, Unit c d, Convertable a b, Convertable c d, UnitEq c a True) => Value f a b -> Value f c d -> Value f a b
+a + b = Value { val = f a (coerce b), unit = constructor }
 	where
 		f :: (Fractional f) => Value f a b -> Value f a b -> f
-		f a b = val a + val b
+		f a b = (Prelude.+) (val a) (val b)
 
-(.-.) :: (Fractional f, Unit a b, Unit c d, Convertable a b, Convertable c d, UnitEq c a True) => Value f a b -> Value f c d -> Value f a b
-a .-. b = Value { val = f a (coerce b), unit = constructor }
+(-) :: (Fractional f, Unit a b, Unit c d, Convertable a b, Convertable c d, UnitEq c a True) => Value f a b -> Value f c d -> Value f a b
+a - b = Value { val = f a (coerce b), unit = constructor }
 	where
 		f :: (Fractional a) => Value a b c -> Value a b c -> a
-		f a b = val a - val b
+		f a b = (Prelude.-) (val a) (val b)
 
 
 ----
@@ -301,7 +304,7 @@ instance Show Day where
 	show _ = "day"
 
 instance Convertable TimeUnit Day where
-	factor _ = 60 * 60 * 24
+	factor _ = 86400
 	constructor = Day
 
 ----
@@ -332,7 +335,7 @@ instance (Unit a b, Convertable a b) => Convertable a (Kilo b) where
 	factor :: (Fractional f) => Value f a (Kilo b) -> f
 	factor _ = let sub :: (Fractional f) => Value f a b
 	               sub = one
-	           in 1000 * (factor sub)
+	           in (Prelude.*) 1000 (factor sub)
 	one :: (Fractional f) => Value f a (Kilo b)
 	one = Value {val = 1, unit = constructor }
 		where u :: Value Double a b
@@ -349,7 +352,7 @@ instance (Unit a b, Convertable a b) => Convertable a (Mili b) where
 	factor :: (Fractional f) => Value f a (Mili b) -> f
 	factor _ = let sub :: (Fractional f) => Value f a b
 	               sub = one
-	           in (factor sub) / 1000
+	           in (Prelude./) (factor sub) 1000
 	one :: (Fractional f) => Value f a (Mili b)
 	one = Value {val = 1, unit = constructor }
 		where u :: Value Double a b
@@ -366,7 +369,7 @@ instance (Unit a b, Convertable a b) => Convertable a (Kibi b) where
 	factor :: (Fractional f) => Value f a (Kibi b) -> f
 	factor _ = let sub :: (Fractional f) => Value f a b
 	               sub = one
-	           in 1024 * (factor sub)
+	           in (Prelude.*) 1024 (factor sub)
 	one :: (Fractional f) => Value f a (Kibi b)
 	one = Value {val = 1, unit = constructor }
 		where u :: Value Double a b
@@ -383,7 +386,7 @@ instance (Unit a b, Convertable a b) => Convertable a (Mebi b) where
 	factor :: (Fractional f) => Value f a (Mebi b) -> f
 	factor _ = let sub :: (Fractional f) => Value f a b
 	               sub = one
-	           in 1024 * 1024 * (factor sub)
+	           in (Prelude.*) 1048576 (factor sub)
 	one :: (Fractional f) => Value f a (Mebi b)
 	one = Value {val = 1, unit = constructor }
 		where u :: Value Double a b
