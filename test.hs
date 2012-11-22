@@ -28,12 +28,12 @@ instance Pre' (Neg a) (Neg (Suc a))
 instance Pre' (Pos One) Zero
 instance Pre' (Pos (Suc a)) (Pos a)
 
-class Add (a :: Number) (b :: Number) (sum :: Number) | a b -> sum, a sum -> b where
+class Add (a :: Number) (b :: Number) (sum :: Number) | a b -> sum where
 
 instance Add Zero b b
 instance (Suc' b b') => Add (Pos One) b b'
 instance (Pre' b b') => Add (Neg One) b b'
-instance (Add (Neg a) b (Neg sum)) => Add (Neg (Suc a)) b (Neg (Suc sum))
+instance (Add (Neg a) b sum, Pre' sum sump) => Add (Neg (Suc a)) b sump
 instance (Add (Pos a) b sum, Suc' sum sump) => Add (Pos (Suc a)) b sump
 
 class Negate (a :: Number) (b :: Number) | a -> b, b -> a where
@@ -109,24 +109,24 @@ class Convertable a b | b -> a where
 	factor :: (Fractional f) => Value f a b -> f
 	constructor :: b
 
-instance (Convertable a b, Convertable c d, UnitMerge a c u) => Convertable u (Mul a b c d) where
-	factor :: (Fractional f) => Value f u (Mul a b c d) -> f
+instance (Convertable a b, Convertable c d, UnitMerge a c u) => Convertable u (Mul b d) where
+	factor :: (Fractional f) => Value f u (Mul b d) -> f
 	factor u = let left :: (Fractional f) => Value f a b
 	               left = one
 	               right ::(Fractional f) => Value f c d
 	               right = one
 	           in (Prelude.*) (factor left) (factor right)
-	constructor :: Mul a b c d
+	constructor :: Mul b d
 	constructor = Mul constructor constructor
 
-instance (Convertable a b, Convertable c d, UnitMerge a c' u, UnitNeg c c') => Convertable u (Div a b c d) where
-	factor :: (Fractional f) => Value f u (Div a b c d) -> f
+instance (Convertable a b, Convertable c d, UnitMerge a c' u, UnitNeg c c') => Convertable u (Div b d) where
+	factor :: (Fractional f) => Value f u (Div b d) -> f
 	factor u = let left :: (Fractional f) => Value f a b
 	               left = one
 	               right ::(Fractional f) => Value f c d
 	               right = one
 	           in (Prelude./) (factor left) (factor right)
-	constructor :: Div a b c d
+	constructor :: Div b d
 	constructor = Div constructor constructor
 
 ---- We can coerce something of a specific dimension into any other unit in the same dimension
@@ -134,12 +134,12 @@ instance (Convertable a b, Convertable c d, UnitMerge a c' u, UnitNeg c c') => C
 coerce :: (Convertable a b, Convertable c d, Fractional f, UnitEq a c True) => Value f a b -> Value f c d
 coerce u = let result = Value {val = (Prelude./) ((Prelude.*) (factor u) (val u)) (factor result), unit = constructor} in result
 
-data Mul a b c d = Mul {
+data Mul b d = Mul {
 	mul_l :: (Convertable a b) => b,
 	mul_r :: (Convertable c d) => d
 }
 
-data Div a b c d = Div {
+data Div b d = Div {
 	div_l :: (Convertable a b) => b,
 	div_r :: (Convertable c d) => d
 }
@@ -149,10 +149,10 @@ data Value a (b :: UnitMap) c = Value {
 	unit :: (Convertable b c) => c
 }
 
-instance (Convertable a b, Convertable c d, Show b, Show d) => Show (Mul a b c d) where
+instance (Convertable a b, Convertable c d, Show b, Show d) => Show (Mul b d) where
 	show m = (show $ mul_l m) ++ "*" ++ (show $ mul_r m)
 
-instance (Convertable a b, Convertable c d, Show b, Show d) => Show (Div a b c d) where
+instance (Convertable a b, Convertable c d, Show b, Show d) => Show (Div b d) where
 	show m = (show $ div_l m) ++ "/(" ++ (show $ div_r m) ++ ")"
 
 instance (Convertable b c, Show a, Show c) => Show (Value a b c) where
@@ -160,10 +160,10 @@ instance (Convertable b c, Show a, Show c) => Show (Value a b c) where
 
 -- We currently have 3 operators on values-with-units: division, multiplication and addition
 
-(*) :: (Fractional f, Convertable a b, Convertable c d, UnitMerge a c u) => Value f a b -> Value f c d -> Value f u (Mul a b c d)
+(*) :: (Fractional f, Convertable a b, Convertable c d, UnitMerge a c u) => Value f a b -> Value f c d -> Value f u (Mul b d)
 a * b = Value { val = (Prelude.*) (val a) (val b), unit = constructor }
 
-(/) :: (Fractional f, Convertable a b, Convertable c d, UnitMerge a c' u, UnitNeg c c') => Value f a b -> Value f c d -> Value f u (Div a b c d)
+(/) :: (Fractional f, Convertable a b, Convertable c d, UnitMerge a c' u, UnitNeg c c') => Value f a b -> Value f c d -> Value f u (Div b d)
 a / b = Value { val = (Prelude./) (val a) (val b), unit = constructor }
 
 
@@ -179,6 +179,21 @@ a - b = Value { val = f a (coerce b), unit = constructor }
 		f :: (Fractional a) => Value a b c -> Value a b c -> a
 		f a b = (Prelude.-) (val a) (val b)
 
+
+infixl 6 +, -
+infixl 7 *, /
+
+----
+
+data Count = Count
+type CountUnit = UnitNil
+
+instance Show Count where
+	show _ = "#"
+
+instance Convertable CountUnit Count where
+	factor _ = 1
+	constructor = Count
 
 ----
 
@@ -199,7 +214,7 @@ instance Show Meter where
 	show _ = "m"
 
 instance Convertable LengthUnit Meter where
-	factor = const 1
+	factor _ = 1
 	constructor = Meter
 
 --
@@ -212,7 +227,7 @@ instance Show Mile where
 	show _ = "mile"
 
 instance Convertable LengthUnit Mile where
-	factor = const 1609
+	factor _ = 1609
 	constructor = Mile
 --
 
@@ -224,7 +239,7 @@ instance Show Inch where
 	show _ = "in"
 
 instance Convertable LengthUnit Inch where
-	factor = const 0.0254
+	factor _ = 0.0254
 	constructor = Inch
 
 --
@@ -237,7 +252,7 @@ instance Show Yard where
 	show _ = "yd"
 
 instance Convertable LengthUnit Yard where
-	factor = const 0.9144
+	factor _ = 0.9144
 	constructor = Yard
 
 ----
@@ -295,6 +310,19 @@ instance Show Day where
 instance Convertable TimeUnit Day where
 	factor _ = 86400
 	constructor = Day
+
+--
+
+data Herz = Herz
+type Herzs = (Fractional f) => Value f (UnitCons Time (Neg One) UnitNil) Herz
+
+instance Show Herz where
+	show _ = "Hz"
+
+instance Convertable (UnitCons Time (Neg One) UnitNil) Herz where
+	factor _ = 1
+	constructor = Herz
+
 
 ----
 
@@ -369,7 +397,53 @@ instance (Convertable a b) => Convertable a (Mebi b) where
 
 ----
 
+-- Mass
+
+data Mass = Mass
+type MassUnit = UnitCons Mass (Pos One) UnitNil
+
+data Gram = Gram
+type Grams = (Fractional f) => Value f MassUnit Gram
+type Kilograms = (Fractional f) => Value f MassUnit (Kilo Gram)
+
+instance Show Gram where
+	show _ = "g"
+
+instance Convertable MassUnit Gram where
+	factor _ = 1
+	constructor = Gram
+
+data PlanckMass = PlanckMass
+type PlanckMasses = (Fractional f) => Value f MassUnit PlanckMass
+
+instance Show PlanckMass where
+	show _ = "m_P"
+
+instance Convertable MassUnit PlanckMass where
+	factor _ = 2.176513e-5
+	constructor = PlanckMass
+
+--
+
+type Speed = UnitCons Time (Neg One) (UnitCons Length (Pos One) UnitNil)
+type Acceleration = UnitCons Time (Neg (Suc One)) (UnitCons Length (Pos One) UnitNil)
+type Kmph = (Fractional f) => Value f Speed (Div (Kilo Meter) Hour)
+type Mpss = (Fractional f) => Value f Acceleration (Div Meter (Mul Second Second))
+
+type Force = UnitCons Time (Neg (Suc One)) (UnitCons Mass (Pos One) (UnitCons Length (Pos One) UnitNil))
+type Newton = Div (Mul (Kilo Gram) Meter) (Mul Second Second)
+
+type Energy = UnitCons Time (Neg (Suc One)) (UnitCons Mass (Pos One) (UnitCons Length (Pos (Suc One)) UnitNil))
+type Joule = Div (Mul (Kilo Gram) (Mul Meter Meter)) (Mul Second Second)
+
+----
+
 mkVal f = Value { val = f, unit = constructor }
+
+count :: (Fractional f) => f -> Value f CountUnit Count
+count = mkVal
+
+--
 
 meter :: (Fractional f) => f -> Value f LengthUnit Meter
 meter = mkVal
@@ -410,3 +484,22 @@ byte = mkVal
 
 kibibyte :: (Fractional f) => f -> Value f DataUnit (Kibi Byte)
 kibibyte = mkVal
+
+--
+
+gram :: (Fractional f) => f -> Value f MassUnit Gram
+gram = mkVal
+
+kilogram :: (Fractional f) => f -> Value f MassUnit (Kilo Gram)
+kilogram = mkVal
+
+m_P :: (Fractional f) => Value f MassUnit PlanckMass
+m_P = mkVal 1
+
+--
+
+newton :: (Fractional f) => f -> Value f Force Newton
+newton = mkVal
+
+joule :: (Fractional f) => f -> Value f Energy Joule
+joule = mkVal
