@@ -1,7 +1,7 @@
-module Units.SI.Meta where
+module UnitTyped.SI.Meta where
 
-import Units.SI
-import Units.Units
+import UnitTyped.SI
+import UnitTyped.Units
 
 import qualified Prelude
 import Prelude (Show(..), Fractional, ($), (++), Double, const, Bool(..), otherwise, undefined, String(..))

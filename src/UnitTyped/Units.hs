@@ -1,6 +1,5 @@
-module Units.Units where
+module UnitTyped.Units where
 
-import Debug.Trace
 import qualified Prelude
 import Prelude (Show(..), Fractional, ($), (++), Double, const, Bool(..), otherwise, undefined, String(..))
 
@@ -159,52 +158,35 @@ instance (Fractional f, Show f, Convertable a b, Show b) => Show (Value f a b) w
 
 -- We currently have 3 operators on values-with-units: division, multiplication and addition
 
-(*) :: (Fractional f, Convertable a b, Convertable c d, UnitMerge a c u) => Value f a b -> Value f c d -> Value f u (Mul b d)
-a * b = Value $ (Prelude.*) (val a) (val b)
+(.*.) :: (Fractional f, Convertable a b, Convertable c d, UnitMerge a c u) => Value f a b -> Value f c d -> Value f u (Mul b d)
+a .*. b = Value $ (Prelude.*) (val a) (val b)
 
-(/) :: (Fractional f, Convertable a b, Convertable c d, UnitMerge a c' u, UnitNeg c c') => Value f a b -> Value f c d -> Value f u (Div b d)
-a / b = Value $ (Prelude./) (val a) (val b)
+(./.) :: (Fractional f, Convertable a b, Convertable c d, UnitMerge a c' u, UnitNeg c c') => Value f a b -> Value f c d -> Value f u (Div b d)
+a ./. b = Value $ (Prelude./) (val a) (val b)
 
 
-(+) :: (Fractional f, Convertable a b, Convertable c d, UnitEq c a True) => Value f a b -> Value f c d -> Value f a b
-a + b = Value $ f a (coerce b)
+(.+.) :: (Fractional f, Convertable a b, Convertable c d, UnitEq c a True) => Value f a b -> Value f c d -> Value f a b
+a .+. b = Value $ f a (coerce b)
 	where
 		f :: (Fractional f) => Value f a b -> Value f a b -> f
 		f a b = (Prelude.+) (val a) (val b)
 
-(-) :: (Fractional f, Convertable a b, Convertable c d, UnitEq c a True) => Value f a b -> Value f c d -> Value f a b
-a - b = Value $ f a (coerce b)
+(.-.) :: (Fractional f, Convertable a b, Convertable c d, UnitEq c a True) => Value f a b -> Value f c d -> Value f a b
+a .-. b = Value $ f a (coerce b)
 	where
 		f :: (Fractional a) => Value a b c -> Value a b c -> a
 		f a b = (Prelude.-) (val a) (val b)
 
-
-infixl 6 +, -
-infixl 7 *, /
-infixl 8 .
+(.$.) :: (Convertable a b, Fractional f) => f -> Value f a b -> Value f a b
+d .$. u = mkVal ((Prelude.*) d (val u))
 
 mkVal f = Value f
+
 val :: (Fractional f) => Value f a b -> f
 val (Value f) = f
 
-(.) :: (Convertable a b, Fractional f) => f -> Value f a b -> Value f a b
-d . u = mkVal ((Prelude.*) d (val u))
-
 square :: (Fractional f, Convertable c d, UnitMerge c c u) => Value f c d -> Value f u (Mul d d)
-square x = x * x
+square x = x .*. x
 
 cubic :: (Fractional f, Convertable c d, UnitMerge c c a, UnitMerge a c u) => Value f c d -> Value f u (Mul (Mul d d) d)
-cubic x = x * x * x
-
-instance (Fractional f, Convertable a b, t ~ Value f a b) => (Prelude.Num (Value f a b -> t)) where
-	fromInteger i x = (Prelude.fromInteger i) . x
-
-instance (Fractional f, Convertable a b, t ~ Value f a b) => (Fractional (Value f a b -> t)) where
-	fromRational r x = (Prelude.fromRational r) . x
-
-
-instance (Fractional f, Convertable a (m b), c ~ (Value f a b -> Value f a (m b))) => (Prelude.Num ((Value f a b -> Value f a (m b)) -> c)) where
-	fromInteger i x y = (Prelude.fromInteger i) . (x y)
-
-instance (Fractional f, Convertable a (m b), c ~ (Value f a b -> Value f a (m b))) => (Fractional ((Value f a b -> Value f a (m b)) -> c)) where
-	fromRational i x y = (Prelude.fromRational i) . (x y)
+cubic x = x .*. x .*. x

@@ -1,9 +1,9 @@
 {-# LANGUAGE FlexibleInstances, RankNTypes, MultiParamTypeClasses, ConstraintKinds, DataKinds, UndecidableInstances, FunctionalDependencies, KindSignatures, TypeFamilies, InstanceSigs, ScopedTypeVariables, FlexibleContexts, TypeOperators, OverlappingInstances, ImpredicativeTypes, GADTs #-}
 
-module Units.Currency where
+module UnitTyped.Currency where
 
-import Units.Units
-import Units.SI.Meta
+import UnitTyped.Units
+import UnitTyped.SI.Meta
 
 import qualified Prelude
 import Prelude (Show(..), Fractional, ($), (++), Double, const, Bool(..), otherwise, undefined, String(..))
@@ -46,17 +46,17 @@ instance Convertable CurrencyUnit Gulden where
 	factor _ = 0.453780216
 	showunit _ _ = "ƒ"
 
-euro :: (Fractional f) => f -> Value f CurrencyUnit Euro
-euro = mkVal
+euro :: (Fractional f) => Value f CurrencyUnit Euro
+euro = one
 
-dollar :: (Fractional f) => f -> Value f CurrencyUnit Dollar
-dollar = mkVal
+dollar :: (Fractional f) => Value f CurrencyUnit Dollar
+dollar = one
 
-yen :: (Fractional f) => f -> Value f CurrencyUnit Yen
-yen = mkVal
+yen :: (Fractional f) => Value f CurrencyUnit Yen
+yen = one
 
-pound :: (Fractional f) => f -> Value f CurrencyUnit Pound
-pound = mkVal
+pound :: (Fractional f) => Value f CurrencyUnit Pound
+pound = one
 
-gulden :: (Fractional f) => f -> Value f CurrencyUnit Gulden
-gulden = mkVal
+gulden :: (Fractional f) => Value f CurrencyUnit Gulden
+gulden = one

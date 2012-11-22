@@ -1,9 +1,9 @@
-module Units.Bytes where
+module UnitTyped.Bytes where
 
-import Units.Units
-import Units.SI.Meta
-import Units.SI.Derived
-import Units.SI
+import UnitTyped.Units
+import UnitTyped.SI.Meta
+import UnitTyped.SI.Derived
+import UnitTyped.SI
 
 import qualified Prelude
 import Prelude (Show(..), Fractional, ($), (++), Double, const, Bool(..), otherwise, undefined, String(..))
@@ -24,8 +24,8 @@ instance Convertable DataUnit Byte where
 
 --
 
-byte :: (Fractional f) => f -> Value f DataUnit Byte
-byte = mkVal
+byte :: (Fractional f) => Value f DataUnit Byte
+byte = one
 
-kibibyte :: (Fractional f) => f -> Value f DataUnit (Kibi Byte)
-kibibyte = mkVal
+kibibyte :: (Fractional f) => Value f DataUnit (Kibi Byte)
+kibibyte = one

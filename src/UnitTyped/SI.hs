@@ -1,6 +1,6 @@
-module Units.SI where
+module UnitTyped.SI where
 
-import Units.Units
+import UnitTyped.Units
 
 import qualified Prelude
 import Prelude (Show(..), Fractional, ($), (++), Double, const, Bool(..), otherwise, undefined, String(..))

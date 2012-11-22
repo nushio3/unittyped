@@ -1,8 +1,8 @@
-module Units.SI.Derived where
+module UnitTyped.SI.Derived where
 
-import Units.Units
-import Units.SI
-import Units.SI.Meta
+import UnitTyped.Units
+import UnitTyped.SI
+import UnitTyped.SI.Meta
 
 import qualified Prelude
 import Prelude (Show(..), Fractional, ($), (++), Double, const, Bool(..), otherwise, undefined, String(..))

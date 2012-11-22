@@ -1,9 +1,10 @@
-module Units.SI.Constants where
+module UnitTyped.SI.Constants where
 
-import Units.Units
-import Units.SI
-import Units.SI.Meta
-import Units.SI.Derived
+import UnitTyped.Units
+import UnitTyped.SI
+import UnitTyped.SI.Meta
+import UnitTyped.SI.Derived
+import UnitTyped.NoPrelude
 
 import qualified Prelude
 import Prelude (Show(..), Fractional, ($), (++), Double, const, Bool(..), otherwise, undefined, String(..))
