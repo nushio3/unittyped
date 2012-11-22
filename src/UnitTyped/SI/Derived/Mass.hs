@@ -8,11 +8,11 @@ import UnitTyped.SI
 ----
 
 data PlanckMass
-type PlanckMasses = (Fractional f) => Value f MassUnit PlanckMass
 
 instance Convertable MassUnit PlanckMass where
 	factor _ = 2.176513e-8
 	showunit _ _ = "m_P"
+
 
 data Pound
 

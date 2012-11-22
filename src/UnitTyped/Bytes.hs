@@ -15,8 +15,8 @@ import Prelude (Show(..), Fractional, ($), (++), Double, const, Bool(..), otherw
 data Data
 type DataUnit = UnitCons Data (Pos One) UnitNil
 
+
 data Byte
-type Bytes = (Fractional f) => Value f DataUnit Byte
 
 instance Convertable DataUnit Byte where
 	factor _ = 1

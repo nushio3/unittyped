@@ -12,40 +12,34 @@ import Data.Ratio
 ----
 
 data Mile
-type Miles = (Fractional f) => Value f LengthUnit Mile
 
 instance Convertable LengthUnit Mile where
 	factor _ = 1609.344
 	showunit _ _ = "mile"
---
+
 
 data Inch
-type Inches = (Fractional f) => Value f LengthUnit Inch
 
 instance Convertable LengthUnit Inch where
 	factor _ = 0.0254
 	showunit _ _ = "in"
 
---
 
 data Yard
-type Yards = (Fractional f) => Value f LengthUnit Yard
 
 instance Convertable LengthUnit Yard where
 	factor _ = 0.9144
 	showunit _ _ = "yd"
 
---
 
 data Foot
-type Feet = (Fractional f) => Value f LengthUnit Foot
 
 instance Convertable LengthUnit Foot where
 	factor _ = 0.3048
 	showunit _ _ = "ft"
 
+
 data Joerimijl
-type Joerimijlen = (Fractional f) => Value f LengthUnit Joerimijl
 
 instance Convertable LengthUnit Joerimijl where
 	factor _ = 20.1e3
@@ -58,14 +52,12 @@ instance Convertable LengthUnit Joerimijl where
 type VolumeUnit = UnitCons Length (Pos (Suc (Suc One))) UnitNil
 
 data Liter
-type Liters = (Fractional f) => Value f VolumeUnit Liter
 
 instance Convertable VolumeUnit Liter where
 	factor _ = 0.001
 	showunit _ _ = "L"
 
 data Gallon
-type Gallons = (Fractional f) => Value f VolumeUnit Gallon
 
 instance Convertable VolumeUnit Gallon where
 	factor _ = 0.00454609
