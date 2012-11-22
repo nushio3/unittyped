@@ -72,7 +72,7 @@ data Mile
 type Miles = (Fractional f) => Value f LengthUnit Mile
 
 instance Convertable LengthUnit Mile where
-	factor _ = 1609
+	factor _ = 1609.344
 	showunit _ _ = "mile"
 --
 
@@ -125,6 +125,12 @@ type Gallons = (Fractional f) => Value f VolumeUnit Gallon
 instance Convertable VolumeUnit Gallon where
 	factor _ = 0.00454609
 	showunit _ _ = "gallon"
+
+data FluidOunce
+
+instance Convertable VolumeUnit FluidOunce where
+	factor _ = 0.0000284130625
+	showunit _ _ = "fl oz"
 
 ----
 -- Time
@@ -190,14 +196,18 @@ instance Convertable (UnitCons Time (Neg One) UnitNil) Herz where
 -- Mass
 ----
 
-type Kilograms = (Fractional f) => Value f MassUnit (Kilo Gram)
-
 data PlanckMass
 type PlanckMasses = (Fractional f) => Value f MassUnit PlanckMass
 
 instance Convertable MassUnit PlanckMass where
 	factor _ = 2.176513e-8
 	showunit _ _ = "m_P"
+
+data Pound
+
+instance Convertable MassUnit Pound where
+	factor _ = 0.45359237
+	showunit _ _ = "lb"
 
 ----
 -- Misc
@@ -357,6 +367,9 @@ liter = one
 gallon :: (Fractional f) => Value f VolumeUnit Gallon
 gallon = one
 
+fluid_ounce :: (Fractional f) => Value f VolumeUnit FluidOunce
+fluid_ounce = one
+
 --
 
 minute :: (Fractional f) => Value f TimeUnit Minute
@@ -382,11 +395,11 @@ herz = one
 
 --
 
-kilogram :: (Fractional f) => Value f MassUnit (Kilo Gram)
-kilogram = one
-
 m_P :: (Fractional f) => Value f MassUnit PlanckMass
 m_P = one
+
+pound :: (Fractional f) => Value f MassUnit Pound
+pound = one
 
 --
 
