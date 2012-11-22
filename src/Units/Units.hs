@@ -102,11 +102,11 @@ instance (UnitNeg map2 map2', UnitMerge map1 map2' sum, UnitNull sum b) => UnitE
 
 
 one :: (Fractional f, Convertable a b) => Value f a b
-one = Value { val = 1, unit = constructor }
+one = mkVal 1
 
 class Convertable a b | b -> a where
 	factor :: (Fractional f) => Value f a b -> f
-	constructor :: b
+	showunit :: b -> String
 
 instance (Convertable a b, Convertable c d, UnitMerge a c u) => Convertable u (Mul b d) where
 	factor :: (Fractional f) => Value f u (Mul b d) -> f
@@ -115,8 +115,7 @@ instance (Convertable a b, Convertable c d, UnitMerge a c u) => Convertable u (M
 	               right ::(Fractional f) => Value f c d
 	               right = one
 	           in (Prelude.*) (factor left) (factor right)
-	constructor :: Mul b d
-	constructor = Mul constructor constructor
+	showunit u = (show $ mul_l u) ++ "*" ++ (show $ mul_r u)
 
 instance (Convertable a b, Convertable c d, UnitMerge a c' u, UnitNeg c c') => Convertable u (Div b d) where
 	factor :: (Fractional f) => Value f u (Div b d) -> f
@@ -125,13 +124,15 @@ instance (Convertable a b, Convertable c d, UnitMerge a c' u, UnitNeg c c') => C
 	               right ::(Fractional f) => Value f c d
 	               right = one
 	           in (Prelude./) (factor left) (factor right)
-	constructor :: Div b d
-	constructor = Div constructor constructor
+	showunit u = (show $ div_l u) ++ "/" ++ rest
+		where
+			rest = if (needsParanthesis $ div_r u) then "(" ++ (show $ div_r u) ++ ")"
+				   else show $ div_r u
 
 ---- We can coerce something of a specific dimension into any other unit in the same dimension
 
 coerce :: (Convertable a b, Convertable c d, Fractional f, UnitEq a c True) => Value f a b -> Value f c d
-coerce u = let result = Value {val = (Prelude./) ((Prelude.*) (factor u) (val u)) (factor result), unit = constructor} in result
+coerce u = let result = Value $ (Prelude./) ((Prelude.*) (factor u) (val u)) (factor result) in result
 
 coerceTo :: (Convertable a b, Convertable c d, Fractional f, UnitEq a c True) => Value f a b -> Value f c d -> Value f c d
 coerceTo u _ = coerce u
@@ -146,10 +147,7 @@ data Div b d = Div {
 	div_r :: (Convertable c d) => d
 }
 
-data Value a (b :: UnitMap) c = Value {
-	val :: a,
-	unit :: (Convertable b c) => c
-}
+data Value a (b :: UnitMap) c = Value a
 
 class NeedsParanthesis a where
 	needsParanthesis :: a -> Bool
@@ -163,40 +161,35 @@ instance NeedsParanthesis (Mul a b) where
 instance NeedsParanthesis a where
 	needsParanthesis _ = False
 
-instance (Convertable a b, Show b, NeedsParanthesis b) => Show (Mul b b) where
-	show m = unit ++ "^2"
-		where unit = if (needsParanthesis $ mul_r m) then "(" ++ (show $ mul_l m) ++ ")"
-			         else show $ mul_l m
-
-instance (Convertable a b, Convertable c d, Show b, Show d) => Show (Mul b d) where
-	show m = (show $ mul_l m) ++ "*" ++ (show $ mul_r m)
-
-instance (Convertable a b, Convertable c d, Show b, Show d, NeedsParanthesis d) => Show (Div b d) where
-	show m = (show $ div_l m) ++ "/" ++ rest
+instance (Convertable a b) => Show b where
+	show m = (showunit unit)
 		where
-			rest = if (needsParanthesis $ div_r m) then "(" ++ (show $ div_r m) ++ ")"
-				   else show $ div_r m
+			unit :: b
+			unit = undefined
 
 instance (Convertable b c, Show a, Show c) => Show (Value a b c) where
-	show u = (show $ val u) ++ " " ++ (show $ unit u)
+	show u = (show $ val u) ++ " " ++ (show unit)
+		where
+			unit :: c
+			unit = undefined
 
 -- We currently have 3 operators on values-with-units: division, multiplication and addition
 
 (*) :: (Fractional f, Convertable a b, Convertable c d, UnitMerge a c u) => Value f a b -> Value f c d -> Value f u (Mul b d)
-a * b = Value { val = (Prelude.*) (val a) (val b), unit = constructor }
+a * b = Value $ (Prelude.*) (val a) (val b)
 
 (/) :: (Fractional f, Convertable a b, Convertable c d, UnitMerge a c' u, UnitNeg c c') => Value f a b -> Value f c d -> Value f u (Div b d)
-a / b = Value { val = (Prelude./) (val a) (val b), unit = constructor }
+a / b = Value $ (Prelude./) (val a) (val b)
 
 
 (+) :: (Fractional f, Convertable a b, Convertable c d, UnitEq c a True) => Value f a b -> Value f c d -> Value f a b
-a + b = Value { val = f a (coerce b), unit = constructor }
+a + b = Value $ f a (coerce b)
 	where
 		f :: (Fractional f) => Value f a b -> Value f a b -> f
 		f a b = (Prelude.+) (val a) (val b)
 
 (-) :: (Fractional f, Convertable a b, Convertable c d, UnitEq c a True) => Value f a b -> Value f c d -> Value f a b
-a - b = Value { val = f a (coerce b), unit = constructor }
+a - b = Value $ f a (coerce b)
 	where
 		f :: (Fractional a) => Value a b c -> Value a b c -> a
 		f a b = (Prelude.-) (val a) (val b)
@@ -205,4 +198,5 @@ a - b = Value { val = f a (coerce b), unit = constructor }
 infixl 6 +, -
 infixl 7 *, /
 
-mkVal f = Value { val = f, unit = constructor }
+mkVal f = Value f
+val (Value f) = f

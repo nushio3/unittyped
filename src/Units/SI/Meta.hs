@@ -24,11 +24,7 @@ instance (MetaUnit m, Convertable a b) => Convertable a (m b) where
 	               self :: (Fractional f) => Value f a (m b)
 	               self = one
 	           in (Prelude.*) (metafactor self) (factor sub)
-	constructor :: m b
-	constructor = metaconstructor (constructor :: b)
-
-instance (Show a, MetaUnit m) => Show (m a) where
-	show m = metashow m
+	showunit = metashow
 
 --
 
