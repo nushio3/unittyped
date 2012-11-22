@@ -263,6 +263,9 @@ yocto _ = one
 
 --
 
+kibi :: (Convertable a b, Fractional f) => Value f a b -> Value f a (Kibi b)
+kibi _ = one
+
 mebi :: (Convertable a b, Fractional f) => Value f a b -> Value f a (Mebi b)
 mebi _ = one
 
