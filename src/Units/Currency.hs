@@ -25,9 +25,38 @@ instance Convertable CurrencyUnit Dollar where
 	factor _ = 0.7760
 	showunit _ _ = "$"
 
+data Yen
+type Yens = (Fractional f) => Value f CurrencyUnit Yen
+
+instance Convertable CurrencyUnit Yen where
+	factor _ = 0.009399
+	showunit _ _ = "¥"
+
+data Pound
+type Pounds = (Fractional f) => Value f CurrencyUnit Pound
+
+instance Convertable CurrencyUnit Pound where
+	factor _ = 1.238
+	showunit _ _ = "£"
+
+data Gulden
+type Guldens = (Fractional f) => Value f CurrencyUnit Gulden
+
+instance Convertable CurrencyUnit Gulden where
+	factor _ = 0.453780216
+	showunit _ _ = "ƒ"
 
 euro :: (Fractional f) => f -> Value f CurrencyUnit Euro
 euro = mkVal
 
 dollar :: (Fractional f) => f -> Value f CurrencyUnit Dollar
 dollar = mkVal
+
+yen :: (Fractional f) => f -> Value f CurrencyUnit Yen
+yen = mkVal
+
+pound :: (Fractional f) => f -> Value f CurrencyUnit Pound
+pound = mkVal
+
+gulden :: (Fractional f) => f -> Value f CurrencyUnit Gulden
+gulden = mkVal
