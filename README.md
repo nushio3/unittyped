@@ -16,4 +16,6 @@ coerceTo can be used to change from one unit to a different unit in the same dim
 		*Main> coerceTo ((120 kilo meter / hour) * 20 minute) mile
 		24.860161591050343 mile
 
-See https://bitbucket.org/xnyhps/haskell-unittyped/wiki/Examples for more complicated examples.
+See [the wiki][1] for more complicated examples.
+
+[1]: https://bitbucket.org/xnyhps/haskell-unittyped/wiki/Examples
