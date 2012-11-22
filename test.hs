@@ -1,7 +1,7 @@
 {-# LANGUAGE FlexibleInstances, RankNTypes, MultiParamTypeClasses, ConstraintKinds, DataKinds, UndecidableInstances, FunctionalDependencies, KindSignatures, TypeFamilies, InstanceSigs, ScopedTypeVariables, FlexibleContexts, TypeOperators, OverlappingInstances, ImpredicativeTypes, GADTs #-}
 
 import qualified Prelude
-import Prelude (Show(..), Fractional(..), ($), (.), (++), Double, const, Bool(..))
+import Prelude (Show(..), Fractional, ($), (.), (++), Double, const, Bool(..))
 
 -- First, type level naturals, and using those, type level integers
 
@@ -41,12 +41,6 @@ class Negate (a :: Number) (b :: Number) | a -> b, b -> a where
 instance Negate Zero Zero
 instance Negate (Pos a) (Neg a)
 instance Negate (Neg a) (Pos a)
-
-class Positive (a :: Number) (b :: Bool) | a -> b where
-
-instance Positive Zero True
-instance Positive (Pos s) True
-instance Positive (Neg s) False
 
 class IsZero (a :: Number) (b :: Bool) | a -> b where
 
@@ -107,12 +101,13 @@ instance (UnitNeg map2 map2', UnitMerge map1 map2' sum, UnitNull sum b) => UnitE
 
 ---- Convertable a b means "b is a unit for dimension a"
 
+
+one :: (Fractional f, Convertable a b) => Value f a b
+one = Value { val = 1, unit = constructor }
+
 class Convertable a b | b -> a where
 	factor :: (Fractional f) => Value f a b -> f
-	one :: (Fractional f) => Value f a b
-	one = Value { val = 1, unit = constructor }
 	constructor :: b
-
 
 instance (Convertable a b, Convertable c d, UnitMerge a c u) => Convertable u (Mul a b c d) where
 	factor :: (Fractional f) => Value f u (Mul a b c d) -> f
@@ -121,7 +116,6 @@ instance (Convertable a b, Convertable c d, UnitMerge a c u) => Convertable u (M
 	               right ::(Fractional f) => Value f c d
 	               right = one
 	           in (Prelude.*) (factor left) (factor right)
-	one = Value { val = 1, unit = constructor }
 	constructor :: Mul a b c d
 	constructor = Mul constructor constructor
 
@@ -132,59 +126,54 @@ instance (Convertable a b, Convertable c d, UnitMerge a c' u, UnitNeg c c') => C
 	               right ::(Fractional f) => Value f c d
 	               right = one
 	           in (Prelude./) (factor left) (factor right)
-	one = Value { val = 1, unit = constructor }
 	constructor :: Div a b c d
 	constructor = Div constructor constructor
 
 ---- We can coerce something of a specific dimension into any other unit in the same dimension
 
-class (Convertable a b) => Unit a b where
-	coerce :: (Unit c d, Convertable c d, Fractional f, UnitEq a c True) => Value f a b -> Value f c d
-
-instance (Convertable a b) => Unit a b where
-	coerce :: (Unit c d, Convertable c d, Fractional f, UnitEq a c True) => Value f a b -> Value f c d
-	coerce u = let result = Value {val = (Prelude./) ((Prelude.*) (factor u) (val u)) (factor result), unit = constructor} in result
+coerce :: (Convertable a b, Convertable c d, Fractional f, UnitEq a c True) => Value f a b -> Value f c d
+coerce u = let result = Value {val = (Prelude./) ((Prelude.*) (factor u) (val u)) (factor result), unit = constructor} in result
 
 data Mul a b c d = Mul {
-	mul_l :: (Unit a b) => b,
-	mul_r :: (Unit c d) => d
+	mul_l :: (Convertable a b) => b,
+	mul_r :: (Convertable c d) => d
 }
 
 data Div a b c d = Div {
-	div_l :: (Unit a b) => b,
-	div_r :: (Unit c d) => d
+	div_l :: (Convertable a b) => b,
+	div_r :: (Convertable c d) => d
 }
 
 data Value a (b :: UnitMap) c = Value {
 	val :: a,
-	unit :: (Unit b c) => c
+	unit :: (Convertable b c) => c
 }
 
-instance (Unit a b, Unit c d, Show b, Show d) => Show (Mul a b c d) where
+instance (Convertable a b, Convertable c d, Show b, Show d) => Show (Mul a b c d) where
 	show m = (show $ mul_l m) ++ "*" ++ (show $ mul_r m)
 
-instance (Unit a b, Unit c d, Show b, Show d) => Show (Div a b c d) where
+instance (Convertable a b, Convertable c d, Show b, Show d) => Show (Div a b c d) where
 	show m = (show $ div_l m) ++ "/(" ++ (show $ div_r m) ++ ")"
 
-instance (Unit b c, Show a, Show c) => Show (Value a b c) where
+instance (Convertable b c, Show a, Show c) => Show (Value a b c) where
 	show u = (show $ val u) ++ " " ++ (show $ unit u)
 
 -- We currently have 3 operators on values-with-units: division, multiplication and addition
 
-(*) :: (Fractional f, Unit a b, Unit c d, Convertable a b, Convertable c d, UnitMerge a c u) => Value f a b -> Value f c d -> Value f u (Mul a b c d)
+(*) :: (Fractional f, Convertable a b, Convertable c d, UnitMerge a c u) => Value f a b -> Value f c d -> Value f u (Mul a b c d)
 a * b = Value { val = (Prelude.*) (val a) (val b), unit = constructor }
 
-(/) :: (Fractional f, Unit a b, Unit c d, Convertable a b, Convertable c d, UnitMerge a c' u, UnitNeg c c') => Value f a b -> Value f c d -> Value f u (Div a b c d)
+(/) :: (Fractional f, Convertable a b, Convertable c d, UnitMerge a c' u, UnitNeg c c') => Value f a b -> Value f c d -> Value f u (Div a b c d)
 a / b = Value { val = (Prelude./) (val a) (val b), unit = constructor }
 
 
-(+) :: (Fractional f, Unit a b, Unit c d, Convertable a b, Convertable c d, UnitEq c a True) => Value f a b -> Value f c d -> Value f a b
+(+) :: (Fractional f, Convertable a b, Convertable c d, UnitEq c a True) => Value f a b -> Value f c d -> Value f a b
 a + b = Value { val = f a (coerce b), unit = constructor }
 	where
 		f :: (Fractional f) => Value f a b -> Value f a b -> f
 		f a b = (Prelude.+) (val a) (val b)
 
-(-) :: (Fractional f, Unit a b, Unit c d, Convertable a b, Convertable c d, UnitEq c a True) => Value f a b -> Value f c d -> Value f a b
+(-) :: (Fractional f, Convertable a b, Convertable c d, UnitEq c a True) => Value f a b -> Value f c d -> Value f a b
 a - b = Value { val = f a (coerce b), unit = constructor }
 	where
 		f :: (Fractional a) => Value a b c -> Value a b c -> a
@@ -331,15 +320,11 @@ data Kilo a = Kilo a
 instance (Show a) => Show (Kilo a) where
 	show (Kilo u) = "k" ++ (show u)
 
-instance (Unit a b, Convertable a b) => Convertable a (Kilo b) where
+instance (Convertable a b) => Convertable a (Kilo b) where
 	factor :: (Fractional f) => Value f a (Kilo b) -> f
 	factor _ = let sub :: (Fractional f) => Value f a b
 	               sub = one
 	           in (Prelude.*) 1000 (factor sub)
-	one :: (Fractional f) => Value f a (Kilo b)
-	one = Value {val = 1, unit = constructor }
-		where u :: Value Double a b
-		      u = one
 	constructor :: Kilo b
 	constructor = Kilo (constructor :: b)
 
@@ -348,15 +333,11 @@ data Mili a = Mili a
 instance (Show a) => Show (Mili a) where
 	show (Mili u) = "m" ++ (show u)
 
-instance (Unit a b, Convertable a b) => Convertable a (Mili b) where
+instance (Convertable a b) => Convertable a (Mili b) where
 	factor :: (Fractional f) => Value f a (Mili b) -> f
 	factor _ = let sub :: (Fractional f) => Value f a b
 	               sub = one
 	           in (Prelude./) (factor sub) 1000
-	one :: (Fractional f) => Value f a (Mili b)
-	one = Value {val = 1, unit = constructor }
-		where u :: Value Double a b
-		      u = one
 	constructor :: Mili b
 	constructor = Mili (constructor :: b)
 
@@ -365,15 +346,11 @@ data Kibi a = Kibi a
 instance (Show a) => Show (Kibi a) where
 	show (Kibi u) = "ki" ++ (show u)
 
-instance (Unit a b, Convertable a b) => Convertable a (Kibi b) where
+instance (Convertable a b) => Convertable a (Kibi b) where
 	factor :: (Fractional f) => Value f a (Kibi b) -> f
 	factor _ = let sub :: (Fractional f) => Value f a b
 	               sub = one
 	           in (Prelude.*) 1024 (factor sub)
-	one :: (Fractional f) => Value f a (Kibi b)
-	one = Value {val = 1, unit = constructor }
-		where u :: Value Double a b
-		      u = one
 	constructor :: Kibi b
 	constructor = Kibi (constructor :: b)
 
@@ -382,15 +359,11 @@ data Mebi a = Mebi a
 instance (Show a) => Show (Mebi a) where
 	show (Mebi u) = "Mi" ++ (show u)
 
-instance (Unit a b, Convertable a b) => Convertable a (Mebi b) where
+instance (Convertable a b) => Convertable a (Mebi b) where
 	factor :: (Fractional f) => Value f a (Mebi b) -> f
 	factor _ = let sub :: (Fractional f) => Value f a b
 	               sub = one
 	           in (Prelude.*) 1048576 (factor sub)
-	one :: (Fractional f) => Value f a (Mebi b)
-	one = Value {val = 1, unit = constructor }
-		where u :: Value Double a b
-		      u = one
 	constructor :: Mebi b
 	constructor = Mebi (constructor :: b)
 
