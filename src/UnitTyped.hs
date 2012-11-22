@@ -190,3 +190,13 @@ square x = x .*. x
 
 cubic :: (Fractional f, Convertable c d, UnitMerge c c a, UnitMerge a c u) => Value f c d -> Value f u (Mul (Mul d d) d)
 cubic x = x .*. x .*. x
+
+wrapB :: (Convertable a b, Convertable c d, UnitEq c a True) => (Prelude.Rational -> Prelude.Rational -> Bool) -> Value Prelude.Rational a b -> Value Prelude.Rational c d -> Bool
+wrapB op a b = op (val a) (val $ coerceTo b a)
+
+(.==.), (.<.), (.>.), (.<=.), (.>=.) :: (Convertable a b, Convertable c d, UnitEq c a True) => Value Prelude.Rational a b -> Value Prelude.Rational c d -> Bool
+(.==.) = wrapB (Prelude.==)
+(.<.) = wrapB (Prelude.<)
+(.<=.) = wrapB (Prelude.<=)
+(.>.) = wrapB (Prelude.>)
+(.>=.) = wrapB (Prelude.>=)

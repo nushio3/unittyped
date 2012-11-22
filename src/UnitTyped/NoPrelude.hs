@@ -61,3 +61,12 @@ asin, acos, atan :: (Floating f) => Value f CountUnit Count -> Value f CountUnit
 asin = wrap2 Prelude.asin
 acos = wrap2 Prelude.acos
 atan = wrap2 Prelude.atan
+
+infixl 5 ==, <, <=, >, >=
+
+(==), (<), (<=), (>), (>=) :: (Convertable a b, Convertable c d, UnitEq c a True) => Value Prelude.Rational a b -> Value Prelude.Rational c d -> Bool
+(==) = (.==.)
+(<) = (.<.)
+(<=) = (.<=.)
+(>) = (.>.)
+(>=) = (.>=.)
