@@ -4,7 +4,7 @@ module Units.Units where
 
 import Debug.Trace
 import qualified Prelude
-import Prelude (Show(..), Fractional, ($), (.), (++), Double, const, Bool(..), otherwise, undefined, String(..))
+import Prelude (Show(..), Fractional, ($), (.), (++), Double, const, Bool(..), otherwise, undefined, String(..), error)
 
 -- First, type level naturals, and using those, type level integers
 
@@ -106,7 +106,7 @@ one = mkVal 1
 
 class Convertable a b | b -> a where
 	factor :: (Fractional f) => Value f a b -> f
-	showunit :: b -> String
+	showunit :: (Fractional f) => Value f a b -> String
 
 instance (Convertable a b, Convertable c d, UnitMerge a c u) => Convertable u (Mul b d) where
 	factor :: (Fractional f) => Value f u (Mul b d) -> f
@@ -115,7 +115,11 @@ instance (Convertable a b, Convertable c d, UnitMerge a c u) => Convertable u (M
 	               right ::(Fractional f) => Value f c d
 	               right = one
 	           in (Prelude.*) (factor left) (factor right)
-	showunit u = (show $ mul_l u) ++ "*" ++ (show $ mul_r u)
+	showunit u = let left :: (Fractional f) => Value f a b
+	                 left = one
+	                 right ::(Fractional f) => Value f c d
+	                 right = one
+	             in (showunit left) ++ "*" ++ (showunit right)
 
 instance (Convertable a b, Convertable c d, UnitMerge a c' u, UnitNeg c c') => Convertable u (Div b d) where
 	factor :: (Fractional f) => Value f u (Div b d) -> f
@@ -124,10 +128,11 @@ instance (Convertable a b, Convertable c d, UnitMerge a c' u, UnitNeg c c') => C
 	               right ::(Fractional f) => Value f c d
 	               right = one
 	           in (Prelude./) (factor left) (factor right)
-	showunit u = (show $ div_l u) ++ "/" ++ rest
-		where
-			rest = if (needsParanthesis $ div_r u) then "(" ++ (show $ div_r u) ++ ")"
-				   else show $ div_r u
+	showunit u = let left :: (Fractional f) => Value f a b
+	                 left = one
+	                 right ::(Fractional f) => Value f c d
+	                 right = one
+	             in (showunit left) ++ "/(" ++ (showunit right) ++ ")"
 
 ---- We can coerce something of a specific dimension into any other unit in the same dimension
 
@@ -137,41 +142,23 @@ coerce u = let result = Value $ (Prelude./) ((Prelude.*) (factor u) (val u)) (fa
 coerceTo :: (Convertable a b, Convertable c d, Fractional f, UnitEq a c True) => Value f a b -> Value f c d -> Value f c d
 coerceTo u _ = coerce u
 
-data Mul b d = Mul {
-	mul_l :: (Convertable a b) => b,
-	mul_r :: (Convertable c d) => d
-}
+data Mul b d
 
-data Div b d = Div {
-	div_l :: (Convertable a b) => b,
-	div_r :: (Convertable c d) => d
-}
+data Div b d
 
 data Value a (b :: UnitMap) c = Value a
 
-class NeedsParanthesis a where
-	needsParanthesis :: a -> Bool
-
-instance NeedsParanthesis (Div a b) where
-	needsParanthesis (Div {}) = True
-
-instance NeedsParanthesis (Mul a b) where
-	needsParanthesis (Mul {}) = True
-
-instance NeedsParanthesis a where
-	needsParanthesis _ = False
-
 instance (Convertable a b) => Show b where
-	show m = (showunit unit)
+	show m = (showunit one)
 		where
-			unit :: b
-			unit = undefined
+			one :: (Fractional f) => Value f a b
+			one = one
 
 instance (Convertable b c, Show a, Show c) => Show (Value a b c) where
 	show u = (show $ val u) ++ " " ++ (show unit)
 		where
 			unit :: c
-			unit = undefined
+			unit = error "(Convertable b c, Show a, Show c) => Show (Value a b c)"
 
 -- We currently have 3 operators on values-with-units: division, multiplication and addition
 
