@@ -24,7 +24,7 @@ type Miles = (Fractional f) => Value f LengthUnit Mile
 
 instance Convertable LengthUnit Mile where
 	factor _ = 1609
-	showunit _ = "mile"
+	showunit _ _ = "mile"
 --
 
 data Inch
@@ -32,7 +32,7 @@ type Inches = (Fractional f) => Value f LengthUnit Inch
 
 instance Convertable LengthUnit Inch where
 	factor _ = 0.0254
-	showunit _ = "in"
+	showunit _ _ = "in"
 
 --
 
@@ -41,7 +41,7 @@ type Yards = (Fractional f) => Value f LengthUnit Yard
 
 instance Convertable LengthUnit Yard where
 	factor _ = 0.9144
-	showunit _ = "yd"
+	showunit _ _ = "yd"
 
 --
 
@@ -50,7 +50,7 @@ type Feet = (Fractional f) => Value f LengthUnit Foot
 
 instance Convertable LengthUnit Foot where
 	factor _ = 0.3048
-	showunit _ = "ft"
+	showunit _ _ = "ft"
 
 --
 
@@ -61,14 +61,14 @@ type Liters = (Fractional f) => Value f VolumeUnit Liter
 
 instance Convertable VolumeUnit Liter where
 	factor _ = 0.001
-	showunit _ = "L"
+	showunit _ _ = "L"
 
 data Gallon
 type Gallons = (Fractional f) => Value f VolumeUnit Gallon
 
 instance Convertable VolumeUnit Gallon where
 	factor _ = 0.00454609
-	showunit _ = "gallon"
+	showunit _ _ = "gallon"
 
 ----
 -- Time
@@ -79,7 +79,7 @@ type Hours = (Fractional f) => Value f TimeUnit Hour
 
 instance Convertable TimeUnit Hour where
 	factor _ = 3600
-	showunit _ = "h"
+	showunit _ _ = "h"
 
 --
 
@@ -88,7 +88,7 @@ type Minutes = (Fractional f) => Value f TimeUnit Minute
 
 instance Convertable TimeUnit Minute where
 	factor _ = 60
-	showunit _ = "min."
+	showunit _ _ = "min."
 
 --
 
@@ -97,7 +97,7 @@ type Days = (Fractional f) => Value f TimeUnit Day
 
 instance Convertable TimeUnit Day where
 	factor _ = 86400
-	showunit _ = "day"
+	showunit _ _ = "day"
 
 --
 
@@ -106,7 +106,7 @@ type Herzs = (Fractional f) => Value f (UnitCons Time (Neg One) UnitNil) Herz
 
 instance Convertable (UnitCons Time (Neg One) UnitNil) Herz where
 	factor _ = 1
-	showunit _ = "Hz"
+	showunit _ _ = "Hz"
 
 
 ----
@@ -120,7 +120,7 @@ type PlanckMasses = (Fractional f) => Value f MassUnit PlanckMass
 
 instance Convertable MassUnit PlanckMass where
 	factor _ = 2.176513e-8
-	showunit _ = "m_P"
+	showunit _ _ = "m_P"
 
 ----
 -- Misc
@@ -136,7 +136,7 @@ type Newtons = (Fractional f) => Value f Force Newton
 
 instance Convertable Force Newton where
 	factor _ = 1
-	showunit _ = "N"
+	showunit _ _ = "N"
 
 type Energy = UnitCons Time (Neg (Suc One)) (UnitCons Mass (Pos One) (UnitCons Length (Pos (Suc One)) UnitNil))
 data Joule
@@ -145,14 +145,14 @@ type Kwh = (Fractional f) => Value f Energy (Mul (Kilo Watt) Hour)
 
 instance Convertable Energy Joule where
 	factor _ = 1
-	showunit _ = "J"
+	showunit _ _ = "J"
 
 data Ev
 type Evs = (Fractional f) => Value f Energy Ev
 
 instance Convertable Energy Ev where
 	factor _ = 1.60217656535e-19
-	showunit _ = "eV"
+	showunit _ _ = "eV"
 
 type Power = UnitCons Time (Neg (Suc (Suc One))) (UnitCons Length (Pos (Suc One)) (UnitCons Mass (Pos One) UnitNil))
 data Watt
@@ -160,7 +160,7 @@ type Watts = (Fractional f) => Value f Power Watt
 
 instance Convertable Power Watt where
 	factor _ = 1
-	showunit _ = "W"
+	showunit _ _ = "W"
 
 type Pressure = UnitCons Time (Neg (Suc One)) (UnitCons Mass (Pos One) (UnitCons Length (Neg One) UnitNil))
 data Pascal
@@ -168,7 +168,7 @@ type Pascals = (Fractional f) => Value f Pressure Pascal
 
 instance Convertable Pressure Pascal where
 	factor _ = 1
-	showunit _ = "Pa"
+	showunit _ _ = "Pa"
 
 --
 

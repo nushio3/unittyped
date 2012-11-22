@@ -14,18 +14,15 @@ import Prelude (Show(..), Fractional, ($), (.), (++), Double, const, Bool(..), o
 -- Data
 ----
 
-data Data = Data
+data Data
 type DataUnit = UnitCons Data (Pos One) UnitNil
 
-data Byte = Byte
+data Byte
 type Bytes = (Fractional f) => Value f DataUnit Byte
-
-instance Show Byte where
-	show _ = "B"
 
 instance Convertable DataUnit Byte where
 	factor _ = 1
-	constructor = Byte
+	showunit _ _ = "B"
 
 --
 

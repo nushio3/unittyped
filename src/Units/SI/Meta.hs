@@ -23,10 +23,10 @@ instance (MetaUnit m a b, Convertable a b) => Convertable a (m b) where
 	               self :: (Fractional f) => Value f a (m b)
 	               self = one
 	           in (Prelude.*) (metafactor self) (factor sub)
-	showunit v = let
-					u :: (Fractional f) => Value f a b
-					u = one
-				 in metashow v ++ (showunit u)
+	showunit b v = let
+			 		   u :: (Fractional f) => Value f a b
+					   u = one
+				   in metashow v ++ (showunit False u) 
 
 --
 

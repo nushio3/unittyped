@@ -14,7 +14,7 @@ type CountUnit = UnitNil
 
 instance Convertable CountUnit Count where
 	factor _ = 1
-	showunit _ = "#"
+	showunit _ _ = "#"
 
 --
 
@@ -23,7 +23,7 @@ type MoleUnit = UnitCons Temperature (Pos One) UnitNil
 
 instance Convertable CountUnit Mole where
 	factor _ = 6.0221417930e23
-	showunit _ = "mole"
+	showunit _ _ = "mole"
 
 ----
 -- Length
@@ -39,7 +39,7 @@ type Meters = (Fractional f) => Value f LengthUnit Meter
 
 instance Convertable LengthUnit Meter where
 	factor _ = 1
-	showunit _ = "m"
+	showunit _ _ = "m"
 
 ----
 -- Time
@@ -56,7 +56,7 @@ type Seconds = (Fractional f) => Value f TimeUnit Second
 
 instance Convertable TimeUnit Second where
 	factor _ = 1
-	showunit _ = "s"
+	showunit _ _ = "s"
 
 ----
 -- Mass
@@ -70,7 +70,7 @@ type Grams = (Fractional f) => Value f MassUnit Gram
 
 instance Convertable MassUnit Gram where
 	factor _ = 0.001
-	showunit _ = "g"
+	showunit _ _ = "g"
 
 ----
 -- Temperature
@@ -84,7 +84,7 @@ type Kelvins = (Fractional f) => Value f TemperatureUnit Kelvin
 
 instance Convertable TemperatureUnit Kelvin where
 	factor _ = 1
-	showunit _ = "K"
+	showunit _ _ = "K"
 
 ----
 

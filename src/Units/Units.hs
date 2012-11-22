@@ -106,7 +106,7 @@ one = mkVal 1
 
 class Convertable a b | b -> a where
 	factor :: (Fractional f) => Value f a b -> f
-	showunit :: (Fractional f) => Value f a b -> String
+	showunit :: (Fractional f) => Bool -> Value f a b -> String
 
 instance (Convertable a b, Convertable c d, UnitMerge a c u) => Convertable u (Mul b d) where
 	factor :: (Fractional f) => Value f u (Mul b d) -> f
@@ -115,11 +115,12 @@ instance (Convertable a b, Convertable c d, UnitMerge a c u) => Convertable u (M
 	               right ::(Fractional f) => Value f c d
 	               right = one
 	           in (Prelude.*) (factor left) (factor right)
-	showunit u = let left :: (Fractional f) => Value f a b
-	                 left = one
-	                 right ::(Fractional f) => Value f c d
-	                 right = one
-	             in (showunit left) ++ "*" ++ (showunit right)
+	showunit b u = let left :: (Fractional f) => Value f a b
+	                   left = one
+	                   right ::(Fractional f) => Value f c d
+	                   right = one
+	                   rest = (showunit False left) ++ "*" ++ (showunit False right)
+	               in if b then "(" ++ rest ++ ")" else rest
 
 instance (Convertable a b, Convertable c d, UnitMerge a c' u, UnitNeg c c') => Convertable u (Div b d) where
 	factor :: (Fractional f) => Value f u (Div b d) -> f
@@ -128,11 +129,12 @@ instance (Convertable a b, Convertable c d, UnitMerge a c' u, UnitNeg c c') => C
 	               right ::(Fractional f) => Value f c d
 	               right = one
 	           in (Prelude./) (factor left) (factor right)
-	showunit u = let left :: (Fractional f) => Value f a b
-	                 left = one
-	                 right ::(Fractional f) => Value f c d
-	                 right = one
-	             in (showunit left) ++ "/(" ++ (showunit right) ++ ")"
+	showunit b u = let left :: (Fractional f) => Value f a b
+	                   left = one
+	                   right ::(Fractional f) => Value f c d
+	                   right = one
+	                   rest = (showunit False left) ++ "/" ++ (showunit True right)
+	                in if b then "(" ++ rest ++ ")" else rest
 
 ---- We can coerce something of a specific dimension into any other unit in the same dimension
 
@@ -149,13 +151,13 @@ data Div b d
 data Value a (b :: UnitMap) c = Value a
 
 instance (Convertable a b) => Show b where
-	show _ = (showunit one)
+	show _ = (showunit False one)
 		where
 			one :: (Fractional f) => Value f a b
 			one = one
 
 instance (Fractional f, Show f, Convertable a b, Show b) => Show (Value f a b) where
-	show u = (show $ val u) ++ " " ++ (showunit u)
+	show u = (show $ val u) ++ " " ++ (showunit False u)
 
 -- We currently have 3 operators on values-with-units: division, multiplication and addition
 
