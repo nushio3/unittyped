@@ -158,7 +158,7 @@ instance Show PlanckMass where
 	show _ = "m_P"
 
 instance Convertable MassUnit PlanckMass where
-	factor _ = 2.176513e-5
+	factor _ = 2.176513e-8
 	constructor = PlanckMass
 
 ----
@@ -177,7 +177,7 @@ instance Show Newton where
 	show _ = "N"
 
 instance Convertable Force Newton where
-	factor _ = 1000
+	factor _ = 1
 	constructor = Newton
 
 type Energy = UnitCons Time (Neg (Suc One)) (UnitCons Mass (Pos One) (UnitCons Length (Pos (Suc One)) UnitNil))
@@ -189,8 +189,18 @@ instance Show Joule where
 	show _ = "J"
 
 instance Convertable Energy Joule where
-	factor _ = 1000
+	factor _ = 1
 	constructor = Joule
+
+data Ev = Ev
+type Evs = (Fractional f) => Value f Energy Ev
+
+instance Show Ev where
+	show _ = "eV"
+
+instance Convertable Energy Ev where
+	factor _ = 1.60217656535e-19
+	constructor = Ev
 
 type Power = UnitCons Time (Neg (Suc (Suc One))) (UnitCons Length (Pos (Suc One)) (UnitCons Mass (Pos One) UnitNil))
 data Watt = Watt
@@ -200,7 +210,7 @@ instance Show Watt where
 	show _ = "W"
 
 instance Convertable Power Watt where
-	factor _ = 1000
+	factor _ = 1
 	constructor = Watt
 
 type Pressure = UnitCons Time (Neg (Suc One)) (UnitCons Mass (Pos One) (UnitCons Length (Neg One) UnitNil))
@@ -211,7 +221,7 @@ instance Show Pascal where
 	show _ = "Pa"
 
 instance Convertable Pressure Pascal where
-	factor _ = 1000
+	factor _ = 1
 	constructor = Pascal
 
 --
@@ -265,6 +275,9 @@ newton = mkVal
 
 joule :: (Fractional f) => f -> Value f Energy Joule
 joule = mkVal
+
+eV :: (Fractional f) => f -> Value f Energy Ev
+eV = mkVal
 
 kwh :: (Fractional f) => f -> Value f Energy (Mul (Kilo Watt) Hour)
 kwh = mkVal

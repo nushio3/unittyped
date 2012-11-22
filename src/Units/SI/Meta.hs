@@ -46,12 +46,30 @@ instance MetaUnit Mega where
 	metafactor _ = 1000000
 	metashow (Mega u) = "M" ++ (show u)
 
+data Giga a = Giga a
+
+instance MetaUnit Giga where
+	metaconstructor = Giga
+	metafactor _ = 1000000000
+	metashow (Giga u) = "G" ++ (show u)
+
+data Tera a = Tera a
+
+instance MetaUnit Tera where
+	metaconstructor = Tera
+	metafactor _ = 1000000000000
+	metashow (Tera u) = "T" ++ (show u)
+
 data Mili a = Mili a
 
 instance MetaUnit Mili where
 	metaconstructor = Mili
 	metafactor _ = 0.001
 	metashow (Mili u) = "m" ++ (show u)
+
+----
+-- 2 factors
+----
 
 data Kibi a = Kibi a
 
@@ -91,6 +109,14 @@ mili _ = mkVal
 
 mega :: (Fractional f) => (f -> Value f a b) -> f -> Value f a (Mega b)
 mega _ = mkVal
+
+giga :: (Fractional f) => (f -> Value f a b) -> f -> Value f a (Giga b)
+giga _ = mkVal
+
+tera :: (Fractional f) => (f -> Value f a b) -> f -> Value f a (Tera b)
+tera _ = mkVal
+
+--
 
 mebi :: (Fractional f) => (f -> Value f a b) -> f -> Value f a (Mebi b)
 mebi _ = mkVal

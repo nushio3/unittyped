@@ -73,7 +73,7 @@ instance Show Gram where
 	show _ = "g"
 
 instance Convertable MassUnit Gram where
-	factor _ = 1
+	factor _ = 0.001
 	constructor = Gram
 
 ----
