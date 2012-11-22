@@ -149,16 +149,13 @@ data Div b d
 data Value a (b :: UnitMap) c = Value a
 
 instance (Convertable a b) => Show b where
-	show m = (showunit one)
+	show _ = (showunit one)
 		where
 			one :: (Fractional f) => Value f a b
 			one = one
 
-instance (Convertable b c, Show a, Show c) => Show (Value a b c) where
-	show u = (show $ val u) ++ " " ++ (show unit)
-		where
-			unit :: c
-			unit = error "(Convertable b c, Show a, Show c) => Show (Value a b c)"
+instance (Fractional f, Show f, Convertable a b, Show b) => Show (Value f a b) where
+	show u = (show $ val u) ++ " " ++ (showunit u)
 
 -- We currently have 3 operators on values-with-units: division, multiplication and addition
 
