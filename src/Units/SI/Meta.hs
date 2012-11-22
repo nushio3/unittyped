@@ -12,90 +12,83 @@ import Prelude (Show(..), Fractional, ($), (.), (++), Double, const, Bool(..), o
 -- Meta-units
 ----
 
-class MetaUnit (m :: * -> *) where
-	metaconstructor :: a -> m a
+class (Convertable a b, Show b) => MetaUnit (m :: * -> *) a b where
 	metafactor :: (Fractional f) => Value f a (m b) -> f
-	metashow :: (Fractional f, Show a) => m a -> String
+	metashow :: (Fractional f) => Value f a (m b) -> String
 
-instance (MetaUnit m, Convertable a b) => Convertable a (m b) where
+instance (MetaUnit m a b, Convertable a b) => Convertable a (m b) where
 	factor :: (Fractional f) => Value f a (m b) -> f
 	factor _ = let sub :: (Fractional f) => Value f a b
 	               sub = one
 	               self :: (Fractional f) => Value f a (m b)
 	               self = one
 	           in (Prelude.*) (metafactor self) (factor sub)
-	showunit = metashow
+	showunit v = let
+					u :: (Fractional f) => Value f a b
+					u = one
+				 in metashow v ++ (showunit u)
 
 --
 
-data Kilo a = Kilo a
+data Kilo a
 
-instance MetaUnit Kilo where
-	metaconstructor = Kilo
+instance (Convertable a b) => MetaUnit Kilo a b where
 	metafactor _ = 1000
-	metashow (Kilo u) = "k" ++ (show u)
+	metashow _ = "k"
 
-data Mega a = Mega a
+data Mega a
 
-instance MetaUnit Mega where
-	metaconstructor = Mega
+instance (Convertable a b) => MetaUnit Mega a b where
 	metafactor _ = 1000000
-	metashow (Mega u) = "M" ++ (show u)
+	metashow _ = "M"
 
-data Giga a = Giga a
+data Giga a
 
-instance MetaUnit Giga where
-	metaconstructor = Giga
+instance (Convertable a b) => MetaUnit Giga a b where
 	metafactor _ = 1000000000
-	metashow (Giga u) = "G" ++ (show u)
+	metashow _ = "G"
 
-data Tera a = Tera a
+data Tera a
 
-instance MetaUnit Tera where
-	metaconstructor = Tera
+instance (Convertable a b) => MetaUnit Tera a b where
 	metafactor _ = 1000000000000
-	metashow (Tera u) = "T" ++ (show u)
+	metashow _ = "T"
 
-data Mili a = Mili a
+data Mili a
 
-instance MetaUnit Mili where
-	metaconstructor = Mili
+instance (Convertable a b) => MetaUnit Mili a b where
 	metafactor _ = 0.001
-	metashow (Mili u) = "m" ++ (show u)
+	metashow _ = "m"
 
-----
--- 2 factors
-----
+------
+---- 2 factors
+------
 
-data Kibi a = Kibi a
+data Kibi a
 
-instance MetaUnit Kibi where
-	metaconstructor = Kibi
+instance (Convertable a b) => MetaUnit Kibi a b where
 	metafactor _ = 1024
-	metashow (Kibi u) = "Ki" ++ (show u)
+	metashow _ = "Ki"
 
-data Mebi a = Mebi a
+data Mebi a
 
-instance MetaUnit Mebi where
-	metaconstructor = Mebi
+instance (Convertable a b) => MetaUnit Mebi a b where
 	metafactor _ = (Prelude.*) 1024 1024
-	metashow (Mebi u) = "Mi" ++ (show u)
+	metashow _ = "Mi"
 
-data Gibi a = Gibi a
+data Gibi a
 
-instance MetaUnit Gibi where
-	metaconstructor = Gibi
+instance (Convertable a b) => MetaUnit Gibi a b where
 	metafactor _ = (Prelude.*) 1024 ((Prelude.*) 1024 1024)
-	metashow (Gibi u) = "Gi" ++ (show u)
+	metashow _ = "Gi"
 
-data Tebi a = Tebi a
+data Tebi a
 
-instance MetaUnit Tebi where
-	metaconstructor = Tebi
+instance (Convertable a b) => MetaUnit Tebi a b where
 	metafactor _ = (Prelude.*) ((Prelude.*) 1024 1024) ((Prelude.*) 1024 1024)
-	metashow (Tebi u) = "Ti" ++ (show u)
+	metashow _ = "Ti"
 
---
+----
 
 kilo :: (Fractional f) => (f -> Value f a b) -> f -> Value f a (Kilo b)
 kilo _ = mkVal
