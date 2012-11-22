@@ -49,8 +49,14 @@ instance Convertable CurrencyUnit Gulden where
 euro :: (Fractional f) => Value f CurrencyUnit Euro
 euro = one
 
+eurocent :: (Fractional f) => Value f CurrencyUnit Euro
+eurocent = 0.01 .$. one
+
 dollar :: (Fractional f) => Value f CurrencyUnit Dollar
 dollar = one
+
+dollarcent :: (Fractional f) => Value f CurrencyUnit Dollar
+dollarcent = 0.01 .$. one
 
 yen :: (Fractional f) => Value f CurrencyUnit Yen
 yen = one
