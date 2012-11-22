@@ -163,6 +163,11 @@ instance NeedsParanthesis (Mul a b) where
 instance NeedsParanthesis a where
 	needsParanthesis _ = False
 
+instance (Convertable a b, Show b, NeedsParanthesis b) => Show (Mul b b) where
+	show m = unit ++ "^2"
+		where unit = if (needsParanthesis $ mul_r m) then "(" ++ (show $ mul_l m) ++ ")"
+			         else show $ mul_l m
+
 instance (Convertable a b, Convertable c d, Show b, Show d) => Show (Mul b d) where
 	show m = (show $ mul_l m) ++ "*" ++ (show $ mul_r m)
 

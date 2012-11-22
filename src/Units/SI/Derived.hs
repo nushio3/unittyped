@@ -55,6 +55,45 @@ instance Convertable LengthUnit Yard where
 	factor _ = 0.9144
 	constructor = Yard
 
+--
+
+data Foot = Foot
+
+type Feet = (Fractional f) => Value f LengthUnit Foot
+
+instance Show Foot where
+	show _ = "ft"
+
+instance Convertable LengthUnit Foot where
+	factor _ = 0.3048
+	constructor = Foot
+
+--
+
+type VolumeUnit = UnitCons Length (Pos (Suc (Suc One))) UnitNil
+
+data Liter = Liter
+
+type Liters = (Fractional f) => Value f VolumeUnit Liter
+
+instance Show Liter where
+	show _ = "L"
+
+instance Convertable VolumeUnit Liter where
+	factor _ = 0.001
+	constructor = Liter
+
+data Gallon = Gallon
+
+type Gallons = (Fractional f) => Value f VolumeUnit Gallon
+
+instance Show Gallon where
+	show _ = "gallon"
+
+instance Convertable VolumeUnit Gallon where
+	factor _ = 0.00454609
+	constructor = Gallon
+
 ----
 -- Time
 ----
@@ -129,8 +168,6 @@ instance Convertable MassUnit PlanckMass where
 
 type Speed = UnitCons Time (Neg One) (UnitCons Length (Pos One) UnitNil)
 type Acceleration = UnitCons Time (Neg (Suc One)) (UnitCons Length (Pos One) UnitNil)
-type Kmph = (Fractional f) => Value f Speed (Div (Kilo Meter) Hour)
-type Mpss = (Fractional f) => Value f Acceleration (Div Meter (Mul Second Second))
 
 type Force = UnitCons Time (Neg (Suc One)) (UnitCons Mass (Pos One) (UnitCons Length (Pos One) UnitNil))
 data Newton = Newton
@@ -166,6 +203,17 @@ instance Convertable Power Watt where
 	factor _ = 1000
 	constructor = Watt
 
+type Pressure = UnitCons Time (Neg (Suc One)) (UnitCons Mass (Pos One) (UnitCons Length (Neg One) UnitNil))
+data Pascal = Pascal
+type Pascals = (Fractional f) => Value f Pressure Pascal
+
+instance Show Pascal where
+	show _ = "Pa"
+
+instance Convertable Pressure Pascal where
+	factor _ = 1000
+	constructor = Pascal
+
 --
 
 kilometer = kilo meter
@@ -180,6 +228,17 @@ inch = mkVal
 yard :: (Fractional f) => f -> Value f LengthUnit Yard
 yard = mkVal
 
+foot :: (Fractional f) => f -> Value f LengthUnit Foot
+foot = mkVal
+
+--
+
+liter :: (Fractional f) => f -> Value f VolumeUnit Liter
+liter = mkVal
+
+gallon :: (Fractional f) => f -> Value f VolumeUnit Gallon
+gallon = mkVal
+
 --
 
 minute :: (Fractional f) => f -> Value f TimeUnit Minute
@@ -192,8 +251,6 @@ day :: (Fractional f) => f -> Value f TimeUnit Day
 day = mkVal
 
 --
-
-
 
 kilogram :: (Fractional f) => f -> Value f MassUnit (Kilo Gram)
 kilogram = mkVal
@@ -214,3 +271,6 @@ kwh = mkVal
 
 watt :: (Fractional f) => f -> Value f Power Watt
 watt = mkVal
+
+pascal :: (Fractional f) => f -> Value f Pressure Pascal
+pascal = mkVal
