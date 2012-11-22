@@ -71,8 +71,10 @@ instance UnitOrd Data Three
 class UnitAppend' q unit (value :: Number) (map :: UnitMap) (rest :: UnitMap) | q unit value map -> rest where
 
 instance UnitAppend' q unit value UnitNil (UnitCons unit value UnitNil)
-instance (Add value value' sum) => UnitAppend' () unit value (UnitCons unit value' rest) (UnitCons unit sum rest)
-instance (UnitAppend' q unit value rest rest', value'' ~ value') => UnitAppend' q unit value (UnitCons unit' value' rest) (UnitCons unit' value'' rest')
+instance (Add value value' sum) =>
+		 UnitAppend' () unit value (UnitCons unit value' rest) (UnitCons unit sum rest)
+instance (UnitAppend' q unit value rest rest', value'' ~ value', unit'' ~ unit') =>
+		 UnitAppend' q unit value (UnitCons unit' value' rest) (UnitCons unit'' value'' rest')
 
 class UnitAppend unit (value :: Number) (map :: UnitMap) (rest :: UnitMap) | unit value map -> rest where
 
@@ -133,6 +135,9 @@ instance (Convertable a b, Convertable c d, UnitMerge a c' u, UnitNeg c c') => C
 
 coerce :: (Convertable a b, Convertable c d, Fractional f, UnitEq a c True) => Value f a b -> Value f c d
 coerce u = let result = Value {val = (Prelude./) ((Prelude.*) (factor u) (val u)) (factor result), unit = constructor} in result
+
+coerceTo :: (Convertable a b, Convertable c d, Fractional f, UnitEq a c True) => Value f a b -> Value f c d -> Value f c d
+coerceTo u _ = coerce u
 
 data Mul b d = Mul {
 	mul_l :: (Convertable a b) => b,
@@ -343,57 +348,63 @@ instance Convertable DataUnit Byte where
 
 -- Example meta-dimensions
 
+class MetaUnit (m :: * -> *) where
+	metaconstructor :: a -> m a
+	metafactor :: (Fractional f) => Value f a (m b) -> f
+
+instance (MetaUnit m, Convertable a b) => Convertable a (m b) where
+	factor :: (Fractional f) => Value f a (m b) -> f
+	factor _ = let sub :: (Fractional f) => Value f a b
+	               sub = one
+	               self :: (Fractional f) => Value f a (m b)
+	               self = one
+	           in (Prelude.*) (metafactor self) (factor sub)
+	constructor :: m b
+	constructor = metaconstructor (constructor :: b)
+
+--
+
 data Kilo a = Kilo a
+
+instance MetaUnit Kilo where
+	metaconstructor = Kilo
+	metafactor _ = 1000
 
 instance (Show a) => Show (Kilo a) where
 	show (Kilo u) = "k" ++ (show u)
 
-instance (Convertable a b) => Convertable a (Kilo b) where
-	factor :: (Fractional f) => Value f a (Kilo b) -> f
-	factor _ = let sub :: (Fractional f) => Value f a b
-	               sub = one
-	           in (Prelude.*) 1000 (factor sub)
-	constructor :: Kilo b
-	constructor = Kilo (constructor :: b)
+data Mega a = Mega a
+
+instance MetaUnit Mega where
+	metaconstructor = Mega
+	metafactor _ = 1000000
+
+instance (Show a) => Show (Mega a) where
+	show (Mega u) = "M" ++ (show u)
 
 data Mili a = Mili a
+
+instance MetaUnit Mili where
+	metaconstructor = Mili
+	metafactor _ = 0.001
 
 instance (Show a) => Show (Mili a) where
 	show (Mili u) = "m" ++ (show u)
 
-instance (Convertable a b) => Convertable a (Mili b) where
-	factor :: (Fractional f) => Value f a (Mili b) -> f
-	factor _ = let sub :: (Fractional f) => Value f a b
-	               sub = one
-	           in (Prelude./) (factor sub) 1000
-	constructor :: Mili b
-	constructor = Mili (constructor :: b)
-
 data Kibi a = Kibi a
+
+instance MetaUnit Kibi where
+	metaconstructor = Kibi
+	metafactor _ = 1024
 
 instance (Show a) => Show (Kibi a) where
 	show (Kibi u) = "ki" ++ (show u)
 
-instance (Convertable a b) => Convertable a (Kibi b) where
-	factor :: (Fractional f) => Value f a (Kibi b) -> f
-	factor _ = let sub :: (Fractional f) => Value f a b
-	               sub = one
-	           in (Prelude.*) 1024 (factor sub)
-	constructor :: Kibi b
-	constructor = Kibi (constructor :: b)
-
 data Mebi a = Mebi a
 
-instance (Show a) => Show (Mebi a) where
-	show (Mebi u) = "Mi" ++ (show u)
-
-instance (Convertable a b) => Convertable a (Mebi b) where
-	factor :: (Fractional f) => Value f a (Mebi b) -> f
-	factor _ = let sub :: (Fractional f) => Value f a b
-	               sub = one
-	           in (Prelude.*) 1048576 (factor sub)
-	constructor :: Mebi b
-	constructor = Mebi (constructor :: b)
+instance MetaUnit Mebi where
+	metaconstructor = Mebi
+	metafactor _ = (Prelude.*) 1024 1024
 
 ----
 
@@ -431,10 +442,38 @@ type Kmph = (Fractional f) => Value f Speed (Div (Kilo Meter) Hour)
 type Mpss = (Fractional f) => Value f Acceleration (Div Meter (Mul Second Second))
 
 type Force = UnitCons Time (Neg (Suc One)) (UnitCons Mass (Pos One) (UnitCons Length (Pos One) UnitNil))
-type Newton = Div (Mul (Kilo Gram) Meter) (Mul Second Second)
+data Newton = Newton
+type Newtons = (Fractional f) => Value f Force Newton
+
+instance Show Newton where
+	show _ = "N"
+
+instance Convertable Force Newton where
+	factor _ = 1000
+	constructor = Newton
 
 type Energy = UnitCons Time (Neg (Suc One)) (UnitCons Mass (Pos One) (UnitCons Length (Pos (Suc One)) UnitNil))
-type Joule = Div (Mul (Kilo Gram) (Mul Meter Meter)) (Mul Second Second)
+data Joule = Joule
+type Joules = (Fractional f) => Value f Energy Joule
+type Kwh = (Fractional f) => Value f Energy (Mul (Kilo Watt) Hour)
+
+instance Show Joule where
+	show _ = "J"
+
+instance Convertable Energy Joule where
+	factor _ = 1000
+	constructor = Joule
+
+type Power = UnitCons Time (Neg (Suc (Suc One))) (UnitCons Length (Pos (Suc One)) (UnitCons Mass (Pos One) UnitNil))
+data Watt = Watt
+type Watts = (Fractional f) => Value f Power Watt
+
+instance Show Watt where
+	show _ = "W"
+
+instance Convertable Power Watt where
+	factor _ = 1000
+	constructor = Watt
 
 ----
 
@@ -443,16 +482,22 @@ mkVal f = Value { val = f, unit = constructor }
 count :: (Fractional f) => f -> Value f CountUnit Count
 count = mkVal
 
+kilo :: (Fractional f) => (f -> Value f a b) -> f -> Value f a (Kilo b)
+kilo func = mkVal
+
+mili :: (Fractional f) => (f -> Value f a b) -> f -> Value f a (Mili b)
+mili func = mkVal
+
+mega :: (Fractional f) => (f -> Value f a b) -> f -> Value f a (Mega b)
+mega func = mkVal
+
 --
 
 meter :: (Fractional f) => f -> Value f LengthUnit Meter
 meter = mkVal
 
-kilometer :: (Fractional f) => f -> Value f LengthUnit (Kilo Meter)
-kilometer = mkVal
-
-milimeter :: (Fractional f) => f -> Value f LengthUnit (Mili Meter)
-milimeter = mkVal
+kilometer = kilo meter
+milimeter = mili meter
 
 mile :: (Fractional f) => f -> Value f LengthUnit Mile
 mile = mkVal
@@ -503,3 +548,10 @@ newton = mkVal
 
 joule :: (Fractional f) => f -> Value f Energy Joule
 joule = mkVal
+
+kwh :: (Fractional f) => f -> Value f Energy (Mul (Kilo Watt) Hour)
+kwh = mkVal
+
+
+watt :: (Fractional f) => f -> Value f Power Watt
+watt = mkVal
