@@ -9,6 +9,16 @@ import Units.SI.Meta
 import qualified Prelude
 import Prelude (Show(..), Fractional, ($), (.), (++), Double, const, Bool(..), otherwise, undefined, String(..))
 
+---
+-- Count
+---
+
+data Percentage
+type Percentages = (Fractional f) => Value f LengthUnit Mile
+
+instance Convertable CountUnit Percentage where
+	factor _ = 0.01
+	showunit _ _ = "%"
 
 ----
 -- Length
@@ -169,6 +179,11 @@ type Pascals = (Fractional f) => Value f Pressure Pascal
 instance Convertable Pressure Pascal where
 	factor _ = 1
 	showunit _ _ = "Pa"
+
+--
+
+percentage :: (Fractional f) => f -> Value f CountUnit Percentage
+percentage = mkVal
 
 --
 
