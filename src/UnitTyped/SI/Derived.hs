@@ -56,7 +56,7 @@ data Degree
 type Degrees = (Fractional f) => Value f CountUnit Degree
 
 instance Convertable CountUnit Degree where
-	factor _ = 180 / 3.141592653589793
+	factor _ = 3.141592653589793 / 180
 	showunit _ _ = "°"
 
 ----

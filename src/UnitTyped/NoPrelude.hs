@@ -1,9 +1,11 @@
 module UnitTyped.NoPrelude where
 
 import UnitTyped
+import UnitTyped.SI
+import UnitTyped.SI.Derived
 
 import qualified Prelude
-import Prelude (Show(..), Fractional, ($), (++), Double, const, Bool(..), otherwise, undefined, String(..), error)
+import Prelude (Show(..), Fractional, Floating, ($), (++), Double, const, Bool(..), otherwise, undefined, String(..), error)
 
 infixl 6 +, -
 infixl 7 *, /
@@ -43,3 +45,19 @@ instance (Fractional f, Convertable a (m b), c ~ (Value f a b -> Value f a (m b)
 
 instance (Fractional f, Convertable a (m b), c ~ (Value f a b -> Value f a (m b))) => (Fractional ((Value f a b -> Value f a (m b)) -> c)) where
 	fromRational i x y = (Prelude.fromRational i) . (x y)
+
+wrap1 :: (Floating f, Convertable CountUnit b) => (f -> f) -> Value f CountUnit b -> Value f CountUnit Count
+wrap1 op v = (op $ val $ coerceTo v rad) . one
+
+sin, cos, tan :: (Floating f, Convertable CountUnit b) => Value f CountUnit b -> Value f CountUnit Count
+sin = wrap1 Prelude.sin
+cos = wrap1 Prelude.cos
+tan = wrap1 Prelude.tan
+
+wrap2 :: (Floating f) => (f -> f) -> Value f CountUnit Count -> Value f CountUnit Radian
+wrap2 op v = (op $ val v) . one
+
+asin, acos, atan :: (Floating f) => Value f CountUnit Count -> Value f CountUnit Radian
+asin = wrap2 Prelude.asin
+acos = wrap2 Prelude.acos
+atan = wrap2 Prelude.atan
