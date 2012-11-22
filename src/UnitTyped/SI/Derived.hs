@@ -4,19 +4,60 @@ import UnitTyped
 import UnitTyped.SI
 import UnitTyped.SI.Meta
 
-import qualified Prelude
-import Prelude (Show(..), Fractional, ($), (++), Double, const, Bool(..), otherwise, undefined, String(..))
+import Data.Ratio
 
 ---
 -- Count
 ---
 
 data Percentage
-type Percentages = (Fractional f) => Value f LengthUnit Mile
+type Percentages = (Fractional f) => Value f CountUnit Percentage
 
 instance Convertable CountUnit Percentage where
 	factor _ = 0.01
 	showunit _ _ = "%"
+
+data Permil
+type Permils = (Fractional f) => Value f CountUnit Permil
+
+instance Convertable CountUnit Permil where
+	factor _ = 0.001
+	showunit _ _ = "‰"
+
+data Ppm
+type Ppms = (Fractional f) => Value f CountUnit Ppm
+
+instance Convertable CountUnit Ppm where
+	factor _ = 0.1^6
+	showunit _ _ = "ppm"
+
+data Ppb
+type Ppbs = (Fractional f) => Value f CountUnit Ppb
+
+instance Convertable CountUnit Ppb where
+	factor _ = 0.1^9
+	showunit _ _ = "ppb"
+
+data Ppt
+type Ppts = (Fractional f) => Value f CountUnit Ppt
+
+instance Convertable CountUnit Ppt where
+	factor _ = 0.1^12
+	showunit _ _ = "ppt"
+
+data Radian
+type Radians = (Fractional f) => Value f CountUnit Radian
+
+instance Convertable CountUnit Radian where
+	factor _ = 1
+	showunit _ _ = "rad"
+
+data Degree
+type Degrees = (Fractional f) => Value f CountUnit Degree
+
+instance Convertable CountUnit Degree where
+	factor _ = 180 / 3.141592653589793
+	showunit _ _ = "°"
 
 ----
 -- Length
@@ -114,6 +155,20 @@ instance Convertable TimeUnit Day where
 	factor _ = 86400
 	showunit _ _ = "day"
 
+data Year
+type Years = (Fractional f) => Value f TimeUnit Year
+
+instance Convertable TimeUnit Year where
+	factor _ = 365.2425 * 24 * 60 * 60
+	showunit _ _ = "yr"
+
+data JulianYear
+type JulianYears = (Fractional f) => Value f TimeUnit JulianYear
+
+instance Convertable TimeUnit JulianYear where
+	factor _ = 31557600
+	showunit _ _ = "a"
+
 --
 
 data Herz
@@ -185,10 +240,87 @@ instance Convertable Pressure Pascal where
 	factor _ = 1
 	showunit _ _ = "Pa"
 
+type Charge = (UnitCons Time (Pos One) (UnitCons Current (Pos One) UnitNil))
+data Coulomb
+
+instance Convertable Charge Coulomb where
+	factor _ = 1
+	showunit _ _ = "C"
+
+type Potential = (UnitCons Current (Neg One) (UnitCons Mass (Pos One) (UnitCons Length (Pos (Suc One)) (UnitCons Time (Neg (Suc (Suc One))) UnitNil))))
+data Volt
+type Volts = (Fractional f) => Value f Potential Volt
+
+instance Convertable Potential Volt where
+	factor _ = 1
+	showunit _ _ = "V"
+
+type Capacitance = (UnitCons Current (Pos (Suc One)) (UnitCons Mass (Neg One) (UnitCons Length (Neg (Suc One)) (UnitCons Time (Pos (Suc (Suc (Suc One)))) UnitNil))))
+data Farad
+type Farads = (Fractional f) => Value f Capacitance Farad
+
+instance Convertable Capacitance Farad where
+	factor _ = 1
+	showunit _ _ = "F"
+
+type Resistance = (UnitCons Current (Neg (Suc One)) (UnitCons Time (Neg (Suc (Suc One))) (UnitCons Length (Pos (Suc One)) (UnitCons Mass (Pos One) UnitNil))))
+data Ohm
+type Ohms = (Fractional f) => Value f Resistance Ohm
+
+instance Convertable Resistance Ohm where
+	factor _ = 1
+	showunit _ _ = "Ω"
+
+type Conductance = (UnitCons Current (Pos (Suc One)) (UnitCons Mass (Neg One) (UnitCons Length (Neg (Suc One)) (UnitCons Time (Pos (Suc (Suc One))) UnitNil))))
+data Siemens
+
+instance Convertable Conductance Siemens where
+	factor _ = 1
+	showunit _ _ = "S"
+
+type Flux = (UnitCons Current (Neg One) (UnitCons Length (Pos (Suc One)) (UnitCons Mass (Pos One) (UnitCons Time (Neg (Suc One)) UnitNil))))
+data Weber
+
+instance Convertable Flux Weber where
+	factor _ = 1
+	showunit _ _ = "Wb"
+
+type FluxDensity = (UnitCons Length (Neg One) (UnitCons Time (Neg (Suc One)) (UnitCons Mass (Pos One) (UnitCons Current (Neg One) UnitNil))))
+data Tesla
+
+instance Convertable FluxDensity Tesla where
+	factor _ = 1
+	showunit _ _ = "T"
+
+type Inductance = (UnitCons Current (Neg (Suc One)) (UnitCons Time (Neg (Suc One)) (UnitCons Mass (Pos One) (UnitCons Length (Pos (Suc One)) UnitNil))))
+data Henry
+
+instance Convertable Inductance Henry where
+	factor _ = 1
+	showunit _ _ = "H"
+
 --
 
 percentage :: (Fractional f) => Value f CountUnit Percentage
 percentage = one
+
+permil :: (Fractional f) => Value f CountUnit Permil
+permil = one
+
+ppm :: (Fractional f) => Value f CountUnit Ppm
+ppm = one
+
+ppb :: (Fractional f) => Value f CountUnit Ppb
+ppb = one
+
+ppt :: (Fractional f) => Value f CountUnit Ppt
+ppt = one
+
+rad :: (Fractional f) => Value f CountUnit Radian
+rad = one
+
+deg :: (Fractional f) => Value f CountUnit Degree
+deg = one
 
 --
 
@@ -229,6 +361,12 @@ hour = one
 day :: (Fractional f) => Value f TimeUnit Day
 day = one
 
+year :: (Fractional f) => Value f TimeUnit Year
+year = one
+
+julianyear :: (Fractional f) => Value f TimeUnit JulianYear
+julianyear = one
+
 herz :: (Fractional f) => Value f (UnitCons Time (Neg One) UnitNil) Herz
 herz = one
 
@@ -259,3 +397,27 @@ watt = one
 
 pascal :: (Fractional f) => Value f Pressure Pascal
 pascal = one
+
+coulomb :: (Fractional f) => Value f Charge Coulomb
+coulomb = one
+
+volt :: (Fractional f) => Value f Potential Volt
+volt = one
+
+farad :: (Fractional f) => Value f Capacitance Farad
+farad = one
+
+ohm :: (Fractional f) => Value f Resistance Ohm
+ohm = one
+
+siemens :: (Fractional f) => Value f Conductance Siemens
+siemens = one
+
+weber :: (Fractional f) => Value f Flux Weber
+weber = one
+
+tesla :: (Fractional f) => Value f FluxDensity Tesla
+tesla = one
+
+henry :: (Fractional f) => Value f Inductance Henry
+henry = one

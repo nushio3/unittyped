@@ -85,6 +85,34 @@ instance Convertable TemperatureUnit Kelvin where
 	showunit _ _ = "K"
 
 ----
+-- Current
+----
+
+data Current
+type CurrentUnit = UnitCons Current (Pos One) UnitNil
+
+data Ampere
+type Amperes = (Fractional f) => Value f CurrentUnit Ampere
+
+instance Convertable CurrentUnit Ampere where
+	factor _ = 1
+	showunit _ _ = "A"
+
+----
+-- Luminous
+----
+
+data Luminous
+type LuminousUnit = UnitCons Luminous (Pos One) UnitNil
+
+data Candela
+type Candelas = (Fractional f) => Value f LuminousUnit Candela
+
+instance Convertable LuminousUnit Candela where
+	factor _ = 1
+	showunit _ _ = "cd"
+
+----
 
 count :: (Fractional f) => Value f CountUnit Count
 count = one
@@ -111,3 +139,13 @@ gram = one
 
 kelvin :: (Fractional f) => Value f TemperatureUnit Kelvin
 kelvin = one
+
+--
+
+ampere :: (Fractional f) => Value f CurrentUnit Ampere
+ampere = one
+
+--
+
+candela :: (Fractional f) => Value f LuminousUnit Candela
+candela = one

@@ -3,9 +3,6 @@ module UnitTyped.SI.Meta where
 import UnitTyped.SI
 import UnitTyped
 
-import qualified Prelude
-import Prelude (Show(..), Fractional, ($), (++), Double, const, Bool(..), otherwise, undefined, String(..))
-
 ----
 -- Meta-units
 ----
@@ -20,7 +17,7 @@ instance (MetaUnit m a b, Convertable a b) => Convertable a (m b) where
 	               sub = one
 	               self :: (Fractional f) => Value f a (m b)
 	               self = one
-	           in (Prelude.*) (metafactor self) (factor sub)
+	           in (metafactor self) * (factor sub)
 	showunit b v = let
 			 		   u :: (Fractional f) => Value f a b
 					   u = one
@@ -37,55 +34,55 @@ instance (Convertable a b) => MetaUnit Deca a b where
 data Hecto a
 
 instance (Convertable a b) => MetaUnit Hecto a b where
-	metafactor _ = 100
+	metafactor _ = 10^2
 	metashow _ = "h"
 
 data Kilo a
 
 instance (Convertable a b) => MetaUnit Kilo a b where
-	metafactor _ = 1000
+	metafactor _ = 10^3
 	metashow _ = "k"
 
 data Mega a
 
 instance (Convertable a b) => MetaUnit Mega a b where
-	metafactor _ = 1000000
+	metafactor _ = 10^6
 	metashow _ = "M"
 
 data Giga a
 
 instance (Convertable a b) => MetaUnit Giga a b where
-	metafactor _ = 1000000000
+	metafactor _ = 10^9
 	metashow _ = "G"
 
 data Tera a
 
 instance (Convertable a b) => MetaUnit Tera a b where
-	metafactor _ = 1000000000000
+	metafactor _ = 10^12
 	metashow _ = "T"
 
 data Peta a
 
 instance (Convertable a b) => MetaUnit Peta a b where
-	metafactor _ = 1000000000000000
+	metafactor _ = 10^15
 	metashow _ = "P"
 
 data Exa a
 
 instance (Convertable a b) => MetaUnit Exa a b where
-	metafactor _ = 1000000000000000000
+	metafactor _ = 10^18
 	metashow _ = "E"
 
 data Zetta a
 
 instance (Convertable a b) => MetaUnit Zetta a b where
-	metafactor _ = 1000000000000000000000
+	metafactor _ = 10^21
 	metashow _ = "Z"
 
 data Yotta a
 
 instance (Convertable a b) => MetaUnit Yotta a b where
-	metafactor _ = 1000000000000000000000000
+	metafactor _ = 10^24
 	metashow _ = "Y"
 
 data Deci a
@@ -97,55 +94,55 @@ instance (Convertable a b) => MetaUnit Deci a b where
 data Centi a
 
 instance (Convertable a b) => MetaUnit Centi a b where
-	metafactor _ = 0.01
+	metafactor _ = 0.1^2
 	metashow _ = "c"
 
 data Mili a
 
 instance (Convertable a b) => MetaUnit Mili a b where
-	metafactor _ = 0.001
+	metafactor _ = 0.1^3
 	metashow _ = "m"
 
 data Micro a
 
 instance (Convertable a b) => MetaUnit Micro a b where
-	metafactor _ = 0.000001
+	metafactor _ = 0.1^6
 	metashow _ = "µ"
 
 data Nano a
 
 instance (Convertable a b) => MetaUnit Nano a b where
-	metafactor _ = 0.000000001
+	metafactor _ = 0.1^9
 	metashow _ = "n"
 
 data Pico a
 
 instance (Convertable a b) => MetaUnit Pico a b where
-	metafactor _ = 0.000000000001
+	metafactor _ = 0.1^12
 	metashow _ = "p"
 
 data Femto a
 
 instance (Convertable a b) => MetaUnit Femto a b where
-	metafactor _ = 0.000000000000001
+	metafactor _ = 0.1^15
 	metashow _ = "f"
 
 data Atto a
 
 instance (Convertable a b) => MetaUnit Atto a b where
-	metafactor _ = 0.000000000000000001
+	metafactor _ = 0.1^18
 	metashow _ = "a"
 
 data Zepto a
 
 instance (Convertable a b) => MetaUnit Zepto a b where
-	metafactor _ = 0.000000000000000000001
+	metafactor _ = 0.1^21
 	metashow _ = "z"
 
 data Yocto a
 
 instance (Convertable a b) => MetaUnit Yocto a b where
-	metafactor _ = 0.000000000000000000000001
+	metafactor _ = 0.1^24
 	metashow _ = "y"
 
 ------
@@ -155,49 +152,49 @@ instance (Convertable a b) => MetaUnit Yocto a b where
 data Kibi a
 
 instance (Convertable a b) => MetaUnit Kibi a b where
-	metafactor _ = (Prelude.^) 2 10
+	metafactor _ = 2 ^ 10
 	metashow _ = "Ki"
 
 data Mebi a
 
 instance (Convertable a b) => MetaUnit Mebi a b where
-	metafactor _ = (Prelude.^) 2 20
+	metafactor _ = 2 ^ 20
 	metashow _ = "Mi"
 
 data Gibi a
 
 instance (Convertable a b) => MetaUnit Gibi a b where
-	metafactor _ = (Prelude.^) 2 30
+	metafactor _ = 2 ^ 30
 	metashow _ = "Gi"
 
 data Tebi a
 
 instance (Convertable a b) => MetaUnit Tebi a b where
-	metafactor _ = (Prelude.^) 2 40
+	metafactor _ = 2 ^ 40
 	metashow _ = "Ti"
 
 data Pebi a
 
 instance (Convertable a b) => MetaUnit Pebi a b where
-	metafactor _ = (Prelude.^) 2 50
+	metafactor _ = 2 ^ 50
 	metashow _ = "Pi"
 
 data Exbi a
 
 instance (Convertable a b) => MetaUnit Exbi a b where
-	metafactor _ = (Prelude.^) 2 60
+	metafactor _ = 2 ^ 60
 	metashow _ = "Ei"
 
 data Zebi a
 
 instance (Convertable a b) => MetaUnit Zebi a b where
-	metafactor _ = (Prelude.^) 2 70
+	metafactor _ = 2 ^ 70
 	metashow _ = "Zi"
 
 data Yobi a
 
 instance (Convertable a b) => MetaUnit Yobi a b where
-	metafactor _ = (Prelude.^) 2 80
+	metafactor _ = 2 ^ 80
 	metashow _ = "Yi"
 
 
