@@ -2,7 +2,7 @@ module UnitTyped.NoPrelude where
 
 import UnitTyped
 import UnitTyped.SI
-import UnitTyped.SI.Derived
+import UnitTyped.SI.Derived.Count
 
 import qualified Prelude
 import Prelude (Show(..), Fractional, Floating, ($), (++), Double, const, Bool(..), otherwise, undefined, String(..), error)
