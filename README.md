@@ -1,8 +1,8 @@
 UnitTyped is a Haskell library for type-safe calculations on numbers with units.
 
-It comes with all SI units and a large number of units derived from them, but it also makes it very easy to add new dimensions and units. It can also introduce new instances of *, /, + and -, to make notation as natural as possible. Only specifying the multiplication factor for a unit is required, from that, all other conversions can be inferred.
+It comes with all SI units and a large number of units derived from them, but it also makes it very easy to add new dimensions and units. It can give new definitions of *, /, +, -, ==, <, <=, > and >= to make notation as natural as possible. To define a new unit, only the multiplication factor (and a string to dispaly it) is required. From just that, all other conversions can be inferred.
 
-While it uses a large number of Haskell extensions, all units and dimensions are used as empty datatypes, so should not be a burden at runtime.
+While it uses a large number of Haskell extensions, all units and dimensions are empty datatypes, so should not be a burden at runtime.
 
 Examples:
 
