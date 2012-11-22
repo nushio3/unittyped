@@ -2,8 +2,9 @@
 
 module Units.Units where
 
+import Debug.Trace
 import qualified Prelude
-import Prelude (Show(..), Fractional, ($), (.), (++), Double, const, Bool(..))
+import Prelude (Show(..), Fractional, ($), (.), (++), Double, const, Bool(..), otherwise, undefined, String(..))
 
 -- First, type level naturals, and using those, type level integers
 
@@ -150,11 +151,26 @@ data Value a (b :: UnitMap) c = Value {
 	unit :: (Convertable b c) => c
 }
 
+class NeedsParanthesis a where
+	needsParanthesis :: a -> Bool
+
+instance NeedsParanthesis (Div a b) where
+	needsParanthesis (Div {}) = True
+
+instance NeedsParanthesis (Mul a b) where
+	needsParanthesis (Mul {}) = True
+
+instance NeedsParanthesis a where
+	needsParanthesis _ = False
+
 instance (Convertable a b, Convertable c d, Show b, Show d) => Show (Mul b d) where
 	show m = (show $ mul_l m) ++ "*" ++ (show $ mul_r m)
 
-instance (Convertable a b, Convertable c d, Show b, Show d) => Show (Div b d) where
-	show m = (show $ div_l m) ++ "/(" ++ (show $ div_r m) ++ ")"
+instance (Convertable a b, Convertable c d, Show b, Show d, NeedsParanthesis d) => Show (Div b d) where
+	show m = (show $ div_l m) ++ "/" ++ rest
+		where
+			rest = if (needsParanthesis $ div_r m) then "(" ++ (show $ div_r m) ++ ")"
+				   else show $ div_r m
 
 instance (Convertable b c, Show a, Show c) => Show (Value a b c) where
 	show u = (show $ val u) ++ " " ++ (show $ unit u)

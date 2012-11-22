@@ -5,7 +5,7 @@ module Units.SI where
 import Units.Units
 
 import qualified Prelude
-import Prelude (Show(..), Fractional, ($), (.), (++), Double, const, Bool(..))
+import Prelude (Show(..), Fractional, ($), (.), (++), Double, const, Bool(..), otherwise, undefined, String(..))
 
 --
 

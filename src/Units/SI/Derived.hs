@@ -7,7 +7,7 @@ import Units.SI
 import Units.SI.Meta
 
 import qualified Prelude
-import Prelude (Show(..), Fractional, ($), (.), (++), Double, const, Bool(..))
+import Prelude (Show(..), Fractional, ($), (.), (++), Double, const, Bool(..), otherwise, undefined, String(..))
 
 
 ----
