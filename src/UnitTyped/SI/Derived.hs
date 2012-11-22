@@ -10,6 +10,13 @@ import Data.Ratio
 type Speed = UnitCons Time (Neg One) (UnitCons Length (Pos One) UnitNil)
 type Acceleration = UnitCons Time (Neg (Suc One)) (UnitCons Length (Pos One) UnitNil)
 
+
+data Knot
+
+instance Convertable Speed Knot where
+	factor _ = 1852 / 3600
+	showunit _ _ = "kn"
+
 --
 
 type Force = UnitCons Time (Neg (Suc One)) (UnitCons Mass (Pos One) (UnitCons Length (Pos One) UnitNil))
@@ -54,6 +61,20 @@ data Pascal
 instance Convertable Pressure Pascal where
 	factor _ = 1
 	showunit _ _ = "Pa"
+
+
+data Bar
+
+instance Convertable Pressure Bar where
+	factor _ = 1e5
+	showunit _ _ = "bar"
+
+
+data MmHg
+
+instance Convertable Pressure MmHg where
+	factor _ = 133.322
+	showunit _ _ = "mmHg"
 
 --
 
@@ -137,6 +158,9 @@ instance Convertable Inductance Henry where
 
 --
 
+knot :: (Fractional f) => Value f Speed Knot
+knot = one
+
 newton :: (Fractional f) => Value f Force Newton
 newton = one
 
@@ -154,6 +178,12 @@ watt = one
 
 pascal :: (Fractional f) => Value f Pressure Pascal
 pascal = one
+
+bar :: (Fractional f) => Value f Pressure Bar
+bar = one
+
+mmHg :: (Fractional f) => Value f Pressure MmHg
+mmHg = one
 
 coulomb :: (Fractional f) => Value f Charge Coulomb
 coulomb = one

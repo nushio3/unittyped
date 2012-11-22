@@ -45,11 +45,39 @@ instance Convertable LengthUnit Joerimijl where
 	factor _ = 20.1e3
 	showunit _ _ = "jmi"
 
+
+data Ångström
+
+instance Convertable LengthUnit Ångström where
+	factor _ = 10e-10
+	showunit _ _ = "Å"
+
+
+data NauticalMile
+
+instance Convertable LengthUnit NauticalMile where
+	factor _ = 1852
+	showunit _ _ = "M"
+
+----
+-- 2 dimensional
+----
+
+type AreaUnit = UnitCons Length (Pos (Suc One)) UnitNil
+
+
+data Barn
+
+instance Convertable AreaUnit Barn where
+	factor _ = 1e-28
+	showunit _ _ = "b"
+
 ----
 -- 3 dimensional
 ----
 
 type VolumeUnit = UnitCons Length (Pos (Suc (Suc One))) UnitNil
+
 
 data Liter
 
@@ -57,11 +85,13 @@ instance Convertable VolumeUnit Liter where
 	factor _ = 0.001
 	showunit _ _ = "L"
 
+
 data Gallon
 
 instance Convertable VolumeUnit Gallon where
 	factor _ = 0.00454609
 	showunit _ _ = "gallon"
+
 
 data FluidOunce
 
@@ -85,6 +115,18 @@ foot = one
 
 joerimijl :: (Fractional f) => Value f LengthUnit Joerimijl
 joerimijl = one
+
+ångström, angstrom :: (Fractional f) => Value f LengthUnit Ångström
+ångström = one
+angstrom = one
+
+nautical_mile :: (Fractional f) => Value f LengthUnit NauticalMile
+nautical_mile = one
+
+--
+
+barn :: (Fractional f) => Value f AreaUnit Barn
+barn = one
 
 --
 

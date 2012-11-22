@@ -22,10 +22,17 @@ instance Convertable DataUnit Byte where
 	factor _ = 1
 	showunit _ _ = "B"
 
+
+data Bit
+
+instance Convertable DataUnit Bit where
+	factor _ = 0.125
+	showunit _ _ = "b"
+
 --
 
 byte :: (Fractional f) => Value f DataUnit Byte
 byte = one
 
-kibibyte :: (Fractional f) => Value f DataUnit (Kibi Byte)
-kibibyte = one
+bit :: (Fractional f) => Value f DataUnit Bit
+bit = one

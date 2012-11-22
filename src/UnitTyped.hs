@@ -116,7 +116,7 @@ instance (Convertable a b, Convertable c d, UnitMerge a c u) => Convertable u (M
 	                   left = one
 	                   right ::(Fractional f) => Value f c d
 	                   right = one
-	                   rest = (showunit False left) ++ "*" ++ (showunit False right)
+	                   rest = (showunit False left) ++ "⋅" ++ (showunit False right)
 	               in if b then "(" ++ rest ++ ")" else rest
 
 instance (Convertable a b, Convertable c d, UnitMerge a c' u, UnitNeg c c') => Convertable u (Div b d) where
