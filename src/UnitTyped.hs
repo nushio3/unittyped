@@ -1,4 +1,4 @@
-module UnitTyped.Units where
+module UnitTyped where
 
 import qualified Prelude
 import Prelude (Show(..), Fractional, ($), (++), Double, const, Bool(..), otherwise, undefined, String(..))
@@ -156,7 +156,7 @@ instance (Convertable a b) => Show b where
 instance (Fractional f, Show f, Convertable a b, Show b) => Show (Value f a b) where
 	show u = (show $ val u) ++ " " ++ (showunit False u)
 
--- We currently have 3 operators on values-with-units: division, multiplication and addition
+-- We currently have 5 operators on values-with-units: division, multiplication, addition, substraction and lifting a rational into a given unit
 
 (.*.) :: (Fractional f, Convertable a b, Convertable c d, UnitMerge a c u) => Value f a b -> Value f c d -> Value f u (Mul b d)
 a .*. b = Value $ (Prelude.*) (val a) (val b)

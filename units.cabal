@@ -9,5 +9,5 @@ synopsis:		A type-safe open-world library for computations including units.
 library
   build-depends:   base == 4.6.0.0
   extensions:      FlexibleInstances, RankNTypes, MultiParamTypeClasses, ConstraintKinds, DataKinds, UndecidableInstances, FunctionalDependencies, KindSignatures, TypeFamilies, InstanceSigs, ScopedTypeVariables, FlexibleContexts, TypeOperators, OverlappingInstances, ImpredicativeTypes, GADTs
-  exposed-modules: UnitTyped.Units, UnitTyped.SI, UnitTyped.SI.Meta, UnitTyped.SI.Derived, UnitTyped.SI.Constants, UnitTyped.Bytes, UnitTyped.Currency, UnitTyped.NoPrelude
+  exposed-modules: UnitTyped, UnitTyped.SI, UnitTyped.SI.Meta, UnitTyped.SI.Derived, UnitTyped.SI.Constants, UnitTyped.Bytes, UnitTyped.Currency, UnitTyped.NoPrelude
   hs-source-dirs:  src

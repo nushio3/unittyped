@@ -1,7 +1,7 @@
 module UnitTyped.SI.Meta where
 
 import UnitTyped.SI
-import UnitTyped.Units
+import UnitTyped
 
 import qualified Prelude
 import Prelude (Show(..), Fractional, ($), (++), Double, const, Bool(..), otherwise, undefined, String(..))

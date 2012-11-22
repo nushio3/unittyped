@@ -1,6 +1,6 @@
 module UnitTyped.SI.Constants where
 
-import UnitTyped.Units
+import UnitTyped
 import UnitTyped.SI
 import UnitTyped.SI.Meta
 import UnitTyped.SI.Derived

@@ -2,7 +2,7 @@
 
 module UnitTyped.Currency where
 
-import UnitTyped.Units
+import UnitTyped
 import UnitTyped.SI.Meta
 
 import qualified Prelude

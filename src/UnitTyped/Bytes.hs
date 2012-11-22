@@ -1,6 +1,6 @@
 module UnitTyped.Bytes where
 
-import UnitTyped.Units
+import UnitTyped
 import UnitTyped.SI.Meta
 import UnitTyped.SI.Derived
 import UnitTyped.SI
