@@ -6,7 +6,7 @@ import Units.Units
 import Units.SI.Meta
 
 import qualified Prelude
-import Prelude (Show(..), Fractional, ($), (.), (++), Double, const, Bool(..), otherwise, undefined, String(..))
+import Prelude (Show(..), Fractional, ($), (++), Double, const, Bool(..), otherwise, undefined, String(..))
 
 data Currency
 type CurrencyUnit = UnitCons Currency (Pos One) UnitNil

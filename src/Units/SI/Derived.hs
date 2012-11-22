@@ -7,7 +7,7 @@ import Units.SI
 import Units.SI.Meta
 
 import qualified Prelude
-import Prelude (Show(..), Fractional, ($), (.), (++), Double, const, Bool(..), otherwise, undefined, String(..))
+import Prelude (Show(..), Fractional, ($), (++), Double, const, Bool(..), otherwise, undefined, String(..))
 
 ---
 -- Count
@@ -61,6 +61,13 @@ type Feet = (Fractional f) => Value f LengthUnit Foot
 instance Convertable LengthUnit Foot where
 	factor _ = 0.3048
 	showunit _ _ = "ft"
+
+data Joerimijl
+type Joerimijlen = (Fractional f) => Value f LengthUnit Joerimijl
+
+instance Convertable LengthUnit Joerimijl where
+	factor _ = 20.1e3
+	showunit _ _ = "jmi"
 
 --
 
@@ -182,69 +189,75 @@ instance Convertable Pressure Pascal where
 
 --
 
-percentage :: (Fractional f) => f -> Value f CountUnit Percentage
-percentage = mkVal
+percentage :: (Fractional f) => Value f CountUnit Percentage
+percentage = one
 
 --
 
 kilometer = kilo meter
 milimeter = mili meter
 
-mile :: (Fractional f) => f -> Value f LengthUnit Mile
-mile = mkVal
+mile :: (Fractional f) => Value f LengthUnit Mile
+mile = one
 
-inch :: (Fractional f) => f -> Value f LengthUnit Inch
-inch = mkVal
+inch :: (Fractional f) => Value f LengthUnit Inch
+inch = one
 
-yard :: (Fractional f) => f -> Value f LengthUnit Yard
-yard = mkVal
+yard :: (Fractional f) => Value f LengthUnit Yard
+yard = one
 
-foot :: (Fractional f) => f -> Value f LengthUnit Foot
-foot = mkVal
+foot :: (Fractional f) => Value f LengthUnit Foot
+foot = one
 
---
-
-liter :: (Fractional f) => f -> Value f VolumeUnit Liter
-liter = mkVal
-
-gallon :: (Fractional f) => f -> Value f VolumeUnit Gallon
-gallon = mkVal
+joerimijl :: (Fractional f) => Value f LengthUnit Joerimijl
+joerimijl = one
 
 --
 
-minute :: (Fractional f) => f -> Value f TimeUnit Minute
-minute = mkVal
+liter :: (Fractional f) => Value f VolumeUnit Liter
+liter = one
 
-hour :: (Fractional f) => f -> Value f TimeUnit Hour
-hour = mkVal
-
-day :: (Fractional f) => f -> Value f TimeUnit Day
-day = mkVal
+gallon :: (Fractional f) => Value f VolumeUnit Gallon
+gallon = one
 
 --
 
-kilogram :: (Fractional f) => f -> Value f MassUnit (Kilo Gram)
-kilogram = mkVal
+minute :: (Fractional f) => Value f TimeUnit Minute
+minute = one
+
+hour :: (Fractional f) => Value f TimeUnit Hour
+hour = one
+
+day :: (Fractional f) => Value f TimeUnit Day
+day = one
+
+herz :: (Fractional f) => Value f (UnitCons Time (Neg One) UnitNil) Herz
+herz = one
+
+--
+
+kilogram :: (Fractional f) => Value f MassUnit (Kilo Gram)
+kilogram = one
 
 m_P :: (Fractional f) => Value f MassUnit PlanckMass
-m_P = mkVal 1
+m_P = one
 
 --
 
-newton :: (Fractional f) => f -> Value f Force Newton
-newton = mkVal
+newton :: (Fractional f) => Value f Force Newton
+newton = one
 
-joule :: (Fractional f) => f -> Value f Energy Joule
-joule = mkVal
+joule :: (Fractional f) => Value f Energy Joule
+joule = one
 
-eV :: (Fractional f) => f -> Value f Energy Ev
-eV = mkVal
+eV :: (Fractional f) => Value f Energy Ev
+eV = one
 
-kwh :: (Fractional f) => f -> Value f Energy (Mul (Kilo Watt) Hour)
-kwh = mkVal
+kwh :: (Fractional f) => Value f Energy (Mul (Kilo Watt) Hour)
+kwh = one
 
-watt :: (Fractional f) => f -> Value f Power Watt
-watt = mkVal
+watt :: (Fractional f) => Value f Power Watt
+watt = one
 
-pascal :: (Fractional f) => f -> Value f Pressure Pascal
-pascal = mkVal
+pascal :: (Fractional f) => Value f Pressure Pascal
+pascal = one

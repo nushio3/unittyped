@@ -6,13 +6,13 @@ import Units.SI
 import Units.Units
 
 import qualified Prelude
-import Prelude (Show(..), Fractional, ($), (.), (++), Double, const, Bool(..), otherwise, undefined, String(..))
+import Prelude (Show(..), Fractional, ($), (++), Double, const, Bool(..), otherwise, undefined, String(..))
 
 ----
 -- Meta-units
 ----
 
-class (Convertable a b, Show b) => MetaUnit (m :: * -> *) a b where
+class (Convertable a b) => MetaUnit (m :: * -> *) a b where
 	metafactor :: (Fractional f) => Value f a (m b) -> f
 	metashow :: (Fractional f) => Value f a (m b) -> String
 
@@ -205,86 +205,86 @@ instance (Convertable a b) => MetaUnit Yobi a b where
 
 ----
 
-deca :: (Fractional f) => (f -> Value f a b) -> f -> Value f a (Deca b)
-deca _ = mkVal
+deca :: (Convertable a b, Fractional f) => Value f a b -> Value f a (Deca b)
+deca _ = one
 
-hecto :: (Fractional f) => (f -> Value f a b) -> f -> Value f a (Hecto b)
-hecto _ = mkVal
+hecto :: (Convertable a b, Fractional f) => Value f a b -> Value f a (Hecto b)
+hecto _ = one
 
-kilo :: (Fractional f) => (f -> Value f a b) -> f -> Value f a (Kilo b)
-kilo _ = mkVal
+kilo :: (Convertable a b, Fractional f) => Value f a b -> Value f a (Kilo b)
+kilo _ = one
 
-mega :: (Fractional f) => (f -> Value f a b) -> f -> Value f a (Mega b)
-mega _ = mkVal
+mega :: (Convertable a b, Fractional f) => Value f a b -> Value f a (Mega b)
+mega _ = one
 
-giga :: (Fractional f) => (f -> Value f a b) -> f -> Value f a (Giga b)
-giga _ = mkVal
+giga :: (Convertable a b, Fractional f) => Value f a b -> Value f a (Giga b)
+giga _ = one
 
-tera :: (Fractional f) => (f -> Value f a b) -> f -> Value f a (Tera b)
-tera _ = mkVal
+tera :: (Convertable a b, Fractional f) => Value f a b -> Value f a (Tera b)
+tera _ = one
 
-peta :: (Fractional f) => (f -> Value f a b) -> f -> Value f a (Peta b)
-peta _ = mkVal
+peta :: (Convertable a b, Fractional f) => Value f a b -> Value f a (Peta b)
+peta _ = one
 
-exa :: (Fractional f) => (f -> Value f a b) -> f -> Value f a (Exa b)
-exa _ = mkVal
+exa :: (Convertable a b, Fractional f) => Value f a b -> Value f a (Exa b)
+exa _ = one
 
-zetta :: (Fractional f) => (f -> Value f a b) -> f -> Value f a (Zetta b)
-zetta _ = mkVal
+zetta :: (Convertable a b, Fractional f) => Value f a b -> Value f a (Zetta b)
+zetta _ = one
 
-yotta :: (Fractional f) => (f -> Value f a b) -> f -> Value f a (Yotta b)
-yotta _ = mkVal
+yotta :: (Convertable a b, Fractional f) => Value f a b -> Value f a (Yotta b)
+yotta _ = one
 
-deci :: (Fractional f) => (f -> Value f a b) -> f -> Value f a (Deci b)
-deci _ = mkVal
+deci :: (Convertable a b, Fractional f) => Value f a b -> Value f a (Deci b)
+deci _ = one
 
-centi :: (Fractional f) => (f -> Value f a b) -> f -> Value f a (Centi b)
-centi _ = mkVal
+centi :: (Convertable a b, Fractional f) => Value f a b -> Value f a (Centi b)
+centi _ = one
 
-mili :: (Fractional f) => (f -> Value f a b) -> f -> Value f a (Mili b)
-mili _ = mkVal
+mili :: (Convertable a b, Fractional f) => Value f a b -> Value f a (Mili b)
+mili _ = one
 
-micro :: (Fractional f) => (f -> Value f a b) -> f -> Value f a (Micro b)
-micro _ = mkVal
+micro :: (Convertable a b, Fractional f) => Value f a b -> Value f a (Micro b)
+micro _ = one
 
-nano :: (Fractional f) => (f -> Value f a b) -> f -> Value f a (Nano b)
-nano _ = mkVal
+nano :: (Convertable a b, Fractional f) => Value f a b -> Value f a (Nano b)
+nano _ = one
 
-pico :: (Fractional f) => (f -> Value f a b) -> f -> Value f a (Pico b)
-pico _ = mkVal
+pico :: (Convertable a b, Fractional f) => Value f a b -> Value f a (Pico b)
+pico _ = one
 
-femto :: (Fractional f) => (f -> Value f a b) -> f -> Value f a (Femto b)
-femto _ = mkVal
+femto :: (Convertable a b, Fractional f) => Value f a b -> Value f a (Femto b)
+femto _ = one
 
-atto :: (Fractional f) => (f -> Value f a b) -> f -> Value f a (Atto b)
-atto _ = mkVal
+atto :: (Convertable a b, Fractional f) => Value f a b -> Value f a (Atto b)
+atto _ = one
 
-zepto :: (Fractional f) => (f -> Value f a b) -> f -> Value f a (Zepto b)
-zepto _ = mkVal
+zepto :: (Convertable a b, Fractional f) => Value f a b -> Value f a (Zepto b)
+zepto _ = one
 
-yocto :: (Fractional f) => (f -> Value f a b) -> f -> Value f a (Yocto b)
-yocto _ = mkVal
+yocto :: (Convertable a b, Fractional f) => Value f a b -> Value f a (Yocto b)
+yocto _ = one
 
 
 --
 
-mebi :: (Fractional f) => (f -> Value f a b) -> f -> Value f a (Mebi b)
-mebi _ = mkVal
+mebi :: (Convertable a b, Fractional f) => Value f a b -> Value f a (Mebi b)
+mebi _ = one
 
-gibi :: (Fractional f) => (f -> Value f a b) -> f -> Value f a (Gibi b)
-gibi _ = mkVal
+gibi :: (Convertable a b, Fractional f) => Value f a b -> Value f a (Gibi b)
+gibi _ = one
 
-tebi :: (Fractional f) => (f -> Value f a b) -> f -> Value f a (Tebi b)
-tebi _ = mkVal
+tebi :: (Convertable a b, Fractional f) => Value f a b -> Value f a (Tebi b)
+tebi _ = one
 
-pebi :: (Fractional f) => (f -> Value f a b) -> f -> Value f a (Pebi b)
-pebi _ = mkVal
+pebi :: (Convertable a b, Fractional f) => Value f a b -> Value f a (Pebi b)
+pebi _ = one
 
-exbi :: (Fractional f) => (f -> Value f a b) -> f -> Value f a (Exbi b)
-exbi _ = mkVal
+exbi :: (Convertable a b, Fractional f) => Value f a b -> Value f a (Exbi b)
+exbi _ = one
 
-zebi :: (Fractional f) => (f -> Value f a b) -> f -> Value f a (Zebi b)
-zebi _ = mkVal
+zebi :: (Convertable a b, Fractional f) => Value f a b -> Value f a (Zebi b)
+zebi _ = one
 
-yobi :: (Fractional f) => (f -> Value f a b) -> f -> Value f a (Yobi b)
-yobi _ = mkVal
+yobi :: (Convertable a b, Fractional f) => Value f a b -> Value f a (Yobi b)
+yobi _ = one

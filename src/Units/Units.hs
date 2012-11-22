@@ -4,7 +4,7 @@ module Units.Units where
 
 import Debug.Trace
 import qualified Prelude
-import Prelude (Show(..), Fractional, ($), (.), (++), Double, const, Bool(..), otherwise, undefined, String(..), error)
+import Prelude (Show(..), Fractional, ($), (++), Double, const, Bool(..), otherwise, undefined, String(..))
 
 -- First, type level naturals, and using those, type level integers
 
@@ -183,6 +183,30 @@ a - b = Value $ f a (coerce b)
 
 infixl 6 +, -
 infixl 7 *, /
+infixl 8 .
 
 mkVal f = Value f
+val :: (Fractional f) => Value f a b -> f
 val (Value f) = f
+
+(.) :: (Convertable a b, Fractional f) => f -> Value f a b -> Value f a b
+d . u = mkVal ((Prelude.*) d (val u))
+
+square :: (Fractional f, Convertable c d, UnitMerge c c u) => Value f c d -> Value f u (Mul d d)
+square x = x * x
+
+cubic :: (Fractional f, Convertable c d, UnitMerge c c a, UnitMerge a c u) => Value f c d -> Value f u (Mul (Mul d d) d)
+cubic x = x * x * x
+
+instance (Fractional f, Convertable a b, t ~ Value f a b) => (Prelude.Num (Value f a b -> t)) where
+	fromInteger i x = (Prelude.fromInteger i) . x
+
+instance (Fractional f, Convertable a b, t ~ Value f a b) => (Fractional (Value f a b -> t)) where
+	fromRational r x = (Prelude.fromRational r) . x
+
+
+instance (Fractional f, Convertable a (m b), c ~ (Value f a b -> Value f a (m b))) => (Prelude.Num ((Value f a b -> Value f a (m b)) -> c)) where
+	fromInteger i x y = (Prelude.fromInteger i) . (x y)
+
+instance (Fractional f, Convertable a (m b), c ~ (Value f a b -> Value f a (m b))) => (Fractional ((Value f a b -> Value f a (m b)) -> c)) where
+	fromRational i x y = (Prelude.fromRational i) . (x y)

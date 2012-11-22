@@ -8,7 +8,7 @@ import Units.SI.Derived
 import Units.SI
 
 import qualified Prelude
-import Prelude (Show(..), Fractional, ($), (.), (++), Double, const, Bool(..), otherwise, undefined, String(..))
+import Prelude (Show(..), Fractional, ($), (++), Double, const, Bool(..), otherwise, undefined, String(..))
 
 ----
 -- Data

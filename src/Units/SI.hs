@@ -5,7 +5,7 @@ module Units.SI where
 import Units.Units
 
 import qualified Prelude
-import Prelude (Show(..), Fractional, ($), (.), (++), Double, const, Bool(..), otherwise, undefined, String(..))
+import Prelude (Show(..), Fractional, ($), (++), Double, const, Bool(..), otherwise, undefined, String(..))
 
 --
 
@@ -88,28 +88,28 @@ instance Convertable TemperatureUnit Kelvin where
 
 ----
 
-count :: (Fractional f) => f -> Value f CountUnit Count
-count = mkVal
+count :: (Fractional f) => Value f CountUnit Count
+count = one
 
-mole :: (Fractional f) => f -> Value f CountUnit Mole
-mole = mkVal
+mole :: (Fractional f) => Value f CountUnit Mole
+mole = one
 
 --
 
-meter :: (Fractional f) => f -> Value f LengthUnit Meter
-meter = mkVal
+meter :: (Fractional f) => Value f LengthUnit Meter
+meter = one
 
 ----
 
-second :: (Fractional f) => f -> Value f TimeUnit Second
-second = mkVal
+second :: (Fractional f) => Value f TimeUnit Second
+second = one
 
 --
 
-gram :: (Fractional f) => f -> Value f MassUnit Gram
-gram = mkVal
+gram :: (Fractional f) => Value f MassUnit Gram
+gram = one
 
 --
 
-kelvin :: (Fractional f) => f -> Value f TemperatureUnit Kelvin
-kelvin = mkVal
+kelvin :: (Fractional f) => Value f TemperatureUnit Kelvin
+kelvin = one
