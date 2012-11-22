@@ -19,6 +19,18 @@ instance Convertable CountUnit Count where
 	factor _ = 1
 	constructor = Count
 
+--
+
+data Mole = Mole
+type MoleUnit = UnitCons Temperature (Pos One) UnitNil
+
+instance Show Mole where
+	show _ = "mole"
+
+instance Convertable CountUnit Mole where
+	factor _ = 6.0221417930e23
+	constructor = Mole
+
 ----
 -- Length
 ----
@@ -77,9 +89,29 @@ instance Convertable MassUnit Gram where
 	constructor = Gram
 
 ----
+-- Temperature
+----
+
+data Temperature = Temperature
+type TemperatureUnit = UnitCons Temperature (Pos One) UnitNil
+
+data Kelvin = Kelvin
+type Kelvins = (Fractional f) => Value f TemperatureUnit Kelvin
+
+instance Show Kelvin where
+	show _ = "K"
+
+instance Convertable TemperatureUnit Kelvin where
+	factor _ = 1
+	constructor = Kelvin
+
+----
 
 count :: (Fractional f) => f -> Value f CountUnit Count
 count = mkVal
+
+mole :: (Fractional f) => f -> Value f CountUnit Mole
+mole = mkVal
 
 --
 
@@ -95,3 +127,8 @@ second = mkVal
 
 gram :: (Fractional f) => f -> Value f MassUnit Gram
 gram = mkVal
+
+--
+
+kelvin :: (Fractional f) => f -> Value f TemperatureUnit Kelvin
+kelvin = mkVal
