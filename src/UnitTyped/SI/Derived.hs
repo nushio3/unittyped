@@ -162,6 +162,13 @@ instance Convertable TimeUnit Year where
 	factor _ = 365.2425 * 24 * 60 * 60
 	showunit _ _ = "yr"
 
+data Month
+type Months = (Fractional f) => Value f TimeUnit Month
+
+instance Convertable TimeUnit Month where
+	factor _ = (365.2425 * 24 * 60 * 60) / 12
+	showunit _ _ = "month"
+
 data JulianYear
 type JulianYears = (Fractional f) => Value f TimeUnit JulianYear
 
@@ -366,6 +373,9 @@ year = one
 
 julianyear :: (Fractional f) => Value f TimeUnit JulianYear
 julianyear = one
+
+month :: (Fractional f) => Value f TimeUnit Month
+month = one
 
 herz :: (Fractional f) => Value f (UnitCons Time (Neg One) UnitNil) Herz
 herz = one
