@@ -1,8 +1,5 @@
 module UnitTyped where
 
-import qualified Prelude
-import Prelude (Show(..), Fractional, ($), (++), Double, const, Bool(..), otherwise, undefined, String(..))
-
 -- First, type level naturals, and using those, type level integers
 
 data Nat = One | Suc Nat
@@ -94,12 +91,8 @@ class UnitEq (map1 :: UnitMap) (map2 :: UnitMap) (b :: Bool) | map1 map2 -> b wh
 instance (UnitNeg map2 map2', UnitMerge map1 map2' sum, UnitNull sum b) => UnitEq map1 map2 b
 
 ----
-
 ---- Convertable a b means "b is a unit for dimension a"
-
-
-one :: (Fractional f, Convertable a b) => Value f a b
-one = mkVal 1
+----
 
 class Convertable a b | b -> a where
 	factor :: (Fractional f) => Value f a b -> f
@@ -111,7 +104,7 @@ instance (Convertable a b, Convertable c d, UnitMerge a c u) => Convertable u (M
 	               left = one
 	               right ::(Fractional f) => Value f c d
 	               right = one
-	           in (Prelude.*) (factor left) (factor right)
+	           in (factor left) * (factor right)
 	showunit b u = let left :: (Fractional f) => Value f a b
 	                   left = one
 	                   right ::(Fractional f) => Value f c d
@@ -125,7 +118,7 @@ instance (Convertable a b, Convertable c d, UnitMerge a c' u, UnitNeg c c') => C
 	               left = one
 	               right ::(Fractional f) => Value f c d
 	               right = one
-	           in (Prelude./) (factor left) (factor right)
+	           in (factor left) / (factor right)
 	showunit b u = let left :: (Fractional f) => Value f a b
 	                   left = one
 	                   right ::(Fractional f) => Value f c d
@@ -134,12 +127,10 @@ instance (Convertable a b, Convertable c d, UnitMerge a c' u, UnitNeg c c') => C
 	                in if b then "(" ++ rest ++ ")" else rest
 
 ---- We can coerce something of a specific dimension into any other unit in the same dimension
+---- The second argument is only used for its type, but it allows nice syntace like coerce (120 meter / second) (kilo meter / hour)
 
-coerce :: (Convertable a b, Convertable c d, Fractional f, UnitEq a c True) => Value f a b -> Value f c d
-coerce u = let result = Value $ (Prelude./) ((Prelude.*) (factor u) (val u)) (factor result) in result
-
-coerceTo :: (Convertable a b, Convertable c d, Fractional f, UnitEq a c True) => Value f a b -> Value f c d -> Value f c d
-coerceTo u _ = coerce u
+coerce :: (Convertable a b, Convertable c d, Fractional f, UnitEq a c True) => Value f a b -> Value f c d -> Value f c d
+coerce u _ = let result = mkVal (factor u * val u / factor result) in result
 
 data Mul b d
 
@@ -159,31 +150,28 @@ instance (Fractional f, Show f, Convertable a b, Show b) => Show (Value f a b) w
 -- We currently have 5 operators on values-with-units: division, multiplication, addition, substraction and lifting a rational into a given unit
 
 (.*.) :: (Fractional f, Convertable a b, Convertable c d, UnitMerge a c u) => Value f a b -> Value f c d -> Value f u (Mul b d)
-a .*. b = Value $ (Prelude.*) (val a) (val b)
+a .*. b = mkVal (val a * val b)
 
 (./.) :: (Fractional f, Convertable a b, Convertable c d, UnitMerge a c' u, UnitNeg c c') => Value f a b -> Value f c d -> Value f u (Div b d)
-a ./. b = Value $ (Prelude./) (val a) (val b)
-
+a ./. b = mkVal (val a / val b)
 
 (.+.) :: (Fractional f, Convertable a b, Convertable c d, UnitEq c a True) => Value f a b -> Value f c d -> Value f a b
-a .+. b = Value $ f a (coerce b)
-	where
-		f :: (Fractional f) => Value f a b -> Value f a b -> f
-		f a b = (Prelude.+) (val a) (val b)
+a .+. b = mkVal (val a + val (coerce b a))
 
 (.-.) :: (Fractional f, Convertable a b, Convertable c d, UnitEq c a True) => Value f a b -> Value f c d -> Value f a b
-a .-. b = Value $ f a (coerce b)
-	where
-		f :: (Fractional a) => Value a b c -> Value a b c -> a
-		f a b = (Prelude.-) (val a) (val b)
+a .-. b = mkVal (val a - val (coerce b a))
 
 (.$.) :: (Convertable a b, Fractional f) => f -> Value f a b -> Value f a b
-d .$. u = mkVal ((Prelude.*) d (val u))
+d .$. u = mkVal (d * (val u))
 
-mkVal f = Value f
+mkVal :: (Fractional f) => f -> Value f a b
+mkVal = Value
 
 val :: (Fractional f) => Value f a b -> f
 val (Value f) = f
+
+one :: (Fractional f, Convertable a b) => Value f a b
+one = mkVal 1
 
 square :: (Fractional f, Convertable c d, UnitMerge c c u) => Value f c d -> Value f u (Mul d d)
 square x = x .*. x
@@ -191,12 +179,12 @@ square x = x .*. x
 cubic :: (Fractional f, Convertable c d, UnitMerge c c a, UnitMerge a c u) => Value f c d -> Value f u (Mul (Mul d d) d)
 cubic x = x .*. x .*. x
 
-wrapB :: (Convertable a b, Convertable c d, UnitEq c a True) => (Prelude.Rational -> Prelude.Rational -> Bool) -> Value Prelude.Rational a b -> Value Prelude.Rational c d -> Bool
-wrapB op a b = op (val a) (val $ coerceTo b a)
+wrapB :: (Convertable a b, Convertable c d, UnitEq c a True) => (Rational -> Rational -> Bool) -> Value Rational a b -> Value Rational c d -> Bool
+wrapB op a b = op (val a) (val $ coerce b a)
 
-(.==.), (.<.), (.>.), (.<=.), (.>=.) :: (Convertable a b, Convertable c d, UnitEq c a True) => Value Prelude.Rational a b -> Value Prelude.Rational c d -> Bool
-(.==.) = wrapB (Prelude.==)
-(.<.) = wrapB (Prelude.<)
-(.<=.) = wrapB (Prelude.<=)
-(.>.) = wrapB (Prelude.>)
-(.>=.) = wrapB (Prelude.>=)
+(.==.), (.<.), (.>.), (.<=.), (.>=.) :: (Convertable a b, Convertable c d, UnitEq c a True) => Value Rational a b -> Value Rational c d -> Bool
+(.==.) = wrapB (==)
+(.<.) = wrapB (<)
+(.<=.) = wrapB (<=)
+(.>.) = wrapB (>)
+(.>=.) = wrapB (>=)

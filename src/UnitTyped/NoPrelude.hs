@@ -47,7 +47,7 @@ instance (Fractional f, Convertable a (m b), c ~ (Value f a b -> Value f a (m b)
 	fromRational i x y = (Prelude.fromRational i) . (x y)
 
 wrap1 :: (Floating f, Convertable CountUnit b) => (f -> f) -> Value f CountUnit b -> Value f CountUnit Count
-wrap1 op v = (op $ val $ coerceTo v rad) . one
+wrap1 op v = (op $ val $ coerce v rad) . one
 
 sin, cos, tan :: (Floating f, Convertable CountUnit b) => Value f CountUnit b -> Value f CountUnit Count
 sin = wrap1 Prelude.sin

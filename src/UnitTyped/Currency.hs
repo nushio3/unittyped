@@ -1,12 +1,7 @@
-{-# LANGUAGE FlexibleInstances, RankNTypes, MultiParamTypeClasses, ConstraintKinds, DataKinds, UndecidableInstances, FunctionalDependencies, KindSignatures, TypeFamilies, InstanceSigs, ScopedTypeVariables, FlexibleContexts, TypeOperators, OverlappingInstances, ImpredicativeTypes, GADTs #-}
-
 module UnitTyped.Currency where
 
 import UnitTyped
 import UnitTyped.SI.Meta
-
-import qualified Prelude
-import Prelude (Show(..), Fractional, ($), (++), Double, const, Bool(..), otherwise, undefined, String(..))
 
 ----
 -- Different currencies. Last update: 22-11-2012
@@ -55,13 +50,13 @@ euro :: (Fractional f) => Value f CurrencyUnit Euro
 euro = one
 
 eurocent :: (Fractional f) => Value f CurrencyUnit Euro
-eurocent = 0.01 .$. one
+eurocent = mkVal 0.01
 
 dollar :: (Fractional f) => Value f CurrencyUnit Dollar
 dollar = one
 
 dollarcent :: (Fractional f) => Value f CurrencyUnit Dollar
-dollarcent = 0.01 .$. one
+dollarcent = mkVal 0.01
 
 yen :: (Fractional f) => Value f CurrencyUnit Yen
 yen = one

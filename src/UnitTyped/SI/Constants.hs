@@ -4,13 +4,9 @@ import UnitTyped
 import UnitTyped.SI
 import UnitTyped.SI.Meta
 import UnitTyped.SI.Derived
-import UnitTyped.NoPrelude
-
-import qualified Prelude
-import Prelude (Show(..), Fractional, ($), (++), Double, const, Bool(..), otherwise, undefined, String(..))
 
 -- π
-pi :: (Fractional f, Prelude.Floating f) => Value f CountUnit Count
+pi :: (Fractional f, Floating f) => Value f CountUnit Count
 pi = mkVal Prelude.pi
 
 -- speed of light
@@ -22,8 +18,8 @@ h :: (Fractional f) => Value f (UnitCons Time (Neg One) (UnitCons Length (Pos (S
 h = mkVal 6.6260695729e-34
 
 -- atomic unit of action
-hbar :: (Fractional f, Prelude.Floating f) => Value f (UnitCons Time (Neg One) (UnitCons Length (Pos (Suc One)) (UnitCons Mass (Pos One) UnitNil))) (Mul Joule Second)
-hbar = coerce (h / (2 . pi))
+hbar :: (Fractional f, Floating f) => Value f (UnitCons Time (Neg One) (UnitCons Length (Pos (Suc One)) (UnitCons Mass (Pos One) UnitNil))) (Mul Joule Second)
+hbar = coerce (h ./. (2 .$. UnitTyped.SI.Constants.pi)) (joule .*. second)
 
 -- atomic unit of charge (elementary charge)
 e :: (Fractional f) => Value f Charge Coulomb

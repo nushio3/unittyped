@@ -5,9 +5,6 @@ import UnitTyped.SI.Meta
 import UnitTyped.SI.Derived
 import UnitTyped.SI
 
-import qualified Prelude
-import Prelude (Show(..), Fractional, ($), (++), Double, const, Bool(..), otherwise, undefined, String(..))
-
 ----
 -- Data
 ----
