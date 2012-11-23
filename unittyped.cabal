@@ -8,9 +8,16 @@ synopsis:       A type-safe open-world library for computations including units.
 
 library
   build-depends:   base == 4.6.0.0
-  extensions:      FlexibleInstances, RankNTypes, MultiParamTypeClasses, ConstraintKinds, DataKinds, UndecidableInstances,
-                   FunctionalDependencies, KindSignatures, TypeFamilies, InstanceSigs, ScopedTypeVariables, FlexibleContexts,
-                   TypeOperators, OverlappingInstances, ImpredicativeTypes, GADTs
+  extensions:      FlexibleInstances,
+                   DataKinds,
+                   UndecidableInstances,
+                   FunctionalDependencies,
+                   KindSignatures,
+                   InstanceSigs,
+                   ScopedTypeVariables,
+                   FlexibleContexts,
+                   OverlappingInstances,
+                   GADTs
   exposed-modules: UnitTyped,
                    UnitTyped.NoPrelude,
                    UnitTyped.SI,
