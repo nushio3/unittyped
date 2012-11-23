@@ -6,8 +6,15 @@ data Nat = One | Suc Nat
 
 data Number = Zero | Neg Nat | Pos Nat
 
-type Two = Pos (Suc One)
-type Three = Pos (Suc (Suc One))
+type POne = Pos One
+type PTwo = Pos (Suc One)
+type PThree = Pos (Suc (Suc One))
+type PFour = Pos (Suc (Suc (Suc One)))
+
+type NOne = Neg One
+type NTwo = Neg (Suc One)
+type NThree = Neg (Suc (Suc One))
+type MFour = Neg (Suc (Suc (Suc One)))
 
 -- These two are useful for Add
 
@@ -131,6 +138,11 @@ instance (Convertable a b, Convertable c d, UnitMerge a c' u, UnitNeg c c') => C
 
 coerce :: (Convertable a b, Convertable c d, Fractional f, UnitEq a c True) => Value f a b -> Value f c d -> Value f c d
 coerce u _ = let result = mkVal (factor u * val u / factor result) in result
+
+infixl 5 ~.
+
+(~.) :: (Convertable a b, Convertable c d, Fractional f, UnitEq a c True) => Value f a b -> Value f c d -> Value f c d
+(~.) = coerce
 
 data Mul b d
 

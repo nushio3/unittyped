@@ -7,8 +7,8 @@ import UnitTyped.SI.Meta
 
 import Data.Ratio
 
-type Speed = UnitCons Time (Neg One) (UnitCons Length (Pos One) UnitNil)
-type Acceleration = UnitCons Time (Neg (Suc One)) (UnitCons Length (Pos One) UnitNil)
+type Speed = UnitCons Time NOne (UnitCons Length POne UnitNil)
+type Acceleration = UnitCons Time NTwo (UnitCons Length POne UnitNil)
 
 
 data Knot
@@ -19,7 +19,7 @@ instance Convertable Speed Knot where
 
 --
 
-type Force = UnitCons Time (Neg (Suc One)) (UnitCons Mass (Pos One) (UnitCons Length (Pos One) UnitNil))
+type Force = UnitCons Time NTwo (UnitCons Mass POne (UnitCons Length POne UnitNil))
 data Newton
 
 instance Convertable Force Newton where
@@ -28,7 +28,7 @@ instance Convertable Force Newton where
 
 --
 
-type Energy = UnitCons Time (Neg (Suc One)) (UnitCons Mass (Pos One) (UnitCons Length (Pos (Suc One)) UnitNil))
+type Energy = UnitCons Time NTwo (UnitCons Mass POne (UnitCons Length PTwo UnitNil))
 
 data Joule
 
@@ -44,7 +44,7 @@ instance Convertable Energy Ev where
 
 --
 
-type Power = UnitCons Time (Neg (Suc (Suc One))) (UnitCons Length (Pos (Suc One)) (UnitCons Mass (Pos One) UnitNil))
+type Power = UnitCons Time NThree (UnitCons Length PTwo (UnitCons Mass POne UnitNil))
 
 data Watt
 
@@ -54,7 +54,7 @@ instance Convertable Power Watt where
 
 --
 
-type Pressure = UnitCons Time (Neg (Suc One)) (UnitCons Mass (Pos One) (UnitCons Length (Neg One) UnitNil))
+type Pressure = UnitCons Time NTwo (UnitCons Mass POne (UnitCons Length NOne UnitNil))
 
 data Pascal
 
@@ -78,7 +78,7 @@ instance Convertable Pressure MmHg where
 
 --
 
-type Charge = (UnitCons Time (Pos One) (UnitCons Current (Pos One) UnitNil))
+type Charge = (UnitCons Time POne (UnitCons Current POne UnitNil))
 
 data Coulomb
 
@@ -88,7 +88,7 @@ instance Convertable Charge Coulomb where
 
 --
 
-type Potential = (UnitCons Current (Neg One) (UnitCons Mass (Pos One) (UnitCons Length (Pos (Suc One)) (UnitCons Time (Neg (Suc (Suc One))) UnitNil))))
+type Potential = (UnitCons Current NOne (UnitCons Mass POne (UnitCons Length PTwo (UnitCons Time NThree UnitNil))))
 
 data Volt
 
@@ -98,7 +98,7 @@ instance Convertable Potential Volt where
 
 --
 
-type Capacitance = (UnitCons Current (Pos (Suc One)) (UnitCons Mass (Neg One) (UnitCons Length (Neg (Suc One)) (UnitCons Time (Pos (Suc (Suc (Suc One)))) UnitNil))))
+type Capacitance = (UnitCons Current PTwo (UnitCons Mass NOne (UnitCons Length NTwo (UnitCons Time PFour UnitNil))))
 
 data Farad
 
@@ -108,7 +108,7 @@ instance Convertable Capacitance Farad where
 
 --
 
-type Resistance = (UnitCons Current (Neg (Suc One)) (UnitCons Time (Neg (Suc (Suc One))) (UnitCons Length (Pos (Suc One)) (UnitCons Mass (Pos One) UnitNil))))
+type Resistance = (UnitCons Current NTwo (UnitCons Time NThree (UnitCons Length PTwo (UnitCons Mass POne UnitNil))))
 
 data Ohm
 
@@ -118,7 +118,7 @@ instance Convertable Resistance Ohm where
 
 --
 
-type Conductance = (UnitCons Current (Pos (Suc One)) (UnitCons Mass (Neg One) (UnitCons Length (Neg (Suc One)) (UnitCons Time (Pos (Suc (Suc One))) UnitNil))))
+type Conductance = (UnitCons Current PTwo (UnitCons Mass NOne (UnitCons Length NTwo (UnitCons Time PThree UnitNil))))
 
 data Siemens
 
@@ -128,7 +128,7 @@ instance Convertable Conductance Siemens where
 
 --
 
-type Flux = (UnitCons Current (Neg One) (UnitCons Length (Pos (Suc One)) (UnitCons Mass (Pos One) (UnitCons Time (Neg (Suc One)) UnitNil))))
+type Flux = (UnitCons Current NOne (UnitCons Length PTwo (UnitCons Mass POne (UnitCons Time NTwo UnitNil))))
 
 data Weber
 
@@ -138,7 +138,7 @@ instance Convertable Flux Weber where
 
 --
 
-type FluxDensity = (UnitCons Length (Neg One) (UnitCons Time (Neg (Suc One)) (UnitCons Mass (Pos One) (UnitCons Current (Neg One) UnitNil))))
+type FluxDensity = UnitCons Time NTwo (UnitCons Mass POne (UnitCons Current NOne UnitNil))
 
 data Tesla
 
@@ -148,7 +148,7 @@ instance Convertable FluxDensity Tesla where
 
 --
 
-type Inductance = (UnitCons Current (Neg (Suc One)) (UnitCons Time (Neg (Suc One)) (UnitCons Mass (Pos One) (UnitCons Length (Pos (Suc One)) UnitNil))))
+type Inductance = (UnitCons Current NTwo (UnitCons Time NTwo (UnitCons Mass POne (UnitCons Length PTwo UnitNil))))
 
 data Henry
 

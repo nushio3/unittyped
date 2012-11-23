@@ -14,11 +14,11 @@ c :: (Fractional f) => Value f Speed (Div Meter Second)
 c = mkVal 299792458
 
 -- planck constant
-h :: (Fractional f) => Value f (UnitCons Time (Neg One) (UnitCons Length (Pos (Suc One)) (UnitCons Mass (Pos One) UnitNil))) (Mul Joule Second)
+h :: (Fractional f) => Value f (UnitCons Time NOne (UnitCons Length PTwo (UnitCons Mass POne UnitNil))) (Mul Joule Second)
 h = mkVal 6.6260695729e-34
 
 -- atomic unit of action
-hbar :: (Fractional f, Floating f) => Value f (UnitCons Time (Neg One) (UnitCons Length (Pos (Suc One)) (UnitCons Mass (Pos One) UnitNil))) (Mul Joule Second)
+hbar :: (Fractional f, Floating f) => Value f (UnitCons Time NOne (UnitCons Length PTwo (UnitCons Mass POne UnitNil))) (Mul Joule Second)
 hbar = coerce (h ./. (2 .$. UnitTyped.SI.Constants.pi)) (joule .*. second)
 
 -- atomic unit of charge (elementary charge)
@@ -37,5 +37,5 @@ a_0 = mkVal 0.529177210818e-10
 e_h :: (Fractional f) => Value f Energy Joule
 e_h = mkVal 4.3597441775e-18
 
-r :: (Fractional f) => Value f (UnitCons Temperature (Neg One) (UnitCons Length (Pos (Suc One)) (UnitCons Mass (Pos One) (UnitCons Time (Neg (Suc One)) UnitNil)))) (Div Joule (Mul Kelvin Mole))
+r :: (Fractional f) => Value f (UnitCons Temperature NOne (UnitCons Length PTwo (UnitCons Mass POne (UnitCons Time (Neg (Suc One)) UnitNil)))) (Div Joule (Mul Kelvin Mole))
 r = mkVal 8.314462175

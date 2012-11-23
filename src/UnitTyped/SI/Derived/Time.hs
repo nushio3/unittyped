@@ -52,9 +52,9 @@ instance Convertable TimeUnit JulianYear where
 	showunit _ _ = "a"
 
 
-data Herz
+data Hertz
 
-instance Convertable (UnitCons Time (Neg One) UnitNil) Herz where
+instance Convertable (UnitCons Time (Neg One) UnitNil) Hertz where
 	factor _ = 1
 	showunit _ _ = "Hz"
 
@@ -78,5 +78,5 @@ julianyear = one
 month :: (Fractional f) => Value f TimeUnit Month
 month = one
 
-herz :: (Fractional f) => Value f (UnitCons Time (Neg One) UnitNil) Herz
-herz = one
+hertz :: (Fractional f) => Value f (UnitCons Time (Neg One) UnitNil) Hertz
+hertz = one

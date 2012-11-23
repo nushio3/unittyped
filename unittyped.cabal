@@ -2,7 +2,7 @@ name:           unittyped
 version:        0.1
 author:         Thijs Alkemade
 license:        GPL
-Cabal-Version:  >= 1.2
+Cabal-Version:  >= 1.8
 build-type:     Simple
 synopsis:       A type-safe open-world library for computations including units.
 
@@ -17,7 +17,8 @@ library
                    ScopedTypeVariables,
                    FlexibleContexts,
                    OverlappingInstances,
-                   GADTs
+                   GADTs,
+                   EmptyDataDecls
   exposed-modules: UnitTyped,
                    UnitTyped.NoPrelude,
                    UnitTyped.SI,
@@ -31,3 +32,8 @@ library
                    UnitTyped.SI.Derived.Time,
                    UnitTyped.SI.Derived.Mass
   hs-source-dirs:  src
+
+Test-Suite test-si
+    type:          exitcode-stdio-1.0
+    main-is:       tests/TestSI.hs
+    build-depends: base == 4.6.0.0, unittyped
