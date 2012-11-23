@@ -10,11 +10,11 @@ Examples:
 		*Main> 1 meter + 35 centi meter
 		1.35 m
 
-coerceTo can be used to change from one unit to a different unit in the same dimension:
+coerce can be used to change from one unit to a different unit in the same dimension:
 
 	:::haskell
-		*Main> coerceTo ((120 kilo meter / hour) * 20 minute) mile
-		24.860161591050343 mile
+		*Main> coerce ((120 kilo meter / hour) * 20 minute) mile
+		24.854847689493358 mile
 
 See [the wiki][1] for more complicated examples.
 
