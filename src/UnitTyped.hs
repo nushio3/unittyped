@@ -144,6 +144,11 @@ infixl 5 ~.
 (~.) :: (Convertable a b, Convertable c d, Fractional f, UnitEq a c True) => Value f a b -> Value f c d -> Value f c d
 (~.) = coerce
 
+infixl 5 `as`
+
+as :: (Convertable a b, Convertable c d, Fractional f, UnitEq a c True) => Value f a b -> Value f c d -> Value f c d
+as = coerce
+
 data Mul b d
 
 data Div b d
@@ -164,8 +169,9 @@ instance (Fractional f, Show f, Convertable a b, Show b) => Show (Value f a b) w
 (.*.) :: (Fractional f, Convertable a b, Convertable c d, UnitMerge a c u) => Value f a b -> Value f c d -> Value f u (Mul b d)
 a .*. b = mkVal (val a * val b)
 
-(./.) :: (Fractional f, Convertable a b, Convertable c d, UnitMerge a c' u, UnitNeg c c') => Value f a b -> Value f c d -> Value f u (Div b d)
+(./.), per :: (Fractional f, Convertable a b, Convertable c d, UnitMerge a c' u, UnitNeg c c') => Value f a b -> Value f c d -> Value f u (Div b d)
 a ./. b = mkVal (val a / val b)
+per = (./.)
 
 (.+.) :: (Fractional f, Convertable a b, Convertable c d, UnitEq c a True) => Value f a b -> Value f c d -> Value f a b
 a .+. b = mkVal (val a + val (coerce b a))
