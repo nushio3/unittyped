@@ -10,6 +10,8 @@ type POne = Pos One
 type PTwo = Pos (Suc One)
 type PThree = Pos (Suc (Suc One))
 type PFour = Pos (Suc (Suc (Suc One)))
+type PFive = Pos (Suc (Suc (Suc (Suc One))))
+type PSix = Pos (Suc (Suc (Suc (Suc (Suc One)))))
 
 type NOne = Neg One
 type NTwo = Neg (Suc One)
@@ -197,35 +199,35 @@ square x = x .*. x
 cubic :: (Fractional f, Convertable c d, UnitMerge c c a, UnitMerge a c u) => Value f c d -> Value f u (Mul (Mul d d) d)
 cubic x = x .*. x .*. x
 
-pown3 :: (Fractional f, UnitNeg c1 c', UnitMerge a1 c' u, UnitMerge c c a, UnitMerge a c c1, Convertable a1 b, Convertable c d) => Value f c d -> Value f u (Div b (Mul (Mul d d) d))
-pown3 x = one ./. (x .*. x .*. x)
+pown3 :: (Fractional f, Convertable a b, Pow a b NThree c d) => Value f a b -> Value f c d
+pown3 = pow (Proxy :: Proxy NThree)
 
-pown2 :: (Fractional f, Convertable c d, UnitMerge c c c1, UnitNeg c1 c2) => Value f c d -> Value f c2 (Div Count (Mul d d))
-pown2 x = one ./. (x .*. x)
+pown2 :: (Fractional f, Convertable a b, Pow a b NTwo c d) => Value f a b -> Value f c d
+pown2 = pow (Proxy :: Proxy NTwo)
 
-pown1 :: (Fractional f, Convertable c d, UnitNeg c c') => Value f c d -> Value f c' (Div Count d)
-pown1 x = one ./. x
+pown1 :: (Fractional f, Convertable a b, Pow a b NOne c d) => Value f a b -> Value f c d
+pown1 = pow (Proxy :: Proxy NOne)
 
-pow0 :: (Fractional f, Convertable c d) => Value f c d -> Value f UnitNil Count
-pow0 _ = one
+pow0 :: (Fractional f, Convertable a b, Pow a b Zero c d) => Value f a b -> Value f c d
+pow0 = pow (Proxy :: Proxy Zero)
 
-pow1 :: (Fractional f, Convertable c d) => Value f c d -> Value f c d
-pow1 = id
+pow1 :: (Fractional f, Convertable a b, Pow a b POne c d) => Value f a b -> Value f c d
+pow1 = pow (Proxy :: Proxy POne)
 
-pow2 :: (Fractional f, Convertable c d, UnitMerge c c u) => Value f c d -> Value f u (Mul d d)
-pow2 = square
+pow2 :: (Fractional f, Convertable a b, Pow a b PTwo c d) => Value f a b -> Value f c d
+pow2 = pow (Proxy :: Proxy PTwo)
 
-pow3 :: (Fractional f, Convertable c d, UnitMerge c c a, UnitMerge a c u) => Value f c d -> Value f u (Mul (Mul d d) d)
-pow3 = cubic
+pow3 :: (Fractional f, Convertable a b, Pow a b PThree c d) => Value f a b -> Value f c d
+pow3 = pow (Proxy :: Proxy PThree)
 
-pow4 :: (Fractional f, UnitMerge c c a, UnitMerge a c a1, UnitMerge a1 c u, Convertable c d) => Value f c d -> Value f u (Mul (Mul (Mul d d) d) d)
-pow4 x = x .*. x .*. x .*. x
+pow4 :: (Fractional f, Convertable a b, Pow a b PFour c d) => Value f a b -> Value f c d
+pow4 = pow (Proxy :: Proxy PFour)
 
-pow5 :: (Fractional f, UnitMerge a c b, UnitMerge b c u, UnitMerge c c e, UnitMerge e c a, Convertable c d) => Value f c d -> Value f u (Mul (Mul (Mul (Mul d d) d) d) d)
-pow5 x = x .*. x .*. x .*. x .*. x
+pow5 :: (Fractional f, Convertable a b, Pow a b PFive c d) => Value f a b -> Value f c d
+pow5 = pow (Proxy :: Proxy PFive)
 
-pow6 :: (Fractional f, UnitMerge a c a3, UnitMerge a3 c u, UnitMerge a1 c a, UnitMerge c c a2, UnitMerge a2 c a1, Convertable c d) => Value f c d -> Value f u (Mul (Mul (Mul (Mul (Mul d d) d) d) d) d)
-pow6 x = x .*. x .*. x .*. x .*. x .*. x
+pow6 :: (Fractional f, Convertable a b, Pow a b PSix c d) => Value f a b -> Value f c d
+pow6 = pow (Proxy :: Proxy PSix)
 
 wrapB :: (Convertable a b, Convertable c d, UnitEq c a True) => (Rational -> Rational -> Bool) -> Value Rational a b -> Value Rational c d -> Bool
 wrapB op a b = op (val a) (val $ coerce b a)
@@ -251,3 +253,25 @@ data Count
 instance Convertable CountUnit Count where
 	factor _ = 1
 	showunit _ _ = "#"
+
+--
+
+data Proxy (i :: Number) = Proxy
+
+class (Convertable a b, Convertable c d) => Pow' q a b (i :: Number) c d | a b i -> c d where
+	_pow :: (Fractional f) => q -> Proxy i -> Value f a b -> Value f c d
+
+instance (Convertable a b) => Pow' () a b Zero UnitNil Count where
+	_pow _ _ _ = one
+
+instance (Convertable a b, Convertable a'' b'', Pow' q a b i' a' b', UnitNeg a' a'', Negate (Neg i) i', b'' ~ (Div Count b')) => Pow' q a b (Neg i) a'' b'' where
+	_pow q p x = one ./. (_pow q (Proxy :: Proxy i') x)
+
+instance (Convertable a b, Convertable a'' b'', Pow' q a b i' a' b', Pre' (Pos i) i', UnitMerge a a' a'', b'' ~ (Mul b b')) => Pow' q a b (Pos i) a'' b'' where
+	_pow q p x = x .*. (_pow q (Proxy :: Proxy i') x)
+
+class (Convertable a b, Convertable c d) => Pow a b (i :: Number) c d | a b -> c, a b -> d where
+	pow :: (Fractional f) => Proxy i -> Value f a b -> Value f c d
+
+instance (Pow' () a b i c d) => Pow a b (i :: Number) c d where
+	pow = _pow ()
