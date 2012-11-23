@@ -2,21 +2,6 @@ module UnitTyped.SI where
 
 import UnitTyped
 
-----
--- Counting
-----
-
-
-type CountUnit = UnitNil
-
---
-
-data Count
-
-instance Convertable CountUnit Count where
-	factor _ = 1
-	showunit _ _ = "#"
-
 --
 
 -- Oficially Mole is an SI unit, and a Mole is different from a dimensionless quantity.

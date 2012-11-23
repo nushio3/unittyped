@@ -197,6 +197,36 @@ square x = x .*. x
 cubic :: (Fractional f, Convertable c d, UnitMerge c c a, UnitMerge a c u) => Value f c d -> Value f u (Mul (Mul d d) d)
 cubic x = x .*. x .*. x
 
+pown3 :: (Fractional f, UnitNeg c1 c', UnitMerge a1 c' u, UnitMerge c c a, UnitMerge a c c1, Convertable a1 b, Convertable c d) => Value f c d -> Value f u (Div b (Mul (Mul d d) d))
+pown3 x = one ./. (x .*. x .*. x)
+
+pown2 :: (Fractional f, Convertable c d, UnitMerge c c c1, UnitNeg c1 c2) => Value f c d -> Value f c2 (Div Count (Mul d d))
+pown2 x = one ./. (x .*. x)
+
+pown1 :: (Fractional f, Convertable c d, UnitNeg c c') => Value f c d -> Value f c' (Div Count d)
+pown1 x = one ./. x
+
+pow0 :: (Fractional f, Convertable c d) => Value f c d -> Value f UnitNil Count
+pow0 _ = one
+
+pow1 :: (Fractional f, Convertable c d) => Value f c d -> Value f c d
+pow1 = id
+
+pow2 :: (Fractional f, Convertable c d, UnitMerge c c u) => Value f c d -> Value f u (Mul d d)
+pow2 = square
+
+pow3 :: (Fractional f, Convertable c d, UnitMerge c c a, UnitMerge a c u) => Value f c d -> Value f u (Mul (Mul d d) d)
+pow3 = cubic
+
+pow4 :: (Fractional f, UnitMerge c c a, UnitMerge a c a1, UnitMerge a1 c u, Convertable c d) => Value f c d -> Value f u (Mul (Mul (Mul d d) d) d)
+pow4 x = x .*. x .*. x .*. x
+
+pow5 :: (Fractional f, UnitMerge a c b, UnitMerge b c u, UnitMerge c c e, UnitMerge e c a, Convertable c d) => Value f c d -> Value f u (Mul (Mul (Mul (Mul d d) d) d) d)
+pow5 x = x .*. x .*. x .*. x .*. x
+
+pow6 :: (Fractional f, UnitMerge a c a3, UnitMerge a3 c u, UnitMerge a1 c a, UnitMerge c c a2, UnitMerge a2 c a1, Convertable c d) => Value f c d -> Value f u (Mul (Mul (Mul (Mul (Mul d d) d) d) d) d)
+pow6 x = x .*. x .*. x .*. x .*. x .*. x
+
 wrapB :: (Convertable a b, Convertable c d, UnitEq c a True) => (Rational -> Rational -> Bool) -> Value Rational a b -> Value Rational c d -> Bool
 wrapB op a b = op (val a) (val $ coerce b a)
 
@@ -206,3 +236,18 @@ wrapB op a b = op (val a) (val $ coerce b a)
 (.<=.) = wrapB (<=)
 (.>.) = wrapB (>)
 (.>=.) = wrapB (>=)
+
+----
+-- Counting. These are dimension-less values.
+----
+
+
+type CountUnit = UnitNil
+
+--
+
+data Count
+
+instance Convertable CountUnit Count where
+	factor _ = 1
+	showunit _ _ = "#"
