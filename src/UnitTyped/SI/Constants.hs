@@ -6,8 +6,12 @@ import UnitTyped.SI.Meta
 import UnitTyped.SI.Derived
 
 -- π
-pi :: (Fractional f, Floating f) => Value f CountUnit Count
-pi = mkVal Prelude.pi
+pi' :: (Fractional f, Floating f) => Value f CountUnit Count
+pi' = mkVal Prelude.pi
+
+-- Yes, π is not a fraction, but this means pi == pi will hold.
+pi :: (Fractional f) => Value f CountUnit Count
+pi = mkVal 3.1415926535897932384626433832795028841971
 
 -- speed of light
 c :: (Fractional f) => Value f Speed (Div Meter Second)
@@ -18,7 +22,7 @@ h :: (Fractional f) => Value f (UnitCons Time NOne (UnitCons Length PTwo (UnitCo
 h = mkVal 6.6260695729e-34
 
 -- atomic unit of action
-hbar :: (Fractional f, Floating f) => Value f (UnitCons Time NOne (UnitCons Length PTwo (UnitCons Mass POne UnitNil))) (Mul Joule Second)
+hbar :: (Fractional f) => Value f (UnitCons Time NOne (UnitCons Length PTwo (UnitCons Mass POne UnitNil))) (Mul Joule Second)
 hbar = coerce (h ./. (2 .$. UnitTyped.SI.Constants.pi)) (joule .*. second)
 
 -- atomic unit of charge (elementary charge)

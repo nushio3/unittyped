@@ -9,6 +9,7 @@ import UnitTyped.SI.Derived.Mass
 import UnitTyped.SI.Derived.Count
 import UnitTyped.SI.Derived.Time
 import UnitTyped.SI.Meta
+import UnitTyped.SI.Constants
 import UnitTyped.Bytes
 import UnitTyped.Currency
 import UnitTyped.NoPrelude
@@ -48,6 +49,8 @@ t22 = minute + hour + day + year + julianyear + month + second == minute + hour 
 t23 = second * hertz == count
 
 t24 = percentage + permil + ppm + ppb + ppt == percentage + permil + ppm + ppb + ppt
+
+t25 = hbar == h / (2 count * pi)
 
 runTest :: Bool -> (Bool, Integer) -> IO Bool
 runTest b (True, _) = return b
