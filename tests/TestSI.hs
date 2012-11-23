@@ -52,12 +52,16 @@ t24 = percentage + permil + ppm + ppb + ppt == percentage + permil + ppm + ppb +
 
 t25 = hbar == h / (2 count * pi)
 
+t26 = pown3 meter * pow3 meter == pown1 meter * pow1 meter
+t27 = pown3 meter * pow3 meter == pown2 meter * pow2 meter
+t28 = pow0 meter == count
+
 runTest :: Bool -> (Bool, Integer) -> IO Bool
 runTest b (True, _) = return b
 runTest b (False, i) = do { putStrLn ("Test " ++ show i ++ " failed.")
 		   				  ; return False
 						  }
 
-main = do { b <- foldM runTest True (zip [t1, t2, t3, t4, t5, t6, t7, t8, t9, t10, t11, t12, t13, t14, t15, t16, t17, t18, t19, t20, t21, t22, t23, t24] [1..])
+main = do { b <- foldM runTest True (zip [t1, t2, t3, t4, t5, t6, t7, t8, t9, t10, t11, t12, t13, t14, t15, t16, t17, t18, t19, t20, t21, t22, t23, t24, t25, t26, t27, t28] [1..])
 		  ; unless b exitFailure
 		  }
