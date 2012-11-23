@@ -156,13 +156,13 @@ data Div b d
 data Value a (b :: UnitMap) c = Value a
 
 instance (Convertable a b) => Show b where
-	show _ = (showunit False one)
+	show _ = showunit False one
 		where
 			one :: (Fractional f) => Value f a b
 			one = one
 
 instance (Fractional f, Show f, Convertable a b, Show b) => Show (Value f a b) where
-	show u = (show $ val u) ++ " " ++ (showunit False u)
+	show u = show (val u) ++ " " ++ showunit False u
 
 -- We currently have 5 operators on values-with-units: division, multiplication, addition, substraction and lifting a rational into a given unit
 
@@ -180,7 +180,7 @@ a .+. b = mkVal (val a + val (coerce b a))
 a .-. b = mkVal (val a - val (coerce b a))
 
 (.$.) :: (Convertable a b, Fractional f) => f -> Value f a b -> Value f a b
-d .$. u = mkVal (d * (val u))
+d .$. u = mkVal (d * val u)
 
 mkVal :: (Fractional f) => f -> Value f a b
 mkVal = Value

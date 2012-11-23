@@ -17,11 +17,11 @@ instance (MetaUnit m a b, Convertable a b) => Convertable a (m b) where
 	               sub = one
 	               self :: (Fractional f) => Value f a (m b)
 	               self = one
-	           in (metafactor self) * (factor sub)
+	           in metafactor self * factor sub
 	showunit b v = let
 			 		   u :: (Fractional f) => Value f a b
 					   u = one
-				   in metashow v ++ (showunit False u) 
+				   in metashow v ++ showunit False u
 
 --
 
