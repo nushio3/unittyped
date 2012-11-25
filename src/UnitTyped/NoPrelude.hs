@@ -1,4 +1,16 @@
-module UnitTyped.NoPrelude where
+-- |A module renaming operators on values to names that would normally collide with the "Prelude".
+-- E.g. '+', '*', 'sin'.
+-- 
+-- Also adds instances for 'Num' that makes it possible to write:
+-- 
+-- @1 meter / second@
+module UnitTyped.NoPrelude ((*), (/), (+), (-), (.),
+	sin, cos, tan,
+	asin, acos, atan,
+
+	(==), (<=), (<), (>=), (>)
+
+) where
 
 import UnitTyped
 import UnitTyped.SI
@@ -11,18 +23,23 @@ infixl 6 +, -
 infixl 7 *, /
 infixl 8 .
 
+-- |See '.*.'
 (*) :: (Fractional f, Convertable a b, Convertable c d, UnitMerge a c u) => Value f a b -> Value f c d -> Value f u (Mul b d)
 (*) = (.*.)
 
+-- |See './.'
 (/) :: (Fractional f, Convertable a b, Convertable c d, UnitMerge a c' u, UnitNeg c c') => Value f a b -> Value f c d -> Value f u (Div b d)
 (/) = (./.)
 
+-- |See '.+.'
 (+) :: (Fractional f, Convertable a b, Convertable c d, UnitEq c a True) => Value f a b -> Value f c d -> Value f a b
 (+) = (.+.)
 
+-- |See '.-.'
 (-) :: (Fractional f, Convertable a b, Convertable c d, UnitEq c a True) => Value f a b -> Value f c d -> Value f a b
 (-) = (.-.)
 
+-- |See '.$.'
 (.) :: (Convertable a b, Fractional f) => f -> Value f a b -> Value f a b
 (.) = (.$.)
 
@@ -50,23 +67,34 @@ wrap1 :: (Floating f, Convertable CountUnit b) => (f -> f) -> Value f CountUnit 
 wrap1 op v = op (val $ coerce v rad) . one
 
 sin, cos, tan :: (Floating f, Convertable CountUnit b) => Value f CountUnit b -> Value f CountUnit Count
+-- |Calculate the sinus of a value. Works on 'Degree' and 'Radian'.
 sin = wrap1 Prelude.sin
+-- |Calculate the cosinus of a value. Works on 'Degree' and 'Radian'.
 cos = wrap1 Prelude.cos
+-- |Calculate the tangens of a value. Works on 'Degree' and 'Radian'.
 tan = wrap1 Prelude.tan
 
 wrap2 :: (Floating f) => (f -> f) -> Value f CountUnit Count -> Value f CountUnit Radian
 wrap2 op v = op (val v) . one
 
 asin, acos, atan :: (Floating f) => Value f CountUnit Count -> Value f CountUnit Radian
+-- |Calculate the arcsinus of a value. Always computes 'Radian's.
 asin = wrap2 Prelude.asin
+-- |Calculate the arccosinus of a value. Always computes 'Radian's.
 acos = wrap2 Prelude.acos
+-- |Calculate the arctangens of a value. Always computes 'Radian's.
 atan = wrap2 Prelude.atan
 
 infixl 5 ==, <, <=, >, >=
 
 (==), (<), (<=), (>), (>=) :: (Convertable a b, Convertable c d, UnitEq c a True) => Value Prelude.Rational a b -> Value Prelude.Rational c d -> Bool
+-- |See '.==.'
 (==) = (.==.)
+-- |See '.<.'
 (<) = (.<.)
+-- |See '.<=.'
 (<=) = (.<=.)
+-- |See '.>.'
 (>) = (.>.)
+-- |See '.>.'
 (>=) = (.>=.)

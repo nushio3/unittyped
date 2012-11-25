@@ -9,21 +9,21 @@ import UnitTyped.SI
 
 data PlanckMass
 
-instance Convertable MassUnit PlanckMass where
+instance Convertable MassDimension PlanckMass where
 	factor _ = 2.176513e-8
 	showunit _ _ = "m_P"
 
 
 data Pound
 
-instance Convertable MassUnit Pound where
+instance Convertable MassDimension Pound where
 	factor _ = 0.45359237
 	showunit _ _ = "lb"
 
 --
 
-m_P :: (Fractional f) => Value f MassUnit PlanckMass
+m_P :: (Fractional f) => Value f MassDimension PlanckMass
 m_P = one
 
-pound :: (Fractional f) => Value f MassUnit Pound
+pound :: (Fractional f) => Value f MassDimension Pound
 pound = one

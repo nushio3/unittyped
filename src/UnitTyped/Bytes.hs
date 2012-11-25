@@ -1,3 +1,4 @@
+-- |A module for working with amounts of bytes and bits.
 module UnitTyped.Bytes where
 
 import UnitTyped
@@ -9,17 +10,19 @@ import UnitTyped.SI
 -- Data
 ----
 
+-- |An of amount of data.
 data Data
+-- |The dimension representing @Data^1@.
 type DataUnit = UnitCons Data (Pos One) UnitNil
 
-
+-- |A byte of data.
 data Byte
 
 instance Convertable DataUnit Byte where
 	factor _ = 1
 	showunit _ _ = "B"
 
-
+-- |A bit of data.
 data Bit
 
 instance Convertable DataUnit Bit where
@@ -28,8 +31,10 @@ instance Convertable DataUnit Bit where
 
 --
 
+-- |One byte.
 byte :: (Fractional f) => Value f DataUnit Byte
 byte = one
 
+-- |One bit.
 bit :: (Fractional f) => Value f DataUnit Bit
 bit = one

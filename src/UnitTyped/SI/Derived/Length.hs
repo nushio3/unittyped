@@ -13,49 +13,49 @@ import Data.Ratio
 
 data Mile
 
-instance Convertable LengthUnit Mile where
+instance Convertable LengthDimension Mile where
 	factor _ = 1609.344
 	showunit _ _ = "mile"
 
 
 data Inch
 
-instance Convertable LengthUnit Inch where
+instance Convertable LengthDimension Inch where
 	factor _ = 0.0254
 	showunit _ _ = "in"
 
 
 data Yard
 
-instance Convertable LengthUnit Yard where
+instance Convertable LengthDimension Yard where
 	factor _ = 0.9144
 	showunit _ _ = "yd"
 
 
 data Foot
 
-instance Convertable LengthUnit Foot where
+instance Convertable LengthDimension Foot where
 	factor _ = 0.3048
 	showunit _ _ = "ft"
 
 
 data Joerimijl
 
-instance Convertable LengthUnit Joerimijl where
+instance Convertable LengthDimension Joerimijl where
 	factor _ = 20.1e3
 	showunit _ _ = "jmi"
 
 
 data Ångström
 
-instance Convertable LengthUnit Ångström where
+instance Convertable LengthDimension Ångström where
 	factor _ = 10e-10
 	showunit _ _ = "Å"
 
 
 data NauticalMile
 
-instance Convertable LengthUnit NauticalMile where
+instance Convertable LengthDimension NauticalMile where
 	factor _ = 1852
 	showunit _ _ = "M"
 
@@ -101,26 +101,26 @@ instance Convertable VolumeUnit FluidOunce where
 
 --
 
-mile :: (Fractional f) => Value f LengthUnit Mile
+mile :: (Fractional f) => Value f LengthDimension Mile
 mile = one
 
-inch :: (Fractional f) => Value f LengthUnit Inch
+inch :: (Fractional f) => Value f LengthDimension Inch
 inch = one
 
-yard :: (Fractional f) => Value f LengthUnit Yard
+yard :: (Fractional f) => Value f LengthDimension Yard
 yard = one
 
-foot :: (Fractional f) => Value f LengthUnit Foot
+foot :: (Fractional f) => Value f LengthDimension Foot
 foot = one
 
-joerimijl :: (Fractional f) => Value f LengthUnit Joerimijl
+joerimijl :: (Fractional f) => Value f LengthDimension Joerimijl
 joerimijl = one
 
-ångström, angstrom :: (Fractional f) => Value f LengthUnit Ångström
+ångström, angstrom :: (Fractional f) => Value f LengthDimension Ångström
 ångström = one
 angstrom = one
 
-nautical_mile :: (Fractional f) => Value f LengthUnit NauticalMile
+nautical_mile :: (Fractional f) => Value f LengthDimension NauticalMile
 nautical_mile = one
 
 --

@@ -1,12 +1,9 @@
+-- |Module definig all SI units and their dimensions.
 module UnitTyped.SI where
 
 import UnitTyped
 
---
-
--- Oficially Mole is an SI unit, and a Mole is different from a dimensionless quantity.
--- This just treats it as dimensionless.
-
+-- |Unit for moles. Officially, this is a SI unit, but we definite it in terms of 'Count'.
 data Mole
 
 instance Convertable CountUnit Mole where
@@ -17,14 +14,17 @@ instance Convertable CountUnit Mole where
 -- Length
 ----
 
+-- |Dimension of length.
 data Length
-type LengthUnit = UnitCons Length (Pos One) UnitNil
+-- |The dimension defining @Length^1@.
+type LengthDimension = UnitCons Length (Pos One) UnitNil
 
 --
 
+-- |The SI unit for 'Length': meter (m).
 data Meter
 
-instance Convertable LengthUnit Meter where
+instance Convertable LengthDimension Meter where
 	factor _ = 1
 	showunit _ _ = "m"
 
@@ -32,14 +32,17 @@ instance Convertable LengthUnit Meter where
 -- Time
 ----
 
+-- |Dimension of time.
 data Time
-type TimeUnit = UnitCons Time (Pos One) UnitNil
+-- |The dimension defining @Time^1@.
+type TimeDimension = UnitCons Time (Pos One) UnitNil
 
 --
 
+-- |The SI unit for 'Time': second (s).
 data Second
 
-instance Convertable TimeUnit Second where
+instance Convertable TimeDimension Second where
 	factor _ = 1
 	showunit _ _ = "s"
 
@@ -47,14 +50,17 @@ instance Convertable TimeUnit Second where
 -- Mass
 ----
 
+-- |Dimension of mass.
 data Mass
-type MassUnit = UnitCons Mass (Pos One) UnitNil
+-- |The dimension defining @Mass^1@.
+type MassDimension = UnitCons Mass (Pos One) UnitNil
 
 --
 
+-- |The SI unit for 'Mass' is officially kilogram, but we define grams (g) here, so @kilo gram@ will work when using 'UnitTyped.SI.Meta'.
 data Gram
 
-instance Convertable MassUnit Gram where
+instance Convertable MassDimension Gram where
 	factor _ = 0.001
 	showunit _ _ = "g"
 
@@ -62,14 +68,17 @@ instance Convertable MassUnit Gram where
 -- Temperature
 ----
 
+-- |Dimension of temperature.
 data Temperature
-type TemperatureUnit = UnitCons Temperature (Pos One) UnitNil
+-- |The dimension defining @Temperature^1@.
+type TemperatureDimension = UnitCons Temperature (Pos One) UnitNil
 
 --
 
+-- |The SI unit for 'Temperature': Kelvin (K).
 data Kelvin
 
-instance Convertable TemperatureUnit Kelvin where
+instance Convertable TemperatureDimension Kelvin where
 	factor _ = 1
 	showunit _ _ = "K"
 
@@ -77,14 +86,17 @@ instance Convertable TemperatureUnit Kelvin where
 -- Current
 ----
 
+-- |Dimension of electric current.
 data Current
-type CurrentUnit = UnitCons Current (Pos One) UnitNil
+-- |The dimension defining @Current^1@.
+type CurrentDimension = UnitCons Current (Pos One) UnitNil
 
 --
 
+-- |The SI unit for 'Current': ampere (A).
 data Ampere
 
-instance Convertable CurrentUnit Ampere where
+instance Convertable CurrentDimension Ampere where
 	factor _ = 1
 	showunit _ _ = "A"
 
@@ -92,51 +104,62 @@ instance Convertable CurrentUnit Ampere where
 -- Luminous
 ----
 
+-- |Dimension of luminous intensity.
 data Luminous
-type LuminousUnit = UnitCons Luminous (Pos One) UnitNil
+-- |The dimension defining @Luminous^1@.
+type LuminousDimension = UnitCons Luminous (Pos One) UnitNil
 
 --
 
+-- |The SI unit for 'Luminous' intensity: candela (cd).
 data Candela
 
-instance Convertable LuminousUnit Candela where
+instance Convertable LuminousDimension Candela where
 	factor _ = 1
 	showunit _ _ = "cd"
 
 ----
 
+-- |One thing (#).
 count :: (Fractional f) => Value f CountUnit Count
 count = one
 
+-- |One mole (mol).
 mole :: (Fractional f) => Value f CountUnit Mole
 mole = one
 
 --
 
-meter :: (Fractional f) => Value f LengthUnit Meter
+-- |One meter (m).
+meter :: (Fractional f) => Value f LengthDimension Meter
 meter = one
 
 --
 
-second :: (Fractional f) => Value f TimeUnit Second
+-- |One second (s).
+second :: (Fractional f) => Value f TimeDimension Second
 second = one
 
 --
 
-gram :: (Fractional f) => Value f MassUnit Gram
+-- |One gram (g).
+gram :: (Fractional f) => Value f MassDimension Gram
 gram = one
 
 --
 
-kelvin :: (Fractional f) => Value f TemperatureUnit Kelvin
+-- |One Kelvin (K).
+kelvin :: (Fractional f) => Value f TemperatureDimension Kelvin
 kelvin = one
 
 --
 
-ampere :: (Fractional f) => Value f CurrentUnit Ampere
+-- |One ampere (A).
+ampere :: (Fractional f) => Value f CurrentDimension Ampere
 ampere = one
 
 --
 
-candela :: (Fractional f) => Value f LuminousUnit Candela
+-- |One candela (cd).
+candela :: (Fractional f) => Value f LuminousDimension Candela
 candela = one

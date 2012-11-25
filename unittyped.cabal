@@ -4,7 +4,7 @@ author:         Thijs Alkemade
 license:        GPL
 Cabal-Version:  >= 1.8
 build-type:     Simple
-synopsis:       A type-safe open-world library for computations including units.
+synopsis:       An extendable library for type-safe computations including units.
 
 library
   build-depends:   base >= 4.6 && < 4.7

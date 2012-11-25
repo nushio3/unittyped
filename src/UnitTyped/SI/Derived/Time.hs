@@ -12,42 +12,42 @@ import Data.Ratio
 
 data Hour
 
-instance Convertable TimeUnit Hour where
+instance Convertable TimeDimension Hour where
 	factor _ = 3600
 	showunit _ _ = "h"
 
 
 data Minute
 
-instance Convertable TimeUnit Minute where
+instance Convertable TimeDimension Minute where
 	factor _ = 60
 	showunit _ _ = "min."
 
 
 data Day
 
-instance Convertable TimeUnit Day where
+instance Convertable TimeDimension Day where
 	factor _ = 86400
 	showunit _ _ = "day"
 
 
 data Year
 
-instance Convertable TimeUnit Year where
+instance Convertable TimeDimension Year where
 	factor _ = 365.2425 * 24 * 60 * 60
 	showunit _ _ = "yr"
 
 
 data Month
 
-instance Convertable TimeUnit Month where
+instance Convertable TimeDimension Month where
 	factor _ = (365.2425 * 24 * 60 * 60) / 12
 	showunit _ _ = "month"
 
 
 data JulianYear
 
-instance Convertable TimeUnit JulianYear where
+instance Convertable TimeDimension JulianYear where
 	factor _ = 31557600
 	showunit _ _ = "a"
 
@@ -60,22 +60,22 @@ instance Convertable (UnitCons Time (Neg One) UnitNil) Hertz where
 
 --
 
-minute :: (Fractional f) => Value f TimeUnit Minute
+minute :: (Fractional f) => Value f TimeDimension Minute
 minute = one
 
-hour :: (Fractional f) => Value f TimeUnit Hour
+hour :: (Fractional f) => Value f TimeDimension Hour
 hour = one
 
-day :: (Fractional f) => Value f TimeUnit Day
+day :: (Fractional f) => Value f TimeDimension Day
 day = one
 
-year :: (Fractional f) => Value f TimeUnit Year
+year :: (Fractional f) => Value f TimeDimension Year
 year = one
 
-julianyear :: (Fractional f) => Value f TimeUnit JulianYear
+julianyear :: (Fractional f) => Value f TimeDimension JulianYear
 julianyear = one
 
-month :: (Fractional f) => Value f TimeUnit Month
+month :: (Fractional f) => Value f TimeDimension Month
 month = one
 
 hertz :: (Fractional f) => Value f (UnitCons Time (Neg One) UnitNil) Hertz
