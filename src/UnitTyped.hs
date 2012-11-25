@@ -108,7 +108,6 @@ class Convertable a b | b -> a where
 	showunit :: (Fractional f) => Bool -> Value f a b -> String
 
 instance (Convertable a b, Convertable c d, UnitMerge a c u) => Convertable u (Mul b d) where
-	factor :: (Fractional f) => Value f u (Mul b d) -> f
 	factor u = let left :: (Fractional f) => Value f a b
 	               left = one
 	               right ::(Fractional f) => Value f c d
@@ -122,7 +121,6 @@ instance (Convertable a b, Convertable c d, UnitMerge a c u) => Convertable u (M
 	               in if b then "(" ++ rest ++ ")" else rest
 
 instance (Convertable a b, Convertable c d, UnitMerge a c' u, UnitNeg c c') => Convertable u (Div b d) where
-	factor :: (Fractional f) => Value f u (Div b d) -> f
 	factor u = let left :: (Fractional f) => Value f a b
 	               left = one
 	               right ::(Fractional f) => Value f c d

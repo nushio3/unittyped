@@ -12,7 +12,6 @@ class (Convertable a b) => MetaUnit (m :: * -> *) a b where
 	metashow :: (Fractional f) => Value f a (m b) -> String
 
 instance (MetaUnit m a b, Convertable a b) => Convertable a (m b) where
-	factor :: (Fractional f) => Value f a (m b) -> f
 	factor _ = let sub :: (Fractional f) => Value f a b
 	               sub = one
 	               self :: (Fractional f) => Value f a (m b)

@@ -7,13 +7,12 @@ build-type:     Simple
 synopsis:       A type-safe open-world library for computations including units.
 
 library
-  build-depends:   base == 4.6.0.0
+  build-depends:   base >= 4.6 && < 4.7
   extensions:      FlexibleInstances,
                    DataKinds,
                    UndecidableInstances,
                    FunctionalDependencies,
                    KindSignatures,
-                   InstanceSigs,
                    ScopedTypeVariables,
                    FlexibleContexts,
                    OverlappingInstances,
@@ -36,4 +35,4 @@ library
 Test-Suite test-si
     type:          exitcode-stdio-1.0
     main-is:       tests/TestSI.hs
-    build-depends: base == 4.6.0.0, unittyped
+    build-depends: base >= 4.6 && < 4.7, unittyped
