@@ -20,49 +20,49 @@ import qualified System.Locale as SL
 -- |Hour (h).
 data Hour
 
-instance Convertable TimeDimension Hour where
+instance Convertible TimeDimension Hour where
 	factor _ = 3600
 	showunit _ _ = "h"
 
 -- |Minute (min.).
 data Minute
 
-instance Convertable TimeDimension Minute where
+instance Convertible TimeDimension Minute where
 	factor _ = 60
 	showunit _ _ = "min."
 
 -- |Day (day).
 data Day
 
-instance Convertable TimeDimension Day where
+instance Convertible TimeDimension Day where
 	factor _ = 86400
 	showunit _ _ = "day"
 
 -- |Year (yr). This is an average year in the Gregorian calender (so 365.2425 days).
 data Year
 
-instance Convertable TimeDimension Year where
+instance Convertible TimeDimension Year where
 	factor _ = 365.2425 * 24 * 60 * 60
 	showunit _ _ = "yr"
 
 -- |Month (month). Average length of a month (365.2425 / 12).
 data Month
 
-instance Convertable TimeDimension Month where
+instance Convertible TimeDimension Month where
 	factor _ = (365.2425 * 24 * 60 * 60) / 12
 	showunit _ _ = "month"
 
 -- |Julian year (a). This is an average year in the Julian calender (so 365.25 days). Still used in astronomy.
 data JulianYear
 
-instance Convertable TimeDimension JulianYear where
+instance Convertible TimeDimension JulianYear where
 	factor _ = 31557600
 	showunit _ _ = "a"
 
 -- |Frequency in Hertz. (Hz)
 data Hertz
 
-instance Convertable (UnitCons Time (Neg One) UnitNil) Hertz where
+instance Convertible (UnitCons Time (Neg One) UnitNil) Hertz where
 	factor _ = 1
 	showunit _ _ = "Hz"
 

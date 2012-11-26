@@ -17,7 +17,7 @@ type Acceleration = UnitCons Time NTwo (UnitCons Length POne UnitNil)
 -- |Derived unit of speed (kn).
 data Knot
 
-instance Convertable Speed Knot where
+instance Convertible Speed Knot where
 	factor _ = 1852 / 3600
 	showunit _ _ = "kn"
 
@@ -28,7 +28,7 @@ type Force = UnitCons Time NTwo (UnitCons Mass POne (UnitCons Length POne UnitNi
 -- |Unit of force (N).
 data Newton
 
-instance Convertable Force Newton where
+instance Convertible Force Newton where
 	factor _ = 1
 	showunit _ _ = "N"
 
@@ -40,14 +40,14 @@ type Energy = UnitCons Time NTwo (UnitCons Mass POne (UnitCons Length PTwo UnitN
 -- |Unit of energy (J).
 data Joule
 
-instance Convertable Energy Joule where
+instance Convertible Energy Joule where
 	factor _ = 1
 	showunit _ _ = "J"
 
 -- |Unit of energy (eV).
 data Ev
 
-instance Convertable Energy Ev where
+instance Convertible Energy Ev where
 	factor _ = 1.60217656535e-19
 	showunit _ _ = "eV"
 
@@ -59,7 +59,7 @@ type Power = UnitCons Time NThree (UnitCons Length PTwo (UnitCons Mass POne Unit
 -- |Unit of power (W).
 data Watt
 
-instance Convertable Power Watt where
+instance Convertible Power Watt where
 	factor _ = 1
 	showunit _ _ = "W"
 
@@ -71,21 +71,21 @@ type Pressure = UnitCons Time NTwo (UnitCons Mass POne (UnitCons Length NOne Uni
 -- |Unit of pressure (Pa).
 data Pascal
 
-instance Convertable Pressure Pascal where
+instance Convertible Pressure Pascal where
 	factor _ = 1
 	showunit _ _ = "Pa"
 
 -- |Unit of pressure (bar).
 data Bar
 
-instance Convertable Pressure Bar where
+instance Convertible Pressure Bar where
 	factor _ = 1e5
 	showunit _ _ = "bar"
 
 -- |Unit of pressure (mmHg).
 data MmHg
 
-instance Convertable Pressure MmHg where
+instance Convertible Pressure MmHg where
 	factor _ = 133.322
 	showunit _ _ = "mmHg"
 
@@ -97,7 +97,7 @@ type Charge = (UnitCons Time POne (UnitCons Current POne UnitNil))
 -- |Unit of chage (C).
 data Coulomb
 
-instance Convertable Charge Coulomb where
+instance Convertible Charge Coulomb where
 	factor _ = 1
 	showunit _ _ = "C"
 
@@ -109,7 +109,7 @@ type Potential = (UnitCons Current NOne (UnitCons Mass POne (UnitCons Length PTw
 -- |Unit of potential (V).
 data Volt
 
-instance Convertable Potential Volt where
+instance Convertible Potential Volt where
 	factor _ = 1
 	showunit _ _ = "V"
 
@@ -121,7 +121,7 @@ type Capacitance = (UnitCons Current PTwo (UnitCons Mass NOne (UnitCons Length N
 -- |Unit of capacitance (F).
 data Farad
 
-instance Convertable Capacitance Farad where
+instance Convertible Capacitance Farad where
 	factor _ = 1
 	showunit _ _ = "F"
 
@@ -133,7 +133,7 @@ type Resistance = (UnitCons Current NTwo (UnitCons Time NThree (UnitCons Length 
 -- |Unit of resistance (Ω).
 data Ohm
 
-instance Convertable Resistance Ohm where
+instance Convertible Resistance Ohm where
 	factor _ = 1
 	showunit _ _ = "Ω"
 
@@ -145,7 +145,7 @@ type Conductance = (UnitCons Current PTwo (UnitCons Mass NOne (UnitCons Length N
 -- |Unit of conductance (S).
 data Siemens
 
-instance Convertable Conductance Siemens where
+instance Convertible Conductance Siemens where
 	factor _ = 1
 	showunit _ _ = "S"
 
@@ -157,7 +157,7 @@ type Flux = (UnitCons Current NOne (UnitCons Length PTwo (UnitCons Mass POne (Un
 -- |Unit of magnetic flux (Wb).
 data Weber
 
-instance Convertable Flux Weber where
+instance Convertible Flux Weber where
 	factor _ = 1
 	showunit _ _ = "Wb"
 
@@ -169,7 +169,7 @@ type FluxDensity = UnitCons Time NTwo (UnitCons Mass POne (UnitCons Current NOne
 -- |Unit of magnetic field strength (T).
 data Tesla
 
-instance Convertable FluxDensity Tesla where
+instance Convertible FluxDensity Tesla where
 	factor _ = 1
 	showunit _ _ = "T"
 
@@ -181,7 +181,7 @@ type Inductance = (UnitCons Current NTwo (UnitCons Time NTwo (UnitCons Mass POne
 -- |Unit of Inductance (H).
 data Henry
 
-instance Convertable Inductance Henry where
+instance Convertible Inductance Henry where
 	factor _ = 1
 	showunit _ _ = "H"
 

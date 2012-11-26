@@ -7,7 +7,7 @@ import UnitTyped
 -- |Unit for moles. Officially, this is a SI unit, but we definite it in terms of 'Count'.
 data Mole
 
-instance Convertable NoDimension Mole where
+instance Convertible NoDimension Mole where
 	factor _ = 6.0221417930e23
 	showunit _ _ = "mole"
 
@@ -25,7 +25,7 @@ type LengthDimension = UnitCons Length (Pos One) UnitNil
 -- |The SI unit for 'Length': meter (m).
 data Meter
 
-instance Convertable LengthDimension Meter where
+instance Convertible LengthDimension Meter where
 	factor _ = 1
 	showunit _ _ = "m"
 
@@ -43,7 +43,7 @@ type TimeDimension = UnitCons Time (Pos One) UnitNil
 -- |The SI unit for 'Time': second (s).
 data Second
 
-instance Convertable TimeDimension Second where
+instance Convertible TimeDimension Second where
 	factor _ = 1
 	showunit _ _ = "s"
 
@@ -61,7 +61,7 @@ type MassDimension = UnitCons Mass (Pos One) UnitNil
 -- |The SI unit for 'Mass' is officially kilogram, but we define grams (g) here, so @kilo gram@ will work when using 'UnitTyped.SI.Meta'.
 data Gram
 
-instance Convertable MassDimension Gram where
+instance Convertible MassDimension Gram where
 	factor _ = 0.001
 	showunit _ _ = "g"
 
@@ -79,7 +79,7 @@ type TemperatureDimension = UnitCons Temperature (Pos One) UnitNil
 -- |The SI unit for 'Temperature': Kelvin (K).
 data Kelvin
 
-instance Convertable TemperatureDimension Kelvin where
+instance Convertible TemperatureDimension Kelvin where
 	factor _ = 1
 	showunit _ _ = "K"
 
@@ -97,7 +97,7 @@ type CurrentDimension = UnitCons Current (Pos One) UnitNil
 -- |The SI unit for 'Current': ampere (A).
 data Ampere
 
-instance Convertable CurrentDimension Ampere where
+instance Convertible CurrentDimension Ampere where
 	factor _ = 1
 	showunit _ _ = "A"
 
@@ -115,7 +115,7 @@ type LuminousDimension = UnitCons Luminous (Pos One) UnitNil
 -- |The SI unit for 'Luminous' intensity: candela (cd).
 data Candela
 
-instance Convertable LuminousDimension Candela where
+instance Convertible LuminousDimension Candela where
 	factor _ = 1
 	showunit _ _ = "cd"
 

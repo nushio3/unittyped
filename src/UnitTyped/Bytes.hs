@@ -19,14 +19,14 @@ type DataUnit = UnitCons Data (Pos One) UnitNil
 -- |A byte of data.
 data Byte
 
-instance Convertable DataUnit Byte where
+instance Convertible DataUnit Byte where
 	factor _ = 1
 	showunit _ _ = "B"
 
 -- |A bit of data.
 data Bit
 
-instance Convertable DataUnit Bit where
+instance Convertible DataUnit Bit where
 	factor _ = 0.125
 	showunit _ _ = "b"
 

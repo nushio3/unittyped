@@ -13,35 +13,35 @@ type CurrencyUnit = UnitCons Currency (Pos One) UnitNil
 -- |A euro (€).
 data Euro
 
-instance Convertable CurrencyUnit Euro where
+instance Convertible CurrencyUnit Euro where
 	factor _ = 1
 	showunit _ _ = "€"
 
 -- |A dollar ($).
 data Dollar
 
-instance Convertable CurrencyUnit Dollar where
+instance Convertible CurrencyUnit Dollar where
 	factor _ = 0.7760
 	showunit _ _ = "$"
 
 -- |A Yen (¥).
 data Yen
 
-instance Convertable CurrencyUnit Yen where
+instance Convertible CurrencyUnit Yen where
 	factor _ = 0.009399
 	showunit _ _ = "¥"
 
 -- |British Pound (£)
 data Pound
 
-instance Convertable CurrencyUnit Pound where
+instance Convertible CurrencyUnit Pound where
 	factor _ = 1.238
 	showunit _ _ = "£"
 
 -- |No longer used, Dutch Guilders (ƒ)
 data Gulden
 
-instance Convertable CurrencyUnit Gulden where
+instance Convertible CurrencyUnit Gulden where
 	factor _ = 0.453780216
 	showunit _ _ = "ƒ"
 

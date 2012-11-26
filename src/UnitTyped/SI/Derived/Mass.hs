@@ -12,7 +12,7 @@ import UnitTyped.SI
 -- |Pound, imperial unit of mass (lb).
 data Pound
 
-instance Convertable MassDimension Pound where
+instance Convertible MassDimension Pound where
 	factor _ = 0.45359237
 	showunit _ _ = "lb"
 
