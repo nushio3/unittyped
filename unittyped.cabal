@@ -1,5 +1,5 @@
 name:           unittyped
-version:        0.1
+version:        0.2
 author:         Thijs Alkemade <thijsalkemade@gmail.com>
 maintainer:     Thijs Alkemade <thijsalkemade@gmail.com>
 copyright:      Copyright: (c) 2012 Thijs Alkemade
@@ -21,10 +21,10 @@ source-repository head
 source-repository this
   type: hg
   location: https://bitbucket.org/xnyhps/haskell-unittyped
-  tag: 0.1
+  tag: 0.2
 
 library
-  build-depends:   base >= 4.6 && < 4.7
+  build-depends:   base >= 4.6 && < 4.7, time, old-locale
   extensions:      FlexibleInstances,
                    UndecidableInstances,
                    FunctionalDependencies,

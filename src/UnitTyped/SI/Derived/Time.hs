@@ -7,6 +7,10 @@ import UnitTyped.SI
 import UnitTyped.SI.Meta
 
 import Data.Ratio
+import qualified Data.Time as DT
+import qualified Data.Time.Clock as DTC
+import qualified Data.Time.Format as DTF
+import qualified System.Locale as SL
 
 ----
 -- Time
@@ -91,3 +95,25 @@ month = one
 -- |One herz (Hz).
 hertz :: (Fractional f) => Value f (UnitCons Time (Neg One) UnitNil) Hertz
 hertz = one
+
+--
+
+-- Interaction with Data.Time
+
+-- |Convert a 'DT.DiffTime' into a value in seconds.
+fromDiffTime :: (Fractional f) => DT.DiffTime -> Value f TimeDimension Second
+fromDiffTime = mkVal . fromRational . toRational
+
+-- |Convert a 'DTC.NominalDiffTime' into a value in seconds.
+fromNominalDiffTime :: (Fractional f) => DTC.NominalDiffTime -> Value f TimeDimension Second
+fromNominalDiffTime = mkVal . fromRational . toRational
+
+-- |Convert the number of seconds since a given 'DTC.UTCTime' into a value in seconds.
+since :: (Fractional f) => DTC.UTCTime -> IO (Value f TimeDimension Second)
+since time = do { t <- DTC.getCurrentTime
+		        ; return (fromNominalDiffTime (DTC.diffUTCTime t time) `as` second)
+		        }
+
+-- |Calculate the number of seconds since a given date and\/or time, parsed according to the first argument.
+since_str :: (Fractional f) => String -> String -> IO (Value f TimeDimension Second)
+since_str fmt str = since (DTF.readTime SL.defaultTimeLocale fmt str)
