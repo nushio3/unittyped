@@ -1,3 +1,4 @@
+{-# LANGUAGE DataKinds #-}
 -- |A number of mathematical or physical constants.
 module UnitTyped.SI.Constants where
 

@@ -1,3 +1,4 @@
+{-# LANGUAGE DataKinds #-}
 -- |Units derived from the SI unit for time: 'second'.
 module UnitTyped.SI.Derived.Time where
 

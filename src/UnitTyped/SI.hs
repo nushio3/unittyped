@@ -1,3 +1,4 @@
+{-# LANGUAGE DataKinds #-}
 -- |Module definig all SI units and their dimensions.
 module UnitTyped.SI where
 

@@ -1,3 +1,4 @@
+{-# LANGUAGE DataKinds #-}
 -- |A module with dimensions and units derived from combining SI units.
 module UnitTyped.SI.Derived where
 

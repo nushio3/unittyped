@@ -1,3 +1,4 @@
+{-# LANGUAGE DataKinds #-}
 -- |A module renaming operators on values to names that would normally collide with the "Prelude".
 -- E.g. '+', '*', 'sin'.
 -- 

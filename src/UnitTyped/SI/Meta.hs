@@ -1,3 +1,4 @@
+{-# LANGUAGE DataKinds #-}
 -- |This module creates the SI prefixes for units.
 -- This module allows syntax like:
 -- 

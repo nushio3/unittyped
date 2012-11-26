@@ -1,3 +1,4 @@
+{-# LANGUAGE DataKinds #-}
 -- |A module with dimensionless units often used with SI.
 module UnitTyped.SI.Derived.Count where
 

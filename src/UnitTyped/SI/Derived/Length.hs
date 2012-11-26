@@ -1,3 +1,4 @@
+{-# LANGUAGE DataKinds #-}
 -- |Units derived from the SI unit for length, and higher dimensions of length (area, volume).
 module UnitTyped.SI.Derived.Length where
 

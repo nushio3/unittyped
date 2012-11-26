@@ -1,3 +1,4 @@
+{-# LANGUAGE DataKinds #-}
 -- |Module defining values with dimensions and units, and mathematical operations on those.
 module UnitTyped (
 	Convertable(..),

@@ -1,3 +1,4 @@
+{-# LANGUAGE DataKinds #-}
 -- |A module for working with amounts of bytes and bits.
 module UnitTyped.Bytes where
 

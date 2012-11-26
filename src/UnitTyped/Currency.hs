@@ -1,3 +1,4 @@
+{-# LANGUAGE DataKinds #-}
 -- |A module with a number of currencies. Values updated on: 22-11-2012
 module UnitTyped.Currency where
 

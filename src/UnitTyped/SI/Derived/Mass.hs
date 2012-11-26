@@ -1,3 +1,4 @@
+{-# LANGUAGE DataKinds #-}
 -- |Units derived from the SI unit for mass.
 module UnitTyped.SI.Derived.Mass where
 
