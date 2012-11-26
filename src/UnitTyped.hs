@@ -191,14 +191,14 @@ infixl 5 `as`
 as :: (Convertible a b, Convertible c d, Fractional f, UnitEq a c True) => Value f a b -> Value f c d -> Value f c d
 as = coerce
 
--- |A unit representing the multplication of the units b and d.
-data Mul b d
+-- |A unit representing the multplication of the units a and b.
+data Mul a b
 
--- |A unit representing the division of the units b by d.
-data Div b d
+-- |A unit representing the division of the units a by b.
+data Div a b
 
--- |A value tagged with its dimension b and unit c.
-data Value a (b :: UnitMap) c = Value a
+-- |A value tagged with its dimension a and unit b.
+data Value f (a :: UnitMap) b = Value f
 
 instance (Convertible a b) => Show b where
 	show _ = showunit False one
