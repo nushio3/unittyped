@@ -43,12 +43,12 @@ t19 = (1 meter / second) * (1 second) == 1 meter
 
 -- These should just typecheck
 t20 = mile + inch + yard + foot + ångström + nautical_mile + meter == mile + inch + yard + foot + ångström + nautical_mile + meter
-t21 = UnitTyped.SI.Derived.Mass.pound + kilo gram + m_P == UnitTyped.SI.Derived.Mass.pound + kilo gram + m_P
+t21 = UnitTyped.SI.Derived.Mass.pound + kilo gram == UnitTyped.SI.Derived.Mass.pound + kilo gram
 
-t22 = minute + hour + day + year + julianyear + month + second == minute + hour + day + year + julianyear + month + second
+t22 = minute + hour + day + year + julian_year + month + second == minute + hour + day + year + julian_year + month + second
 t23 = second * hertz == count
 
-t24 = percentage + permil + ppm + ppb + ppt == percentage + permil + ppm + ppb + ppt
+t24 = percent + permil + ppm + ppb + ppt == percent + permil + ppm + ppb + ppt
 
 t25 = hbar == h / (2 count * pi)
 

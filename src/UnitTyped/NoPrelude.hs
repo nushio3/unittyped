@@ -3,7 +3,7 @@
 -- 
 -- Also adds instances for 'Num' that makes it possible to write:
 -- 
--- @1 meter / second@
+-- >>> 1 meter / second
 module UnitTyped.NoPrelude ((*), (/), (+), (-), (.),
 	sin, cos, tan,
 	asin, acos, atan,
@@ -63,10 +63,10 @@ instance (Fractional f, Convertable a (m b), c ~ (Value f a b -> Value f a (m b)
 instance (Fractional f, Convertable a (m b), c ~ (Value f a b -> Value f a (m b))) => (Fractional ((Value f a b -> Value f a (m b)) -> c)) where
 	fromRational i x y = Prelude.fromRational i . x y
 
-wrap1 :: (Floating f, Convertable CountUnit b) => (f -> f) -> Value f CountUnit b -> Value f CountUnit Count
+wrap1 :: (Floating f, Convertable NoDimension b) => (f -> f) -> Value f NoDimension b -> Value f NoDimension Count
 wrap1 op v = op (val $ coerce v rad) . one
 
-sin, cos, tan :: (Floating f, Convertable CountUnit b) => Value f CountUnit b -> Value f CountUnit Count
+sin, cos, tan :: (Floating f, Convertable NoDimension b) => Value f NoDimension b -> Value f NoDimension Count
 -- |Calculate the sinus of a value. Works on 'Degree' and 'Radian'.
 sin = wrap1 Prelude.sin
 -- |Calculate the cosinus of a value. Works on 'Degree' and 'Radian'.
@@ -74,10 +74,10 @@ cos = wrap1 Prelude.cos
 -- |Calculate the tangens of a value. Works on 'Degree' and 'Radian'.
 tan = wrap1 Prelude.tan
 
-wrap2 :: (Floating f) => (f -> f) -> Value f CountUnit Count -> Value f CountUnit Radian
+wrap2 :: (Floating f) => (f -> f) -> Value f NoDimension Count -> Value f NoDimension Radian
 wrap2 op v = op (val v) . one
 
-asin, acos, atan :: (Floating f) => Value f CountUnit Count -> Value f CountUnit Radian
+asin, acos, atan :: (Floating f) => Value f NoDimension Count -> Value f NoDimension Radian
 -- |Calculate the arcsinus of a value. Always computes 'Radian's.
 asin = wrap2 Prelude.asin
 -- |Calculate the arccosinus of a value. Always computes 'Radian's.

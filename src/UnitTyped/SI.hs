@@ -6,7 +6,7 @@ import UnitTyped
 -- |Unit for moles. Officially, this is a SI unit, but we definite it in terms of 'Count'.
 data Mole
 
-instance Convertable CountUnit Mole where
+instance Convertable NoDimension Mole where
 	factor _ = 6.0221417930e23
 	showunit _ _ = "mole"
 
@@ -121,11 +121,11 @@ instance Convertable LuminousDimension Candela where
 ----
 
 -- |One thing (#).
-count :: (Fractional f) => Value f CountUnit Count
+count :: (Fractional f) => Value f NoDimension Count
 count = one
 
 -- |One mole (mol).
-mole :: (Fractional f) => Value f CountUnit Mole
+mole :: (Fractional f) => Value f NoDimension Mole
 mole = one
 
 --

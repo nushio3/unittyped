@@ -7,11 +7,11 @@ import UnitTyped.SI.Meta
 import UnitTyped.SI.Derived
 
 -- |π as the floating point value it has in the "Prelude".
-pi' :: (Fractional f, Floating f) => Value f CountUnit Count
+pi' :: (Fractional f, Floating f) => Value f NoDimension Count
 pi' = mkVal Prelude.pi
 
 -- |π as a rational value. Which it isn't. But we can pretend it is.
-pi :: (Fractional f) => Value f CountUnit Count
+pi :: (Fractional f) => Value f NoDimension Count
 pi = mkVal 3.1415926535897932384626433832795028841971
 
 -- |The speed of light
@@ -45,3 +45,15 @@ e_h = mkVal 4.3597441775e-18
 -- |Gas constant.
 r :: (Fractional f) => Value f (UnitCons Temperature NOne (UnitCons Length PTwo (UnitCons Mass POne (UnitCons Time (Neg (Suc One)) UnitNil)))) (Div Joule (Mul Kelvin Mole))
 r = mkVal 8.314462175
+
+-- |Gravitational constant
+g :: (Fractional f) => Value f (UnitCons Time (Neg (Suc One)) (UnitCons Length (Pos (Suc (Suc One))) (UnitCons Mass (Neg One) UnitNil))) (Div (Div (Mul (Mul Meter Meter) Meter) (Kilo Gram)) (Mul Second Second))
+g = mkVal 6.6738480e-11
+
+-- |Planck mass
+m_P :: (Fractional f, Floating f) => Value f MassDimension (Kilo Gram)
+m_P = mkVal (sqrt (val $ hbar .*. c ./. g))
+
+-- |Reduced Planck mass
+m_P' :: (Fractional f, Floating f) => Value f MassDimension (Kilo Gram)
+m_P' = mkVal (sqrt (val $ hbar .*. c ./. ((Prelude.pi * 8) .$. g)))

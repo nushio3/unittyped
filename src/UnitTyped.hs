@@ -3,7 +3,7 @@ module UnitTyped (
 	Convertable(..),
 	Value(..), Mul, Div,
 
-	CountUnit, Count,
+	NoDimension, Count,
 
 	UnitMap(..), Nat(..), Number(..),
 	UnitMerge, UnitEq, UnitNeg,
@@ -269,7 +269,7 @@ pown2 = pow (Proxy :: Proxy NTwo)
 pown1 :: (Fractional f, Convertable a b, Pow a b NOne c d) => Value f a b -> Value f c d
 pown1 = pow (Proxy :: Proxy NOne)
 
--- |Calculate @x^0@. Yes, this is always @one :: Value f CountUnit Count@.
+-- |Calculate @x^0@. Yes, this is always @one :: Value f NoDimension Count@.
 pow0 :: (Fractional f, Convertable a b, Pow a b Zero c d) => Value f a b -> Value f c d
 pow0 = pow (Proxy :: Proxy Zero)
 
@@ -317,14 +317,14 @@ wrapB op a b = op (val a) (val $ coerce b a)
 ----
 
 -- |This is for dimensionless values.
-type CountUnit = UnitNil
+type NoDimension = UnitNil
 
 --
 
 -- |One thing.
 data Count
 
-instance Convertable CountUnit Count where
+instance Convertable NoDimension Count where
 	factor _ = 1
 	showunit _ _ = "#"
 
@@ -332,7 +332,7 @@ instance Convertable CountUnit Count where
 
 data Proxy (i :: Number) = Proxy
 
-class (Convertable a b, Convertable c d) => Pow' q a b (i :: Number) c d | a b i -> c d where
+class (Convertable a b, Convertable c d) => Pow' q a b (i :: Number) c d | q a b i -> c d where
 	_pow :: (Fractional f) => q -> Proxy i -> Value f a b -> Value f c d
 
 instance (Convertable a b) => Pow' () a b Zero UnitNil Count where

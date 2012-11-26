@@ -1,7 +1,8 @@
 name:           unittyped
 version:        0.1
 author:         Thijs Alkemade
-license:        GPL
+license:        LGPL-2.1
+license-file:   LICENSE
 Cabal-Version:  >= 1.8
 build-type:     Simple
 synopsis:       An extendable library for type-safe computations including units.
