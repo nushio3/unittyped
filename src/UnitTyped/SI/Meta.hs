@@ -1,4 +1,4 @@
-{-# LANGUAGE DataKinds #-}
+{-# LANGUAGE DataKinds, PolyKinds #-}
 -- |This module creates the SI prefixes for units.
 -- This module allows syntax like:
 -- 
@@ -22,20 +22,15 @@ import UnitTyped
 -- Meta-units
 ----
 
+data MetaProxy m a b = MetaProxy
+
 class (Convertible a b) => MetaUnit (m :: * -> *) a b where
-	metafactor :: (Fractional f) => Value f a (m b) -> f
-	metashow :: (Fractional f) => Value f a (m b) -> String
+	metafactor :: (Fractional f) => MetaProxy m a b -> f
+	metashow :: (Fractional f) => MetaProxy m a b -> String
 
 instance (MetaUnit m a b, Convertible a b) => Convertible a (m b) where
-	factor _ = let sub :: (Fractional f) => Value f a b
-	               sub = one
-	               self :: (Fractional f) => Value f a (m b)
-	               self = one
-	           in metafactor self * factor sub
-	showunit b v = let
-			 		   u :: (Fractional f) => Value f a b
-					   u = one
-				   in metashow v ++ showunit False u
+	factor _ = metafactor (MetaProxy :: MetaProxy m a b) * factor (ValueProxy :: ValueProxy a b)
+	showunit v = metashow (MetaProxy :: MetaProxy m a b) ++ showunit (ValueProxy :: ValueProxy a b)
 
 --
 
@@ -243,115 +238,115 @@ instance (Convertible a b) => MetaUnit Yobi a b where
 ----
 
 -- |Take a unit and return one deca(unit).
-deca :: (Convertible a b, Fractional f) => Value f a b -> Value f a (Deca b)
+deca :: (Convertible a b, Fractional f) => Value f a (UnitCons b POne UnitNil) -> Value f a (UnitCons (Deca b) POne UnitNil)
 deca _ = one
 
 -- |Take a unit and return one hecto(unit).
-hecto :: (Convertible a b, Fractional f) => Value f a b -> Value f a (Hecto b)
+hecto :: (Convertible a b, Fractional f) => Value f a (UnitCons b POne UnitNil) -> Value f a (UnitCons (Hecto b) POne UnitNil)
 hecto _ = one
 
 -- |Take a unit and return one kilo(unit).
-kilo :: (Convertible a b, Fractional f) => Value f a b -> Value f a (Kilo b)
+kilo :: (Convertible a b, Fractional f) => Value f a (UnitCons b POne UnitNil) -> Value f a (UnitCons (Kilo b) POne UnitNil)
 kilo _ = one
 
 -- |Take a unit and return one mega(unit).
-mega :: (Convertible a b, Fractional f) => Value f a b -> Value f a (Mega b)
+mega :: (Convertible a b, Fractional f) => Value f a (UnitCons b POne UnitNil) -> Value f a (UnitCons (Mega b) POne UnitNil)
 mega _ = one
 
 -- |Take a unit and return one giga(unit).
-giga :: (Convertible a b, Fractional f) => Value f a b -> Value f a (Giga b)
+giga :: (Convertible a b, Fractional f) => Value f a (UnitCons b POne UnitNil) -> Value f a (UnitCons (Giga b) POne UnitNil)
 giga _ = one
 
 -- |Take a unit and return one tera(unit).
-tera :: (Convertible a b, Fractional f) => Value f a b -> Value f a (Tera b)
+tera :: (Convertible a b, Fractional f) => Value f a (UnitCons b POne UnitNil) -> Value f a (UnitCons (Tera b) POne UnitNil)
 tera _ = one
 
 -- |Take a unit and return one peta(unit).
-peta :: (Convertible a b, Fractional f) => Value f a b -> Value f a (Peta b)
+peta :: (Convertible a b, Fractional f) => Value f a (UnitCons b POne UnitNil) -> Value f a (UnitCons (Peta b) POne UnitNil)
 peta _ = one
 
 -- |Take a unit and return one exa(unit).
-exa :: (Convertible a b, Fractional f) => Value f a b -> Value f a (Exa b)
+exa :: (Convertible a b, Fractional f) => Value f a (UnitCons b POne UnitNil) -> Value f a (UnitCons (Exa b) POne UnitNil)
 exa _ = one
 
 -- |Take a unit and return one zetta(unit).
-zetta :: (Convertible a b, Fractional f) => Value f a b -> Value f a (Zetta b)
+zetta :: (Convertible a b, Fractional f) => Value f a (UnitCons b POne UnitNil) -> Value f a (UnitCons (Zetta b) POne UnitNil)
 zetta _ = one
 
 -- |Take a unit and return one yotta(unit).
-yotta :: (Convertible a b, Fractional f) => Value f a b -> Value f a (Yotta b)
+yotta :: (Convertible a b, Fractional f) => Value f a (UnitCons b POne UnitNil) -> Value f a (UnitCons (Yotta b) POne UnitNil)
 yotta _ = one
 
 -- |Take a unit and return one deci(unit).
-deci :: (Convertible a b, Fractional f) => Value f a b -> Value f a (Deci b)
+deci :: (Convertible a b, Fractional f) => Value f a (UnitCons b POne UnitNil) -> Value f a (UnitCons (Deci b) POne UnitNil)
 deci _ = one
 
 -- |Take a unit and return one centi(unit).
-centi :: (Convertible a b, Fractional f) => Value f a b -> Value f a (Centi b)
+centi :: (Convertible a b, Fractional f) => Value f a (UnitCons b POne UnitNil) -> Value f a (UnitCons (Centi b) POne UnitNil)
 centi _ = one
 
 -- |Take a unit and return one mili(unit).
-mili :: (Convertible a b, Fractional f) => Value f a b -> Value f a (Mili b)
+mili :: (Convertible a b, Fractional f) => Value f a (UnitCons b POne UnitNil) -> Value f a (UnitCons (Mili b) POne UnitNil)
 mili _ = one
 
 -- |Take a unit and return one micro(unit).
-micro :: (Convertible a b, Fractional f) => Value f a b -> Value f a (Micro b)
+micro :: (Convertible a b, Fractional f) => Value f a (UnitCons b POne UnitNil) -> Value f a (UnitCons (Micro b) POne UnitNil)
 micro _ = one
 
 -- |Take a unit and return one nano(unit).
-nano :: (Convertible a b, Fractional f) => Value f a b -> Value f a (Nano b)
+nano :: (Convertible a b, Fractional f) => Value f a (UnitCons b POne UnitNil) -> Value f a (UnitCons (Nano b) POne UnitNil)
 nano _ = one
 
 -- |Take a unit and return one pico(unit).
-pico :: (Convertible a b, Fractional f) => Value f a b -> Value f a (Pico b)
+pico :: (Convertible a b, Fractional f) => Value f a (UnitCons b POne UnitNil) -> Value f a (UnitCons (Pico b) POne UnitNil)
 pico _ = one
 
 -- |Take a unit and return one femto(unit).
-femto :: (Convertible a b, Fractional f) => Value f a b -> Value f a (Femto b)
+femto :: (Convertible a b, Fractional f) => Value f a (UnitCons b POne UnitNil) -> Value f a (UnitCons (Femto b) POne UnitNil)
 femto _ = one
 
 -- |Take a unit and return one atto(unit).
-atto :: (Convertible a b, Fractional f) => Value f a b -> Value f a (Atto b)
+atto :: (Convertible a b, Fractional f) => Value f a (UnitCons b POne UnitNil) -> Value f a (UnitCons (Atto b) POne UnitNil)
 atto _ = one
 
 -- |Take a unit and return one zepto(unit).
-zepto :: (Convertible a b, Fractional f) => Value f a b -> Value f a (Zepto b)
+zepto :: (Convertible a b, Fractional f) => Value f a (UnitCons b POne UnitNil) -> Value f a (UnitCons (Zepto b) POne UnitNil)
 zepto _ = one
 
 -- |Take a unit and return one yocto(unit).
-yocto :: (Convertible a b, Fractional f) => Value f a b -> Value f a (Yocto b)
+yocto :: (Convertible a b, Fractional f) => Value f a (UnitCons b POne UnitNil) -> Value f a (UnitCons (Yocto b) POne UnitNil)
 yocto _ = one
 
 --
 
 -- |Take a unit and return one kibi(unit).
-kibi :: (Convertible a b, Fractional f) => Value f a b -> Value f a (Kibi b)
+kibi :: (Convertible a b, Fractional f) => Value f a (UnitCons b POne UnitNil) -> Value f a (UnitCons (Kibi b) POne UnitNil)
 kibi _ = one
 
 -- |Take a unit and return one mebi(unit).
-mebi :: (Convertible a b, Fractional f) => Value f a b -> Value f a (Mebi b)
+mebi :: (Convertible a b, Fractional f) => Value f a (UnitCons b POne UnitNil) -> Value f a (UnitCons (Mebi b) POne UnitNil)
 mebi _ = one
 
 -- |Take a unit and return one gibi(unit).
-gibi :: (Convertible a b, Fractional f) => Value f a b -> Value f a (Gibi b)
+gibi :: (Convertible a b, Fractional f) => Value f a (UnitCons b POne UnitNil) -> Value f a (UnitCons (Gibi b) POne UnitNil)
 gibi _ = one
 
 -- |Take a unit and return one tebi(unit).
-tebi :: (Convertible a b, Fractional f) => Value f a b -> Value f a (Tebi b)
+tebi :: (Convertible a b, Fractional f) => Value f a (UnitCons b POne UnitNil) -> Value f a (UnitCons (Tebi b) POne UnitNil)
 tebi _ = one
 
 -- |Take a unit and return one pebi(unit).
-pebi :: (Convertible a b, Fractional f) => Value f a b -> Value f a (Pebi b)
+pebi :: (Convertible a b, Fractional f) => Value f a (UnitCons b POne UnitNil) -> Value f a (UnitCons (Pebi b) POne UnitNil)
 pebi _ = one
 
 -- |Take a unit and return one exbi(unit).
-exbi :: (Convertible a b, Fractional f) => Value f a b -> Value f a (Exbi b)
+exbi :: (Convertible a b, Fractional f) => Value f a (UnitCons b POne UnitNil) -> Value f a (UnitCons (Exbi b) POne UnitNil)
 exbi _ = one
 
 -- |Take a unit and return one zebi(unit).
-zebi :: (Convertible a b, Fractional f) => Value f a b -> Value f a (Zebi b)
+zebi :: (Convertible a b, Fractional f) => Value f a (UnitCons b POne UnitNil) -> Value f a (UnitCons (Zebi b) POne UnitNil)
 zebi _ = one
 
 -- |Take a unit and return one yobi(unit).
-yobi :: (Convertible a b, Fractional f) => Value f a b -> Value f a (Yobi b)
+yobi :: (Convertible a b, Fractional f) => Value f a (UnitCons b POne UnitNil) -> Value f a (UnitCons (Yobi b) POne UnitNil)
 yobi _ = one

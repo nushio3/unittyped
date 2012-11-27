@@ -21,21 +21,21 @@ data Byte
 
 instance Convertible DataUnit Byte where
 	factor _ = 1
-	showunit _ _ = "B"
+	showunit _ = "B"
 
 -- |A bit of data.
 data Bit
 
 instance Convertible DataUnit Bit where
 	factor _ = 0.125
-	showunit _ _ = "b"
+	showunit _ = "b"
 
 --
 
 -- |One byte.
-byte :: (Fractional f) => Value f DataUnit Byte
+byte :: (Fractional f) => Value f DataUnit (UnitCons Byte POne UnitNil)
 byte = one
 
 -- |One bit.
-bit :: (Fractional f) => Value f DataUnit Bit
+bit :: (Fractional f) => Value f DataUnit (UnitCons Bit POne UnitNil)
 bit = one

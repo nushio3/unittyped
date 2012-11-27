@@ -38,14 +38,13 @@ library
                    UnitTyped.NoPrelude,
                    UnitTyped.SI,
                    UnitTyped.SI.Meta,
-                   UnitTyped.SI.Constants,
                    UnitTyped.Bytes,
-                   UnitTyped.Currency,
                    UnitTyped.SI.Derived,
                    UnitTyped.SI.Derived.Length,
                    UnitTyped.SI.Derived.Count,
                    UnitTyped.SI.Derived.Time,
-                   UnitTyped.SI.Derived.Mass
+                   UnitTyped.SI.Derived.Mass,
+                   UnitTyped.SI.Constants,
                    UnitTyped.SI.Show
   hs-source-dirs:  src
 

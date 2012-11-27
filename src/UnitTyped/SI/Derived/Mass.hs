@@ -14,10 +14,10 @@ data Pound
 
 instance Convertible MassDimension Pound where
 	factor _ = 0.45359237
-	showunit _ _ = "lb"
+	showunit _ = "lb"
 
 --
 
 -- |One pound (lb).
-pound :: (Fractional f) => Value f MassDimension Pound
+pound :: (Fractional f) => Value f MassDimension (UnitCons Pound POne UnitNil)
 pound = one

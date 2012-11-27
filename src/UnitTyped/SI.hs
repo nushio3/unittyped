@@ -9,7 +9,7 @@ data Mole
 
 instance Convertible NoDimension Mole where
 	factor _ = 6.0221417930e23
-	showunit _ _ = "mole"
+	showunit _ = "mole"
 
 ----
 -- Length
@@ -27,7 +27,7 @@ data Meter
 
 instance Convertible LengthDimension Meter where
 	factor _ = 1
-	showunit _ _ = "m"
+	showunit _ = "m"
 
 ----
 -- Time
@@ -45,7 +45,7 @@ data Second
 
 instance Convertible TimeDimension Second where
 	factor _ = 1
-	showunit _ _ = "s"
+	showunit _ = "s"
 
 ----
 -- Mass
@@ -63,7 +63,7 @@ data Gram
 
 instance Convertible MassDimension Gram where
 	factor _ = 0.001
-	showunit _ _ = "g"
+	showunit _ = "g"
 
 ----
 -- Temperature
@@ -81,7 +81,7 @@ data Kelvin
 
 instance Convertible TemperatureDimension Kelvin where
 	factor _ = 1
-	showunit _ _ = "K"
+	showunit _ = "K"
 
 ----
 -- Current
@@ -99,7 +99,7 @@ data Ampere
 
 instance Convertible CurrentDimension Ampere where
 	factor _ = 1
-	showunit _ _ = "A"
+	showunit _ = "A"
 
 ----
 -- Luminous
@@ -117,50 +117,50 @@ data Candela
 
 instance Convertible LuminousDimension Candela where
 	factor _ = 1
-	showunit _ _ = "cd"
+	showunit _ = "cd"
 
 ----
 
 -- |One thing (#).
-count :: (Fractional f) => Value f NoDimension Count
+count :: (Fractional f) => Value f NoDimension UnitNil
 count = one
 
 -- |One mole (mol).
-mole :: (Fractional f) => Value f NoDimension Mole
+mole :: (Fractional f) => Value f NoDimension UnitNil
 mole = one
 
 --
 
 -- |One meter (m).
-meter :: (Fractional f) => Value f LengthDimension Meter
+meter :: (Fractional f) => Value f LengthDimension (UnitCons Meter POne UnitNil)
 meter = one
 
 --
 
 -- |One second (s).
-second :: (Fractional f) => Value f TimeDimension Second
+second :: (Fractional f) => Value f TimeDimension (UnitCons Second POne UnitNil)
 second = one
 
 --
 
 -- |One gram (g).
-gram :: (Fractional f) => Value f MassDimension Gram
+gram :: (Fractional f) => Value f MassDimension (UnitCons Gram POne UnitNil)
 gram = one
 
 --
 
 -- |One Kelvin (K).
-kelvin :: (Fractional f) => Value f TemperatureDimension Kelvin
+kelvin :: (Fractional f) => Value f TemperatureDimension (UnitCons Kelvin POne UnitNil)
 kelvin = one
 
 --
 
 -- |One ampere (A).
-ampere :: (Fractional f) => Value f CurrentDimension Ampere
+ampere :: (Fractional f) => Value f CurrentDimension (UnitCons Ampere POne UnitNil)
 ampere = one
 
 --
 
 -- |One candela (cd).
-candela :: (Fractional f) => Value f LuminousDimension Candela
+candela :: (Fractional f) => Value f LuminousDimension (UnitCons Candela POne UnitNil)
 candela = one

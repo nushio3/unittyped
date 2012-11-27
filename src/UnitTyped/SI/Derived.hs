@@ -4,8 +4,8 @@ module UnitTyped.SI.Derived where
 
 import UnitTyped
 import UnitTyped.SI
-import UnitTyped.SI.Derived.Time
-import UnitTyped.SI.Meta
+-- import UnitTyped.SI.Derived.Time
+-- import UnitTyped.SI.Meta
 
 import Data.Ratio
 
@@ -19,7 +19,7 @@ data Knot
 
 instance Convertible Speed Knot where
 	factor _ = 1852 / 3600
-	showunit _ _ = "kn"
+	showunit _ = "kn"
 
 --
 
@@ -30,7 +30,7 @@ data Newton
 
 instance Convertible Force Newton where
 	factor _ = 1
-	showunit _ _ = "N"
+	showunit _ = "N"
 
 --
 
@@ -42,14 +42,14 @@ data Joule
 
 instance Convertible Energy Joule where
 	factor _ = 1
-	showunit _ _ = "J"
+	showunit _ = "J"
 
 -- |Unit of energy (eV).
 data Ev
 
 instance Convertible Energy Ev where
 	factor _ = 1.60217656535e-19
-	showunit _ _ = "eV"
+	showunit _ = "eV"
 
 --
 
@@ -61,7 +61,7 @@ data Watt
 
 instance Convertible Power Watt where
 	factor _ = 1
-	showunit _ _ = "W"
+	showunit _ = "W"
 
 --
 
@@ -73,21 +73,21 @@ data Pascal
 
 instance Convertible Pressure Pascal where
 	factor _ = 1
-	showunit _ _ = "Pa"
+	showunit _ = "Pa"
 
 -- |Unit of pressure (bar).
 data Bar
 
 instance Convertible Pressure Bar where
 	factor _ = 1e5
-	showunit _ _ = "bar"
+	showunit _ = "bar"
 
 -- |Unit of pressure (mmHg).
 data MmHg
 
 instance Convertible Pressure MmHg where
 	factor _ = 133.322
-	showunit _ _ = "mmHg"
+	showunit _ = "mmHg"
 
 --
 
@@ -99,7 +99,7 @@ data Coulomb
 
 instance Convertible Charge Coulomb where
 	factor _ = 1
-	showunit _ _ = "C"
+	showunit _ = "C"
 
 --
 
@@ -111,7 +111,7 @@ data Volt
 
 instance Convertible Potential Volt where
 	factor _ = 1
-	showunit _ _ = "V"
+	showunit _ = "V"
 
 --
 
@@ -123,7 +123,7 @@ data Farad
 
 instance Convertible Capacitance Farad where
 	factor _ = 1
-	showunit _ _ = "F"
+	showunit _ = "F"
 
 --
 
@@ -135,7 +135,7 @@ data Ohm
 
 instance Convertible Resistance Ohm where
 	factor _ = 1
-	showunit _ _ = "Ω"
+	showunit _ = "Ω"
 
 --
 
@@ -147,7 +147,7 @@ data Siemens
 
 instance Convertible Conductance Siemens where
 	factor _ = 1
-	showunit _ _ = "S"
+	showunit _ = "S"
 
 --
 
@@ -159,7 +159,7 @@ data Weber
 
 instance Convertible Flux Weber where
 	factor _ = 1
-	showunit _ _ = "Wb"
+	showunit _ = "Wb"
 
 --
 
@@ -171,7 +171,7 @@ data Tesla
 
 instance Convertible FluxDensity Tesla where
 	factor _ = 1
-	showunit _ _ = "T"
+	showunit _ = "T"
 
 --
 
@@ -183,74 +183,74 @@ data Henry
 
 instance Convertible Inductance Henry where
 	factor _ = 1
-	showunit _ _ = "H"
+	showunit _ = "H"
 
 --
 
 -- |One knot.
-knot :: (Fractional f) => Value f Speed Knot
+knot :: (Fractional f) => Value f Speed (UnitCons Knot POne UnitNil)
 knot = one
 
 -- |One newton.
-newton :: (Fractional f) => Value f Force Newton
+newton :: (Fractional f) => Value f Force (UnitCons Newton POne UnitNil)
 newton = one
 
 -- |One joule.
-joule :: (Fractional f) => Value f Energy Joule
+joule :: (Fractional f) => Value f Energy (UnitCons Joule POne UnitNil)
 joule = one
 
 -- |One eV.
-eV :: (Fractional f) => Value f Energy Ev
+eV :: (Fractional f) => Value f Energy (UnitCons Ev POne UnitNil)
 eV = one
 
 -- |One kwh.
-kwh :: (Fractional f) => Value f Energy (Mul (Kilo Watt) Hour)
-kwh = one
+--kwh :: (Fractional f) => Value f Energy (UnitCons (Mul (Kilo Watt) Hour) POne UnitNil)
+--kwh = one
 
 -- |One watt.
-watt :: (Fractional f) => Value f Power Watt
+watt :: (Fractional f) => Value f Power (UnitCons Watt POne UnitNil)
 watt = one
 
 -- |One pascal.
-pascal :: (Fractional f) => Value f Pressure Pascal
+pascal :: (Fractional f) => Value f Pressure (UnitCons Pascal POne UnitNil)
 pascal = one
 
 -- |One bar.
-bar :: (Fractional f) => Value f Pressure Bar
+bar :: (Fractional f) => Value f Pressure (UnitCons Bar POne UnitNil)
 bar = one
 
 -- |One mmHg.
-mmHg :: (Fractional f) => Value f Pressure MmHg
+mmHg :: (Fractional f) => Value f Pressure (UnitCons MmHg POne UnitNil)
 mmHg = one
 
 -- |One coulomb.
-coulomb :: (Fractional f) => Value f Charge Coulomb
+coulomb :: (Fractional f) => Value f Charge (UnitCons Coulomb POne UnitNil)
 coulomb = one
 
 -- |One volt.
-volt :: (Fractional f) => Value f Potential Volt
+volt :: (Fractional f) => Value f Potential (UnitCons Volt POne UnitNil)
 volt = one
 
 -- |One farad.
-farad :: (Fractional f) => Value f Capacitance Farad
+farad :: (Fractional f) => Value f Capacitance (UnitCons Farad POne UnitNil)
 farad = one
 
 -- |One ohm.
-ohm :: (Fractional f) => Value f Resistance Ohm
+ohm :: (Fractional f) => Value f Resistance (UnitCons Ohm POne UnitNil)
 ohm = one
 
 -- |One siemens.
-siemens :: (Fractional f) => Value f Conductance Siemens
+siemens :: (Fractional f) => Value f Conductance (UnitCons Siemens POne UnitNil)
 siemens = one
 
 -- |One weber.
-weber :: (Fractional f) => Value f Flux Weber
+weber :: (Fractional f) => Value f Flux (UnitCons Weber POne UnitNil)
 weber = one
 
 -- |One tesla.
-tesla :: (Fractional f) => Value f FluxDensity Tesla
+tesla :: (Fractional f) => Value f FluxDensity (UnitCons Tesla POne UnitNil)
 tesla = one
 
 -- |One henry.
-henry :: (Fractional f) => Value f Inductance Henry
+henry :: (Fractional f) => Value f Inductance (UnitCons Henry POne UnitNil)
 henry = one
