@@ -36,8 +36,8 @@ t14 = henry == volt * second / ampere
 
 t15 = 3.6 kilo meter / hour == 1 meter / second
 t16 = 3.6 mega joule == 1 kilo watt * hour
-t17 = 1 . cubic (deci meter) == 1 liter
-t18 = 1 . square meter == 10000 . square (centi meter)
+t17 = 1 ~> cubic (deci meter) == 1 liter
+t18 = 1 ~> square meter == 10000 ~> square (centi meter)
 
 t19 = (1 meter / second) * (1 second) == 1 meter
 

@@ -46,6 +46,7 @@ library
                    UnitTyped.SI.Derived.Count,
                    UnitTyped.SI.Derived.Time,
                    UnitTyped.SI.Derived.Mass
+                   UnitTyped.SI.Show
   hs-source-dirs:  src
 
 Test-Suite test-si

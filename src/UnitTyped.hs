@@ -1,4 +1,4 @@
-{-# LANGUAGE DataKinds #-}
+{-# LANGUAGE DataKinds, ScopedTypeVariables #-}
 -- |Module defining values with dimensions and units, and mathematical operations on those.
 module UnitTyped (
 	Convertible(..),
@@ -12,7 +12,7 @@ module UnitTyped (
 	NOne, NTwo, NThree, NFour,
 	Pow,
 
-	coerce, as, one, mkVal, val, (.*.), (./.), (.+.), (.-.), (.$.), (~.),
+	coerce, as, to, one, mkVal, val, mapVal, (.*.), (./.), (.+.), (.-.), (~>), (~.),
 	(.==.), (.<=.), (.<.), (.>=.), (.>.),
 
 	square, cubic,
@@ -134,6 +134,7 @@ instance (UnitNull rest b', IsZero value b, And b b' result) => UnitNull (UnitCo
 -- |'b' is equal to 'True' if and only if 'map1' and 'map2' represent the same dimension.
 class UnitEq (map1 :: UnitMap) (map2 :: UnitMap) (b :: Bool) | map1 map2 -> b where
 
+instance UnitEq a a True
 instance (UnitNeg map2 map2', UnitMerge map1 map2' sum, UnitNull sum b) => UnitEq map1 map2 b
 
 -- |Convertible is a class that models the fact that the unit 'b' has dimension 'a' (of kind 'UnitMap').
@@ -180,6 +181,7 @@ coerce :: (Convertible a b, Convertible c d, Fractional f, UnitEq a c True) => V
 coerce u _ = let result = mkVal (factor u * val u / factor result) in result
 
 infixl 5 ~.
+infixl 8 ~>
 
 -- |Shorthand for 'coerce'.
 (~.) :: (Convertible a b, Convertible c d, Fractional f, UnitEq a c True) => Value f a b -> Value f c d -> Value f c d
@@ -190,6 +192,10 @@ infixl 5 `as`
 -- |Shorthand for 'coerce'.
 as :: (Convertible a b, Convertible c d, Fractional f, UnitEq a c True) => Value f a b -> Value f c d -> Value f c d
 as = coerce
+
+-- |Shorthand for 'flip' 'coerce'
+to :: (Convertible a b, Convertible c d, Fractional f, UnitEq a c True) => Value f c d -> Value f a b -> Value f c d
+to = flip coerce
 
 -- |A unit representing the multplication of the units a and b.
 data Mul a b
@@ -229,8 +235,8 @@ a .+. b = mkVal (val a + val (coerce b a))
 a .-. b = mkVal (val a - val (coerce b a))
 
 -- |Multiply a unit by a scalar.
-(.$.) :: (Convertible a b, Fractional f) => f -> Value f a b -> Value f a b
-d .$. u = mkVal (d * val u)
+(~>) :: (Convertible a b, Fractional f) => f -> Value f a b -> Value f a b
+d ~> u = mkVal (d * val u)
 
 -- |Create a new value with given scalar as value.
 mkVal :: (Fractional f) => f -> Value f a b
@@ -239,6 +245,10 @@ mkVal = Value
 -- |Obtain the value of a value wrapped in a type.
 val :: (Fractional f) => Value f a b -> f
 val (Value f) = f
+
+-- |Map over values. The 'Fractional' constraints make it impossible to define a 'Functor' instance, therefore this.
+mapVal :: (Fractional f, Fractional g) => (f -> g) -> Value f a b -> Value g a b
+mapVal f = mkVal . f . val
 
 -- |A wrapped value with scalar value 1.
 one :: (Fractional f, Convertible a b) => Value f a b
@@ -352,3 +362,5 @@ class (Convertible a b, Convertible c d) => Pow a b (i :: Number) c d | a b -> c
 
 instance (Pow' () a b i c d) => Pow a b (i :: Number) c d where
 	pow = _pow ()
+
+--

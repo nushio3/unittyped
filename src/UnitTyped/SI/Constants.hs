@@ -25,7 +25,7 @@ h = mkVal 6.6260695729e-34
 
 -- |Reduced Planck constant
 hbar :: (Fractional f) => Value f (UnitCons Time NOne (UnitCons Length PTwo (UnitCons Mass POne UnitNil))) (Mul Joule Second)
-hbar = coerce (h ./. (2 .$. UnitTyped.SI.Constants.pi)) (joule .*. second)
+hbar = coerce (h ./. (2 ~> UnitTyped.SI.Constants.pi)) (joule .*. second)
 
 -- |Atomic unit of charge (elementary charge)
 e :: (Fractional f) => Value f Charge Coulomb
@@ -57,4 +57,4 @@ m_P = mkVal (sqrt (val $ hbar .*. c ./. g))
 
 -- |Reduced Planck mass
 m_P' :: (Fractional f, Floating f) => Value f MassDimension (Kilo Gram)
-m_P' = mkVal (sqrt (val $ hbar .*. c ./. ((Prelude.pi * 8) .$. g)))
+m_P' = mkVal (sqrt (val $ hbar .*. c ./. ((Prelude.pi * 8) ~> g)))
