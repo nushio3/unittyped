@@ -12,6 +12,7 @@ stability:      experimental
 Cabal-Version:  >= 1.8
 build-type:     Simple
 synopsis:       An extendable library for type-safe computations including units.
+tested-with:    GHC == 7.6.1
 description:    UnitTyped is a Haskell library that makes it possible to do computations on values with a dimension and a unit. The typechecker ensures that all operations are using the proper dimensions, and all units can be converted to compatible units automatically. New dimensions and units can be defined from other modules, requiring just a data type and one class instance to work with everything else. The library comes with all SI dimensions and units, and many units derived from those.
 
 source-repository head
@@ -33,19 +34,11 @@ library
                    FlexibleContexts,
                    OverlappingInstances,
                    GADTs,
-                   EmptyDataDecls
+                   EmptyDataDecls,
+                   TypeOperators,
+                   RankNTypes
   exposed-modules: UnitTyped,
-                   UnitTyped.NoPrelude,
-                   UnitTyped.SI,
-                   UnitTyped.SI.Meta,
-                   UnitTyped.Bytes,
-                   UnitTyped.SI.Derived,
-                   UnitTyped.SI.Derived.Length,
-                   UnitTyped.SI.Derived.Count,
-                   UnitTyped.SI.Derived.Time,
-                   UnitTyped.SI.Derived.Mass,
-                   UnitTyped.SI.Constants,
-                   UnitTyped.SI.Show
+                   UnitTyped.SI
   hs-source-dirs:  src
 
 Test-Suite test-si

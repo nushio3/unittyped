@@ -7,7 +7,7 @@ import UnitTyped
 -- |Unit for moles. Officially, this is a SI unit, but we definite it in terms of 'Count'.
 data Mole
 
-instance Convertible NoDimension Mole where
+instance Convertible '[] Mole where
 	factor _ = 6.0221417930e23
 	showunit _ = "mole"
 
@@ -18,7 +18,7 @@ instance Convertible NoDimension Mole where
 -- |Dimension of length.
 data Length
 -- |The dimension defining @Length^1@.
-type LengthDimension = UnitCons Length (Pos One) UnitNil
+type LengthDimension = '[ '(Length, (Pos One))]
 
 --
 
@@ -36,7 +36,7 @@ instance Convertible LengthDimension Meter where
 -- |Dimension of time.
 data Time
 -- |The dimension defining @Time^1@.
-type TimeDimension = UnitCons Time (Pos One) UnitNil
+type TimeDimension = '[ '(Time, (Pos One))]
 
 --
 
@@ -54,7 +54,7 @@ instance Convertible TimeDimension Second where
 -- |Dimension of mass.
 data Mass
 -- |The dimension defining @Mass^1@.
-type MassDimension = UnitCons Mass (Pos One) UnitNil
+type MassDimension = '[ '(Mass, (Pos One))]
 
 --
 
@@ -72,7 +72,7 @@ instance Convertible MassDimension Gram where
 -- |Dimension of temperature.
 data Temperature
 -- |The dimension defining @Temperature^1@.
-type TemperatureDimension = UnitCons Temperature (Pos One) UnitNil
+type TemperatureDimension = '[ '(Temperature, (Pos One)) ]
 
 --
 
@@ -90,7 +90,7 @@ instance Convertible TemperatureDimension Kelvin where
 -- |Dimension of electric current.
 data Current
 -- |The dimension defining @Current^1@.
-type CurrentDimension = UnitCons Current (Pos One) UnitNil
+type CurrentDimension = '[ '(Current, (Pos One))]
 
 --
 
@@ -108,7 +108,7 @@ instance Convertible CurrentDimension Ampere where
 -- |Dimension of luminous intensity.
 data Luminous
 -- |The dimension defining @Luminous^1@.
-type LuminousDimension = UnitCons Luminous (Pos One) UnitNil
+type LuminousDimension = '[ '(Luminous, (Pos One))]
 
 --
 
@@ -122,45 +122,45 @@ instance Convertible LuminousDimension Candela where
 ----
 
 -- |One thing (#).
-count :: (Fractional f) => Value f NoDimension UnitNil
+count :: (Fractional f) => Value f '[] '[]
 count = one
 
 -- |One mole (mol).
-mole :: (Fractional f) => Value f NoDimension UnitNil
+mole :: (Fractional f) => Value f '[] '[]
 mole = one
 
 --
 
 -- |One meter (m).
-meter :: (Fractional f) => Value f LengthDimension (UnitCons Meter POne UnitNil)
+meter :: (Fractional f) => Value f LengthDimension '[ '(Meter, POne) ]
 meter = one
 
 --
 
 -- |One second (s).
-second :: (Fractional f) => Value f TimeDimension (UnitCons Second POne UnitNil)
+second :: (Fractional f) => Value f TimeDimension '[ '(Second, POne) ]
 second = one
 
 --
 
 -- |One gram (g).
-gram :: (Fractional f) => Value f MassDimension (UnitCons Gram POne UnitNil)
+gram :: (Fractional f) => Value f MassDimension '[ '(Gram, POne) ]
 gram = one
 
 --
 
 -- |One Kelvin (K).
-kelvin :: (Fractional f) => Value f TemperatureDimension (UnitCons Kelvin POne UnitNil)
+kelvin :: (Fractional f) => Value f TemperatureDimension '[ '(Kelvin, POne) ]
 kelvin = one
 
 --
 
 -- |One ampere (A).
-ampere :: (Fractional f) => Value f CurrentDimension (UnitCons Ampere POne UnitNil)
+ampere :: (Fractional f) => Value f CurrentDimension '[ '(Ampere, POne) ]
 ampere = one
 
 --
 
 -- |One candela (cd).
-candela :: (Fractional f) => Value f LuminousDimension (UnitCons Candela POne UnitNil)
+candela :: (Fractional f) => Value f LuminousDimension '[ '(Candela, POne) ]
 candela = one

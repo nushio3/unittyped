@@ -1,13 +1,13 @@
-{-# LANGUAGE DataKinds, ScopedTypeVariables #-}
+{-# LANGUAGE DataKinds, ScopedTypeVariables, TypeFamilies #-}
 -- |Module defining values with dimensions and units, and mathematical operations on those.
 module UnitTyped (
 	Convertible(..), Convertible'(..),
 	Value(..), ValueProxy(..), proxy',
 
-	NoDimension, Count,
+	Count,
 
-	UnitMap(..), Nat(..), Number(..),
-	UnitMerge, UnitEq, UnitNeg,
+	Nat(..), Number(..),
+	MapMerge, MapEq, MapNeg, MapTimes,
 	POne, PTwo, PThree, PFour, PFive, PSix,
 	NOne, NTwo, NThree, NFour,
 	
@@ -91,58 +91,66 @@ instance And False True False
 instance And True False False
 instance And False False False
 
--- |This is meant to be use as a datatype promoted to a kind.
--- It represents a map of dimensions to type level integers.
--- If two maps are equal, then the dimension they represent is the same.
-data UnitMap where
-	UnitNil :: UnitMap
-	UnitCons :: a -> Number -> UnitMap -> UnitMap
+--class Insert unit (value :: Number) (map :: [(*, Number)]) (result :: [(*, Number)]) | unit value map -> result where
+--instance Insert unit Zero map map
+--instance Insert unit (Pos i) map ('(unit, (Pos i)) ': map)
+--instance Insert unit (Neg i) map ('(unit, (Neg i)) ': map)
 
-class UnitAppend' q unit (value :: Number) (map :: UnitMap) (rest :: UnitMap) | q unit value map -> rest where
+class MapInsert' q unit (value :: Number) (map :: [(*, Number)]) (rest :: [(*, Number)]) | unit value map -> rest where
 
-instance UnitAppend' q unit value UnitNil (UnitCons unit value UnitNil)
+instance MapInsert' q unit value '[] '[ '(unit, value) ]
+
 instance (Add value value' sum) =>
-		 UnitAppend' () unit value (UnitCons unit value' rest) (UnitCons unit sum rest)
-instance (UnitAppend' q unit value rest rest', value'' ~ value', unit'' ~ unit') =>
-		 UnitAppend' q unit value (UnitCons unit' value' rest) (UnitCons unit'' value'' rest')
+		 MapInsert' () unit value ( '(unit, value') ': rest) ( '(unit, sum) ': rest)
 
-class UnitAppend unit (value :: Number) (map :: UnitMap) (rest :: UnitMap) | unit value map -> rest where
+instance (MapInsert' q unit value rest rest', value'' ~ value', unit'' ~ unit') =>
+		 MapInsert' q unit value ( '(unit', value') ': rest) ( '(unit'', value'') ': rest')
 
-instance UnitAppend' () unit value map rest => UnitAppend unit value map rest where
+class MapInsert unit (value :: Number) (map :: [(*, Number)]) (rest :: [(*, Number)]) where
+
+instance (MapInsert' () unit value map rest) => MapInsert unit value map rest where
 
 -- |States that merging the first map with the second map produces the third argument.
 -- Merging happens by summing the two values for the same key.
 -- Typically, dimensions are merged when multiplicing two values.
-class UnitMerge (map1 :: UnitMap) (map2 :: UnitMap) (rest :: UnitMap) | map1 map2 -> rest, map1 rest -> map2 where
+class MapMerge (map1 :: [(*, Number)]) (map2 :: [(*, Number)]) (rest :: [(*, Number)]) | map1 map2 -> rest, map1 rest -> map2 where
 
-instance UnitMerge UnitNil map2 map2
-instance (UnitMerge rest map2 rest2, UnitAppend unit value rest2 rec) => UnitMerge (UnitCons unit value rest) map2 rec
+instance MapMerge '[] map2 map2
+instance (MapMerge rest map2 rest2, MapInsert unit value rest2 rec) => MapMerge ('(unit, value) ': rest) map2 rec
+
+class MapTimes (value :: Number) (map :: [(*, Number)]) (result :: [(*, Number)]) | value map -> result where
+
+instance MapTimes Zero map '[]
+instance MapTimes (Pos One) map map
+instance (MapNeg map result) => MapTimes (Neg One) map result
+instance (MapTimes (Pos n) map rec, MapMerge map rec result) => MapTimes (Pos (Suc n)) map result
+instance (MapTimes (Neg n) map rec, MapNeg map neg_map, MapMerge neg_map rec result) => MapTimes (Neg (Suc n)) map result
 
 -- |States that 'rest' is the same dimension as 'map1', but all integers inverted.
 -- Used for division.
-class UnitNeg (map1 :: UnitMap) (rest :: UnitMap) | map1 -> rest where
+class MapNeg (map1 :: [(*, Number)]) (rest :: [(*, Number)]) | map1 -> rest where
 
-instance UnitNeg UnitNil UnitNil
-instance (Negate value value', UnitNeg rest rest') => UnitNeg (UnitCons unit value rest) (UnitCons unit value' rest')
+instance MapNeg '[] '[]
+instance (Negate value value', MapNeg rest rest') => MapNeg ('(unit, value) ': rest) ('(unit, value') ': rest')
 
-class UnitNull (map :: UnitMap) (b :: Bool) | map -> b where
+class MapNull (map :: [(*, Number)]) (b :: Bool) | map -> b where
 
-instance UnitNull UnitNil True
-instance (UnitNull rest b', IsZero value b, And b b' result) => UnitNull (UnitCons unit value rest) result
+instance MapNull '[] True
+instance (MapNull rest b', IsZero value b, And b b' result) => MapNull ('(unit, value) ': rest) result
 
 -- |'b' is equal to 'True' if and only if 'map1' and 'map2' represent the same dimension.
-class UnitEq (map1 :: UnitMap) (map2 :: UnitMap) (b :: Bool) | map1 map2 -> b where
+class MapEq (map1 :: [(*, Number)]) (map2 :: [(*, Number)]) (b :: Bool) | map1 map2 -> b where
 
-instance UnitEq a a True
-instance (UnitNeg map2 map2', UnitMerge map1 map2' sum, UnitNull sum b) => UnitEq map1 map2 b
+instance MapEq a a True
+instance (MapNeg map2 map2', MapMerge map1 map2' sum, MapNull sum b) => MapEq map1 map2 b
 
 -- |A value tagged with its dimension a and unit b.
-data Value f (a :: UnitMap) (b :: UnitMap) = Value f
-data ValueProxy (a :: UnitMap) b = ValueProxy
-data ValueProxy' (a :: UnitMap) (b :: UnitMap) = ValueProxy'
+data Value f (a :: [(*, Number)]) (b :: [(*, Number)]) = Value f
+data ValueProxy (a :: [(*, Number)]) b = ValueProxy
+data ValueProxy' (a :: [(*, Number)]) (b :: [(*, Number)]) = ValueProxy'
 data NumberProxy (a :: Number) = NumberProxy
 
-proxy' :: Value f a b -> ValueProxy' a b
+proxy' :: (Convertible' a b) => Value f a b -> ValueProxy' a b
 proxy' _ = ValueProxy'
 
 class FromNumber (a :: Number) where
@@ -163,12 +171,12 @@ instance FromNumber (Neg One) where
 instance (FromNumber (Neg a)) => FromNumber (Neg (Suc a)) where
 	fromNumber _ = -1 + (fromNumber (NumberProxy :: NumberProxy (Neg a)))
 
-class Convertible (a :: UnitMap) b | b -> a where
+class Convertible (a :: [(*, Number)]) b | b -> a where
 	factor :: (Fractional f) => ValueProxy a b -> f
 	showunit :: (Fractional f) => ValueProxy a b -> String
 
--- |Convertible is a class that models the fact that the unit 'b' has dimension 'a' (of kind 'UnitMap').
-class Convertible' (a :: UnitMap) (b :: UnitMap) where
+-- |Convertible is a class that models the fact that the unit 'b' has dimension 'a' (of kind '[(*, Number)]').
+class Convertible' (a :: [(*, Number)]) (b :: [(*, Number)]) where
 	-- |The multiplication factor to convert this unit between other units in the same dimension.
 	-- Only the ratio matters, which one is '1' is not important, as long as all are consistent.
 	factor' :: (Fractional f) => ValueProxy' a b -> f
@@ -176,24 +184,30 @@ class Convertible' (a :: UnitMap) (b :: UnitMap) where
 	-- The value should not be important for the output, its only here because it needs to be a class method.
 	showunit' :: (Fractional f) => ValueProxy' a b -> String
 
---instance Convertible' NoDimension UnitNil where
---	factor' _ = 1
---	showunit' _ = ""
-
-instance (UnitNull a True) => Convertible' a UnitNil where
+instance Convertible' '[] '[] where
 	factor' _ = 1
 	showunit' _ = ""
 
-instance (Convertible a b) => Convertible' a (UnitCons b POne UnitNil) where
+instance (Convertible' rest '[]) => Convertible' ('(a, Zero) ': rest) '[] where
+	factor' _ = 1
+	showunit' _ = ""
+
+--instance (MapNull a True) => Convertible' a '[] where
+--	factor' _ = 1
+--	showunit' _ = ""
+
+instance (Convertible a b) => Convertible' a ('(b, POne) ': '[]) where
 	factor' _ = factor (ValueProxy :: ValueProxy a b)
 	showunit' _ = showunit (ValueProxy :: ValueProxy a b)
 
-instance (FromNumber value, Convertible' a' rest, Convertible a'' unit, UnitNeg a'' a''', UnitMerge a''' a a') => Convertible' a (UnitCons unit value rest) where
+instance (FromNumber value, Convertible' rec_dimension rest, MapNeg unit_dimension neg_unit_dimension,
+		  MapTimes value neg_unit_dimension times_neg_unit_dimension, MapMerge dimension times_neg_unit_dimension rec_dimension,
+		  Convertible unit_dimension unit) => Convertible' dimension ('(unit, value) ': rest) where
 	factor' _ = let
-					rec = (factor' (ValueProxy' :: ValueProxy' a' rest))
-				in rec * (factor (ValueProxy :: ValueProxy a'' unit))
+					rec = 1 -- (factor' (ValueProxy' :: ValueProxy' rec_dimension rest))
+				in rec * (factor (ValueProxy :: ValueProxy unit_dimension unit))
 	showunit' _ = let
-					rec = (showunit' (ValueProxy' :: ValueProxy' a' rest))
+					rec = "" -- (showunit' (ValueProxy' :: ValueProxy' rec_dimension rest))
 					power = fromNumber (NumberProxy :: NumberProxy value)
 				  in (if null rec then "" else rec) ++ (if (not $ null rec) && (power /= 0) then "⋅" else "") ++ (if power /= 0 then (showunit (ValueProxy :: ValueProxy a'' unit)) ++ (if power /= 1 then "^" ++ show power else "") else "")
 
@@ -206,43 +220,43 @@ instance (Fractional f, Show f, Convertible' a b) => Show (Value f a b) where
 --
 -- >>> coerce (120 meter / second) (kilo meter / hour)
 -- 432.0 km/h
-coerce :: (Convertible' a b, Convertible' c d, Fractional f, UnitEq a c True) => Value f a b -> Value f c d -> Value f c d
+coerce :: (Convertible' a b, Convertible' c d, Fractional f, MapEq a c True) => Value f a b -> Value f c d -> Value f c d
 coerce u _ = let result = mkVal (factor' (proxy' u) * val u / factor' (proxy' result)) in result
 
 infixl 5 ~.
 infixl 8 ~>
 
 -- |Shorthand for 'coerce'.
-(~.) :: (Convertible' a b, Convertible' c d, Fractional f, UnitEq a c True) => Value f a b -> Value f c d -> Value f c d
+(~.) :: (Convertible' a b, Convertible' c d, Fractional f, MapEq a c True) => Value f a b -> Value f c d -> Value f c d
 (~.) = coerce
 
 infixl 5 `as`
 
 -- |Shorthand for 'coerce'.
-as :: (Convertible' a b, Convertible' c d, Fractional f, UnitEq a c True) => Value f a b -> Value f c d -> Value f c d
+as :: (Convertible' a b, Convertible' c d, Fractional f, MapEq a c True) => Value f a b -> Value f c d -> Value f c d
 as = coerce
 
 -- |Shorthand for 'flip' 'coerce'
-to :: (Convertible' a b, Convertible' c d, Fractional f, UnitEq a c True) => Value f c d -> Value f a b -> Value f c d
+to :: (Convertible' a b, Convertible' c d, Fractional f, MapEq a c True) => Value f c d -> Value f a b -> Value f c d
 to = flip coerce
 
 -- |Multiply two values, constructing a value with as dimension the product of the dimensions,
 -- and as unit the multplication of the units.
-(.*.) :: (Fractional f, Convertible' a b, Convertible' c d, UnitMerge a c u, UnitMerge b d s) => Value f a b -> Value f c d -> Value f u s
+(.*.) :: (Fractional f, Convertible' a b, Convertible' c d, MapMerge a c u, MapMerge b d s) => Value f a b -> Value f c d -> Value f u s
 a .*. b = mkVal (val a * val b)
 
 -- |Divide two values, constructing a value with as dimension the division of the dimension of the lhs by the dimension of the rhs,
 -- and the same for the units.
-(./.), per :: (Fractional f, Convertible' a b, Convertible' c d, UnitMerge a c' u, UnitNeg c c', UnitNeg d d', UnitMerge b d' s) => Value f a b -> Value f c d -> Value f u s
+(./.), per :: (Fractional f, Convertible' a b, Convertible' c d, MapMerge a c' u, MapNeg c c', MapNeg d d', MapMerge b d' s) => Value f a b -> Value f c d -> Value f u s
 a ./. b = mkVal (val a / val b)
 per = (./.)
 
 -- |Add two values with matching dimensions. Units are automatically resolved. The result will have the same unit as the lhs.
-(.+.) :: (Fractional f, Convertible' a b, Convertible' c d, UnitEq c a True) => Value f a b -> Value f c d -> Value f a b
+(.+.) :: (Fractional f, Convertible' a b, Convertible' c d, MapEq c a True) => Value f a b -> Value f c d -> Value f a b
 a .+. b = mkVal (val a + val (coerce b a))
 
 -- |Subtract two values with matching dimensions. Units are automatically resolved. The result will have the same unit as the lhs.
-(.-.) :: (Fractional f, Convertible' a b, Convertible' c d, UnitEq c a True) => Value f a b -> Value f c d -> Value f a b
+(.-.) :: (Fractional f, Convertible' a b, Convertible' c d, MapEq c a True) => Value f a b -> Value f c d -> Value f a b
 a .-. b = mkVal (val a - val (coerce b a))
 
 -- |Multiply a unit by a scalar.
@@ -291,7 +305,7 @@ pown2 = pow (NumberProxy :: NumberProxy NTwo)
 pown1 :: (Fractional f, Convertible' a b, Pow a b NOne c d) => Value f a b -> Value f c d
 pown1 = pow (NumberProxy :: NumberProxy NOne)
 
--- |Calculate @x^0@. Yes, this is always @one :: Value f NoDimension Count@.
+-- |Calculate @x^0@. Yes, this is always @one :: Value f ('[] Count@.
 pow0 :: (Fractional f, Convertible' a b, Pow a b Zero c d) => Value f a b -> Value f c d
 pow0 = pow (NumberProxy :: NumberProxy Zero)
 
@@ -319,10 +333,10 @@ pow5 = pow (NumberProxy :: NumberProxy PFive)
 pow6 :: (Fractional f, Convertible' a b, Pow a b PSix c d) => Value f a b -> Value f c d
 pow6 = pow (NumberProxy :: NumberProxy PSix)
 
-wrapB :: (Convertible' a b, Convertible' c d, UnitEq c a True) => (Rational -> Rational -> Bool) -> Value Rational a b -> Value Rational c d -> Bool
+wrapB :: (Convertible' a b, Convertible' c d, MapEq c a True) => (Rational -> Rational -> Bool) -> Value Rational a b -> Value Rational c d -> Bool
 wrapB op a b = op (val a) (val $ coerce b a)
 
-(.==.), (.<.), (.>.), (.<=.), (.>=.) :: (Convertible' a b, Convertible' c d, UnitEq c a True) => Value Rational a b -> Value Rational c d -> Bool
+(.==.), (.<.), (.>.), (.<=.), (.>=.) :: (Convertible' a b, Convertible' c d, MapEq c a True) => Value Rational a b -> Value Rational c d -> Bool
 -- |'==' for values. Only defined for values with rational contents. Can be used on any two values with the same dimension.
 (.==.) = wrapB (==)
 -- |'<' on values. Only defined for values with rational contents. Can be used on any two values with the same dimension.
@@ -338,15 +352,12 @@ wrapB op a b = op (val a) (val $ coerce b a)
 -- Counting. These are dimension-less values.
 ----
 
--- |This is for dimensionless values.
-type NoDimension = UnitNil
-
 --
 
 -- |One thing.
 data Count
 
-instance Convertible NoDimension Count where
+instance Convertible '[] Count where
 	factor _ = 1
 	showunit _ = "#"
 
@@ -355,10 +366,10 @@ instance Convertible NoDimension Count where
 class (Convertible' a b, Convertible' c d) => Pow' q a b (i :: Number) c d | q a b i -> c d where
 	_pow :: (Fractional f) => q -> NumberProxy i -> Value f a b -> Value f c d
 
-instance (Convertible' c d, UnitNull c True, UnitNull d True, Convertible' a b) => Pow' () a b Zero c d where
+instance (Convertible' c d, MapNull c True, MapNull d True, Convertible' a b) => Pow' () a b Zero c d where
 	_pow _ _ _ = one
 
-instance (Convertible' a b, Convertible' a'' b'', Pow' q a b i' a' b', Pre' (Pos i) i', UnitMerge a a' a'', UnitMerge b b' b'') => Pow' q a b (Pos i) a'' b'' where
+instance (Convertible' a b, Convertible' a'' b'', Pow' q a b i' a' b', Pre' (Pos i) i', MapMerge a a' a'', MapMerge b b' b'') => Pow' q a b (Pos i) a'' b'' where
 	_pow _ _ _ = one
 
 -- |'^' is not definable on 'Value's in general, as the result depends on the exponent.
