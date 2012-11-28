@@ -28,19 +28,19 @@ hbar :: Fractional f => Value f '[ '(Time, NOne), '(Length, PTwo), '(Mass, POne)
 hbar = coerce (h ./. (2 ~> UnitTyped.SI.Constants.pi)) (joule .*. second)
 
 -- |Atomic unit of charge (elementary charge)
-e :: (Fractional f) => Value f Charge '[ '(Coulomb, POne) ]
+e :: (Fractional f) => Value f Charge (Unit Coulomb)
 e = mkVal 1.6021765314e-19
 
 -- |Atomic unit of mass (electron mass)
-m_e :: (Fractional f) => Value f MassDimension '[ '((Kilo Gram), POne) ]
+m_e :: (Fractional f) => Value f MassDimension (Unit (Kilo Gram))
 m_e = mkVal 9.109382616e-31
 
 -- |Atomic unit of length
-a_0 :: (Fractional f) => Value f LengthDimension '[ '(Meter, POne) ]
+a_0 :: (Fractional f) => Value f LengthDimension (Unit Meter)
 a_0 = mkVal 0.529177210818e-10
 
 -- |Atomic unit of energy
-e_h :: (Fractional f) => Value f Energy '[ '(Joule, POne) ]
+e_h :: (Fractional f) => Value f Energy (Unit Joule)
 e_h = mkVal 4.3597441775e-18
 
 -- |Gas constant.
@@ -52,9 +52,9 @@ g :: (Fractional f) => Value f '[ '(Time, NTwo), '(Length, PThree), '(Mass, NOne
 g = mkVal 6.6738480e-11
 
 ---- |Planck mass
---m_P :: (Fractional f, Floating f) => Value f MassDimension '[ '((Kilo Gram), POne) ]
+--m_P :: (Fractional f, Floating f) => Value f MassDimension (Unit (Kilo Gram))
 --m_P = mkVal (sqrt (val $ hbar .*. c ./. g))
 
 ---- |Reduced Planck mass
---m_P' :: (Fractional f, Floating f) => Value f MassDimension '[ '((Kilo Gram), POne) ]
+--m_P' :: (Fractional f, Floating f) => Value f MassDimension (Unit (Kilo Gram))
 --m_P' = mkVal (sqrt (val $ hbar .*. c ./. ((Prelude.pi * 8) ~> g)))

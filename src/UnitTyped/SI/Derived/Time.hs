@@ -69,31 +69,31 @@ instance Convertible '[ '(Time, Neg One) ] Hertz where
 --
 
 -- |One minute (min.).
-minute :: (Fractional f) => Value f TimeDimension '[ '(Minute, POne) ]
+minute :: (Fractional f) => Value f TimeDimension (Unit Minute)
 minute = one
 
 -- |One hour (h).
-hour :: (Fractional f) => Value f TimeDimension '[ '(Hour, POne) ]
+hour :: (Fractional f) => Value f TimeDimension (Unit Hour)
 hour = one
 
 -- |One day (day).
-day :: (Fractional f) => Value f TimeDimension '[ '(Day, POne) ]
+day :: (Fractional f) => Value f TimeDimension (Unit Day)
 day = one
 
 -- |One year (yr).
-year :: (Fractional f) => Value f TimeDimension '[ '(Year, POne) ]
+year :: (Fractional f) => Value f TimeDimension (Unit Year)
 year = one
 
 -- |One Julian year (a).
-julian_year :: (Fractional f) => Value f TimeDimension '[ '(JulianYear, POne) ]
+julian_year :: (Fractional f) => Value f TimeDimension (Unit JulianYear)
 julian_year = one
 
 -- |One month (month).
-month :: (Fractional f) => Value f TimeDimension '[ '(Month, POne) ]
+month :: (Fractional f) => Value f TimeDimension (Unit Month)
 month = one
 
 -- |One herz (Hz).
-hertz :: (Fractional f) => Value f '[ '(Time, NOne) ] '[ '(Hertz, POne) ]
+hertz :: (Fractional f) => Value f '[ '(Time, NOne) ] (Unit Hertz)
 hertz = one
 
 --
@@ -101,19 +101,19 @@ hertz = one
 -- Interaction with Data.Time
 
 -- |Convert a 'DT.DiffTime' into a value in seconds.
-fromDiffTime :: (Fractional f) => DT.DiffTime -> Value f TimeDimension '[ '(Second, POne) ]
+fromDiffTime :: (Fractional f) => DT.DiffTime -> Value f TimeDimension (Unit Second)
 fromDiffTime = mkVal . fromRational . toRational
 
 -- |Convert a 'DTC.NominalDiffTime' into a value in seconds.
-fromNominalDiffTime :: (Fractional f) => DTC.NominalDiffTime -> Value f TimeDimension '[ '(Second, POne) ]
+fromNominalDiffTime :: (Fractional f) => DTC.NominalDiffTime -> Value f TimeDimension (Unit Second)
 fromNominalDiffTime = mkVal . fromRational . toRational
 
 -- |Convert the number of seconds since a given 'DTC.UTCTime' into a value in seconds.
-since :: (Fractional f) => DTC.UTCTime -> IO (Value f TimeDimension '[ '(Second, POne) ])
+since :: (Fractional f) => DTC.UTCTime -> IO (Value f TimeDimension (Unit Second))
 since time = do { t <- DTC.getCurrentTime
 		        ; return (fromNominalDiffTime (DTC.diffUTCTime t time) `as` second)
 		        }
 
 -- |Calculate the number of seconds since a given date and\/or time, parsed according to the first argument.
-since_str :: (Fractional f) => String -> String -> IO (Value f TimeDimension '[ '(Second, POne) ])
+since_str :: (Fractional f) => String -> String -> IO (Value f TimeDimension (Unit Second))
 since_str fmt str = since (DTF.readTime SL.defaultTimeLocale fmt str)

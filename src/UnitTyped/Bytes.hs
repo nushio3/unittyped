@@ -14,28 +14,28 @@ import UnitTyped.SI
 -- |An of amount of data.
 data Data
 -- |The dimension representing @Data^1@.
-type DataUnit = '[ '(Data, POne) ]
+type DataDimension = '[ '(Data, POne) ]
 
 -- |A byte of data.
 data Byte
 
-instance Convertible DataUnit Byte where
+instance Convertible DataDimension Byte where
 	factor _ = 1
 	showunit _ = "B"
 
 -- |A bit of data.
 data Bit
 
-instance Convertible DataUnit Bit where
+instance Convertible DataDimension Bit where
 	factor _ = 0.125
 	showunit _ = "b"
 
 --
 
 -- |One byte.
-byte :: (Fractional f) => Value f DataUnit '[ '(Byte, POne) ]
+byte :: (Fractional f) => Value f DataDimension (Unit Byte)
 byte = one
 
 -- |One bit.
-bit :: (Fractional f) => Value f DataUnit '[ '(Bit, POne) ]
+bit :: (Fractional f) => Value f DataDimension (Unit Bit)
 bit = one

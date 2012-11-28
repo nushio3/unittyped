@@ -1,7 +1,7 @@
 {-# LANGUAGE DataKinds, ScopedTypeVariables, TypeFamilies #-}
 -- |Module defining values with dimensions and units, and mathematical operations on those.
 module UnitTyped (
-	Convertible(..), Convertible'(..),
+	Convertible(..), Convertible'(..), Unit(..),
 	Value(..), ValueProxy(..), proxy',
 
 	Count,
@@ -148,12 +148,12 @@ instance (MapNeg map2 map2', MapMerge map1 map2' sum, MapNull sum b) => MapEq ma
 
 -- |A value tagged with its dimension a and unit b.
 data Value f (a :: [(*, Number)]) (b :: [(*, Number)]) = Value f
-data ValueProxy (a :: [(*, Number)]) b = ValueProxy
-data ValueProxy' (a :: [(*, Number)]) (b :: [(*, Number)]) = ValueProxy'
-data NumberProxy (a :: Number) = NumberProxy
+data ValueProxy (a :: [(*, Number)]) b
+data ValueProxy' (a :: [(*, Number)]) (b :: [(*, Number)])
+data NumberProxy (a :: Number)
 
 proxy' :: (Convertible' a b) => Value f a b -> ValueProxy' a b
-proxy' _ = ValueProxy'
+proxy' _ = undefined
 
 class FromNumber (a :: Number) where
 	fromNumber :: NumberProxy a -> Integer
@@ -165,26 +165,29 @@ instance FromNumber (Pos One) where
 	fromNumber _ = 1
 
 instance (FromNumber (Pos a)) => FromNumber (Pos (Suc a)) where
-	fromNumber _ = 1 + (fromNumber (NumberProxy :: NumberProxy (Pos a)))
+	fromNumber _ = 1 + (fromNumber (undefined :: NumberProxy (Pos a)))
 
 instance FromNumber (Neg One) where
 	fromNumber _ = -1
 
 instance (FromNumber (Neg a)) => FromNumber (Neg (Suc a)) where
-	fromNumber _ = -1 + (fromNumber (NumberProxy :: NumberProxy (Neg a)))
+	fromNumber _ = -1 + (fromNumber (undefined :: NumberProxy (Neg a)))
 
+-- |Convertible is a class that models the fact that the simple unit 'b' has dimension 'a'.
 class Convertible (a :: [(*, Number)]) b | b -> a where
 	factor :: (Fractional f) => ValueProxy a b -> f
-	showunit :: (Fractional f) => ValueProxy a b -> String
+	showunit :: ValueProxy a b -> String
 
--- |Convertible is a class that models the fact that the unit 'b' has dimension 'a' (of kind '[(*, Number)]').
+type Unit a = '[ '(a, POne) ]
+
+-- |Convertible' is a class that models the fact that the composed unit 'b' has dimension 'a'.
 class Convertible' (a :: [(*, Number)]) (b :: [(*, Number)]) where
 	-- |The multiplication factor to convert this unit between other units in the same dimension.
 	-- Only the ratio matters, which one is '1' is not important, as long as all are consistent.
 	factor' :: (Fractional f) => ValueProxy' a b -> f
 	-- |String representation of a unit. The boolean determines wether to use brackets (only important for the denomiator).
 	-- The value should not be important for the output, its only here because it needs to be a class method.
-	showunit' :: (Fractional f) => ValueProxy' a b -> String
+	showunit' :: ValueProxy' a b -> String
 
 --instance Convertible' '[] '[] where
 --	factor' _ = 1
@@ -199,20 +202,32 @@ instance (MapNull a True) => Convertible' a '[] where
 --	showunit' _ = ""
 
 instance (Convertible a b, MapEq a a' True) => Convertible' a' ('(b, POne) ': '[]) where
-	factor' _ = factor (ValueProxy :: ValueProxy a b)
-	showunit' _ = showunit (ValueProxy :: ValueProxy a b)
+	factor' _ = factor (undefined :: ValueProxy a b)
+	showunit' _ = showunit (undefined :: ValueProxy a b)
 
 instance (FromNumber value, Convertible' rec_dimension rest, MapNeg unit_dimension neg_unit_dimension,
 		  MapTimes value neg_unit_dimension times_neg_unit_dimension, MapMerge times_neg_unit_dimension dimension rec_dimension,
 		  Convertible unit_dimension unit) => Convertible' dimension ('(unit, value) ': rest) where
 	factor' _ = let
-					rec = factor' (ValueProxy' :: ValueProxy' rec_dimension rest)
-				in rec * ((factor (ValueProxy :: ValueProxy unit_dimension unit)) ^^ (fromNumber (NumberProxy :: NumberProxy value)))
+					rec = factor' (undefined :: ValueProxy' rec_dimension rest)
+				in rec * ((factor (undefined :: ValueProxy unit_dimension unit)) ^^ (fromNumber (undefined :: NumberProxy value)))
 	showunit' _ = let
-					rec = showunit' (ValueProxy' :: ValueProxy' rec_dimension rest)
-					power = fromNumber (NumberProxy :: NumberProxy value)
-				  in (if null rec then "" else rec) ++ (if (not $ null rec) && (power /= 0) then "⋅" else "") ++ (if power /= 0 then (showunit (ValueProxy :: ValueProxy a'' unit)) ++ (if power /= 1 then "^" ++ show power else "") else "")
+					rec = showunit' (undefined :: ValueProxy' rec_dimension rest)
+					power = fromNumber (undefined :: NumberProxy value)
+				  in (if null rec then "" else rec) ++ (if (not $ null rec) && (power /= 0) then "⋅" else "") ++ (if power /= 0 then (showunit (undefined :: ValueProxy a'' unit)) ++ if power /= 1 then show_power power else "" else "")
 
+show_power 1 = "¹"
+show_power 2 = "²"
+show_power 3 = "³"
+show_power 4 = "⁴"
+show_power 5 = "⁵"
+show_power 6 = "⁶"
+show_power 7 = "⁷"
+show_power 8 = "⁸"
+show_power 9 = "⁹"
+show_power n
+	| n < 0 = "⁻" ++ (show_power (-n))
+	| otherwise = (show_power (n `div` 10)) ++ (show_power (n `mod` 10))
 
 instance (Fractional f, Show f, Convertible' a b) => Show (Value f a b) where
 	show u = show (val u) ++ " " ++ showunit' (proxy' u)
@@ -300,43 +315,43 @@ cubic x = x .*. x .*. x
 
 -- |Calculate @x^(-3)@.
 pown3 :: (Fractional f, Convertible' a b, Pow a b NThree c d) => Value f a b -> Value f c d
-pown3 = pow (NumberProxy :: NumberProxy NThree)
+pown3 = pow (undefined :: NumberProxy NThree)
 
 -- |Calculate @x^(-2)@.
 pown2 :: (Fractional f, Convertible' a b, Pow a b NTwo c d) => Value f a b -> Value f c d
-pown2 = pow (NumberProxy :: NumberProxy NTwo)
+pown2 = pow (undefined :: NumberProxy NTwo)
 
 -- |Calculate @x^(-1)@.
 pown1 :: (Fractional f, Convertible' a b, Pow a b NOne c d) => Value f a b -> Value f c d
-pown1 = pow (NumberProxy :: NumberProxy NOne)
+pown1 = pow (undefined :: NumberProxy NOne)
 
 -- |Calculate @x^0@. Yes, this is always @one :: Value f ('[] Count@.
 pow0 :: (Fractional f, Convertible' a b, Pow a b Zero c d) => Value f a b -> Value f c d
-pow0 = pow (NumberProxy :: NumberProxy Zero)
+pow0 = pow (undefined :: NumberProxy Zero)
 
 -- |Calculate @x^1@.
 pow1 :: (Fractional f, Convertible' a b, Pow a b POne c d) => Value f a b -> Value f c d
-pow1 = pow (NumberProxy :: NumberProxy POne)
+pow1 = pow (undefined :: NumberProxy POne)
 
 -- |Calculate @x^2@.
 pow2 :: (Fractional f, Convertible' a b, Pow a b PTwo c d) => Value f a b -> Value f c d
-pow2 = pow (NumberProxy :: NumberProxy PTwo)
+pow2 = pow (undefined :: NumberProxy PTwo)
 
 -- |Calculate @x^3@.
 pow3 :: (Fractional f, Convertible' a b, Pow a b PThree c d) => Value f a b -> Value f c d
-pow3 = pow (NumberProxy :: NumberProxy PThree)
+pow3 = pow (undefined :: NumberProxy PThree)
 
 -- |Calculate @x^4@.
 pow4 :: (Fractional f, Convertible' a b, Pow a b PFour c d) => Value f a b -> Value f c d
-pow4 = pow (NumberProxy :: NumberProxy PFour)
+pow4 = pow (undefined :: NumberProxy PFour)
 
 -- |Calculate @x^5@.
 pow5 :: (Fractional f, Convertible' a b, Pow a b PFive c d) => Value f a b -> Value f c d
-pow5 = pow (NumberProxy :: NumberProxy PFive)
+pow5 = pow (undefined :: NumberProxy PFive)
 
 -- |Calculate @x^6@.
 pow6 :: (Fractional f, Convertible' a b, Pow a b PSix c d) => Value f a b -> Value f c d
-pow6 = pow (NumberProxy :: NumberProxy PSix)
+pow6 = pow (undefined :: NumberProxy PSix)
 
 wrapB :: (Convertible' a b, Convertible' c d, MapEq c a True) => (Rational -> Rational -> Bool) -> Value Rational a b -> Value Rational c d -> Bool
 wrapB op a b = op (val a) (val $ coerce b a)

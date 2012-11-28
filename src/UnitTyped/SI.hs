@@ -132,35 +132,35 @@ mole = one
 --
 
 -- |One meter (m).
-meter :: (Fractional f) => Value f LengthDimension '[ '(Meter, POne) ]
+meter :: (Fractional f) => Value f LengthDimension (Unit Meter)
 meter = one
 
 --
 
 -- |One second (s).
-second :: (Fractional f) => Value f TimeDimension '[ '(Second, POne) ]
+second :: (Fractional f) => Value f TimeDimension (Unit Second)
 second = one
 
 --
 
 -- |One gram (g).
-gram :: (Fractional f) => Value f MassDimension '[ '(Gram, POne) ]
+gram :: (Fractional f) => Value f MassDimension (Unit Gram)
 gram = one
 
 --
 
 -- |One Kelvin (K).
-kelvin :: (Fractional f) => Value f TemperatureDimension '[ '(Kelvin, POne) ]
+kelvin :: (Fractional f) => Value f TemperatureDimension (Unit Kelvin)
 kelvin = one
 
 --
 
 -- |One ampere (A).
-ampere :: (Fractional f) => Value f CurrentDimension '[ '(Ampere, POne) ]
+ampere :: (Fractional f) => Value f CurrentDimension (Unit Ampere)
 ampere = one
 
 --
 
 -- |One candela (cd).
-candela :: (Fractional f) => Value f LuminousDimension '[ '(Candela, POne) ]
+candela :: (Fractional f) => Value f LuminousDimension (Unit Candela)
 candela = one
