@@ -60,7 +60,7 @@ instance Convertible LengthDimension NauticalMile where
 ----
 
 -- |Area: @Length^2@.
-type AreaUnit = UnitCons Length (Pos (Suc One)) UnitNil
+type AreaUnit = '[ '(Length, PTwo) ]
 
 -- |Area, often used in nuclear physics (b).
 data Barn
@@ -74,7 +74,7 @@ instance Convertible AreaUnit Barn where
 ----
 
 -- |Volume: @Length^3@.
-type VolumeUnit = UnitCons Length (Pos (Suc (Suc One))) UnitNil
+type VolumeUnit = '[ '(Length, PThree) ]
 
 -- |Liter, unit of volume (L).
 data Liter
@@ -100,47 +100,47 @@ instance Convertible VolumeUnit FluidOunce where
 --
 
 -- |One mile (mile).
-mile :: (Fractional f) => Value f LengthDimension (UnitCons Mile POne UnitNil)
+mile :: (Fractional f) => Value f LengthDimension '[ '(Mile, POne) ]
 mile = one
 
 -- |One inch (in).
-inch :: (Fractional f) => Value f LengthDimension (UnitCons Inch POne UnitNil)
+inch :: (Fractional f) => Value f LengthDimension '[ '(Inch, POne) ]
 inch = one
 
 -- |One yard (yd).
-yard :: (Fractional f) => Value f LengthDimension (UnitCons Yard POne UnitNil)
+yard :: (Fractional f) => Value f LengthDimension '[ '(Yard, POne) ]
 yard = one
 
 -- |One foot (ft).
-foot :: (Fractional f) => Value f LengthDimension (UnitCons Foot POne UnitNil)
+foot :: (Fractional f) => Value f LengthDimension '[ '(Foot, POne) ]
 foot = one
 
-ångström, angstrom :: (Fractional f) => Value f LengthDimension (UnitCons Ångström POne UnitNil)
+ångström, angstrom :: (Fractional f) => Value f LengthDimension '[ '(Ångström, POne) ]
 -- |One ångström (Å).
 ångström = one
 -- |One ångström, for those with bad UTF-8 support (Å).
 angstrom = one
 
 -- |One nautical mile (M).
-nautical_mile :: (Fractional f) => Value f LengthDimension (UnitCons NauticalMile POne UnitNil)
+nautical_mile :: (Fractional f) => Value f LengthDimension '[ '(NauticalMile, POne) ]
 nautical_mile = one
 
 --
 
 -- |One barn (b).
-barn :: (Fractional f) => Value f AreaUnit (UnitCons Barn POne UnitNil)
+barn :: (Fractional f) => Value f AreaUnit '[ '(Barn, POne) ]
 barn = one
 
 --
 
 -- |One liter (L).
-liter :: (Fractional f) => Value f VolumeUnit (UnitCons Liter POne UnitNil)
+liter :: (Fractional f) => Value f VolumeUnit '[ '(Liter, POne) ]
 liter = one
 
 -- |One gallon (gallon).
-gallon :: (Fractional f) => Value f VolumeUnit (UnitCons Gallon POne UnitNil)
+gallon :: (Fractional f) => Value f VolumeUnit '[ '(Gallon, POne) ]
 gallon = one
 
 -- |One fluid ounce (fl oz).
-fluid_ounce :: (Fractional f) => Value f VolumeUnit (UnitCons FluidOunce POne UnitNil)
+fluid_ounce :: (Fractional f) => Value f VolumeUnit '[ '(FluidOunce, POne) ]
 fluid_ounce = one

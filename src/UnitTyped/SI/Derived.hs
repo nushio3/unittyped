@@ -4,15 +4,15 @@ module UnitTyped.SI.Derived where
 
 import UnitTyped
 import UnitTyped.SI
--- import UnitTyped.SI.Derived.Time
--- import UnitTyped.SI.Meta
+import UnitTyped.SI.Derived.Time
+import UnitTyped.SI.Meta
 
 import Data.Ratio
 
 -- |Speed. @Length^1 Time^-1@.
-type Speed = UnitCons Time NOne (UnitCons Length POne UnitNil)
+type Speed = '[ '(Time, NOne), '(Length, POne) ]
 -- |Acceleration. @Length^1 Time^-2@.
-type Acceleration = UnitCons Time NTwo (UnitCons Length POne UnitNil)
+type Acceleration = '[ '(Time, NTwo), '(Length, POne) ]
 
 -- |Derived unit of speed (kn).
 data Knot
@@ -23,8 +23,8 @@ instance Convertible Speed Knot where
 
 --
 
--- |Force. @Length^1 Time^-1 Mass^1@.
-type Force = UnitCons Time NTwo (UnitCons Mass POne (UnitCons Length POne UnitNil))
+-- |Force. @Length^1 Time^-2 Mass^1@.
+type Force = '[ '(Time, NTwo), '(Mass, POne), '(Length, POne) ]
 -- |Unit of force (N).
 data Newton
 
@@ -35,7 +35,7 @@ instance Convertible Force Newton where
 --
 
 -- |Energy. @Length^2 Time^-2 Mass^1@.
-type Energy = UnitCons Time NTwo (UnitCons Mass POne (UnitCons Length PTwo UnitNil))
+type Energy = '[ '(Time, NTwo), '(Mass, POne), '(Length, PTwo) ]
 
 -- |Unit of energy (J).
 data Joule
@@ -54,7 +54,7 @@ instance Convertible Energy Ev where
 --
 
 -- |Energy. @Length^2 Time^-3 Mass^1@.
-type Power = UnitCons Time NThree (UnitCons Length PTwo (UnitCons Mass POne UnitNil))
+type Power = '[ '(Time, NThree), '(Length, PTwo), '(Mass, POne) ]
 
 -- |Unit of power (W).
 data Watt
@@ -66,7 +66,7 @@ instance Convertible Power Watt where
 --
 
 -- |Energy. @Length^-1 Time^-2 Mass^1@.
-type Pressure = UnitCons Time NTwo (UnitCons Mass POne (UnitCons Length NOne UnitNil))
+type Pressure = '[ '(Time, NTwo), '(Mass, POne), '(Length, NOne) ]
 
 -- |Unit of pressure (Pa).
 data Pascal
@@ -92,7 +92,7 @@ instance Convertible Pressure MmHg where
 --
 
 -- |Electric charge. @Time^1 Current^1@.
-type Charge = (UnitCons Time POne (UnitCons Current POne UnitNil))
+type Charge = '[ '(Time, POne), '(Current, POne) ]
 
 -- |Unit of chage (C).
 data Coulomb
@@ -104,7 +104,7 @@ instance Convertible Charge Coulomb where
 --
 
 -- |Electric potential. @Time^-3 Current^-1 Mass^1 Length^2@.
-type Potential = (UnitCons Current NOne (UnitCons Mass POne (UnitCons Length PTwo (UnitCons Time NThree UnitNil))))
+type Potential = '[ '(Current, NOne), '(Mass, POne), '(Length, PTwo), '(Time, NThree) ]
 
 -- |Unit of potential (V).
 data Volt
@@ -116,7 +116,7 @@ instance Convertible Potential Volt where
 --
 
 -- |Electric capacitance. @Current^2 Mass^-1 Length^2 Time^4@.
-type Capacitance = (UnitCons Current PTwo (UnitCons Mass NOne (UnitCons Length NTwo (UnitCons Time PFour UnitNil))))
+type Capacitance = '[ '(Current, PTwo), '(Mass, NOne), '(Length, NTwo), '(Time, PFour) ]
 
 -- |Unit of capacitance (F).
 data Farad
@@ -128,7 +128,7 @@ instance Convertible Capacitance Farad where
 --
 
 -- |Electric resistance. @Current^-2 Time^-3 Length^2 Mass^1@.
-type Resistance = (UnitCons Current NTwo (UnitCons Time NThree (UnitCons Length PTwo (UnitCons Mass POne UnitNil))))
+type Resistance = '[ '(Current, NTwo), '(Time, NThree), '(Length, PTwo), '(Mass, POne) ]
 
 -- |Unit of resistance (Ω).
 data Ohm
@@ -140,7 +140,7 @@ instance Convertible Resistance Ohm where
 --
 
 -- |Electric conductance. @Current^2 Mass^-1 Length^-2 Time^3@.
-type Conductance = (UnitCons Current PTwo (UnitCons Mass NOne (UnitCons Length NTwo (UnitCons Time PThree UnitNil))))
+type Conductance = '[ '(Current, PTwo), '(Mass, NOne), '(Length, NTwo), '(Time, PThree) ]
 
 -- |Unit of conductance (S).
 data Siemens
@@ -152,7 +152,7 @@ instance Convertible Conductance Siemens where
 --
 
 -- |Magnetic flux. @Current^-1 Length^2 Mass^1 Time^-2@.
-type Flux = (UnitCons Current NOne (UnitCons Length PTwo (UnitCons Mass POne (UnitCons Time NTwo UnitNil))))
+type Flux = '[ '(Current, NOne), '(Length, PTwo), '(Mass, POne), '(Time, NTwo) ]
 
 -- |Unit of magnetic flux (Wb).
 data Weber
@@ -164,7 +164,7 @@ instance Convertible Flux Weber where
 --
 
 -- |Magnetic field strength. @Time^-2 Mass^1 Current^-1@.
-type FluxDensity = UnitCons Time NTwo (UnitCons Mass POne (UnitCons Current NOne UnitNil))
+type FluxDensity = '[ '(Time, NTwo), '(Mass, POne), '(Current, NOne) ]
 
 -- |Unit of magnetic field strength (T).
 data Tesla
@@ -176,7 +176,7 @@ instance Convertible FluxDensity Tesla where
 --
 
 -- |Inductance. @Current^-2 Time^-2 Mass^1 Length^2@.
-type Inductance = (UnitCons Current NTwo (UnitCons Time NTwo (UnitCons Mass POne (UnitCons Length PTwo UnitNil))))
+type Inductance = '[ '(Current, NTwo), '(Time, NTwo), '(Mass, POne), '(Length, PTwo) ]
 
 -- |Unit of Inductance (H).
 data Henry
@@ -188,69 +188,69 @@ instance Convertible Inductance Henry where
 --
 
 -- |One knot.
-knot :: (Fractional f) => Value f Speed (UnitCons Knot POne UnitNil)
+knot :: (Fractional f) => Value f Speed '[ '(Knot, POne) ]
 knot = one
 
 -- |One newton.
-newton :: (Fractional f) => Value f Force (UnitCons Newton POne UnitNil)
+newton :: (Fractional f) => Value f '[ '(Time, NTwo), '(Mass, POne), '(Length, POne)] '[ '(Newton, POne) ]
 newton = one
 
 -- |One joule.
-joule :: (Fractional f) => Value f Energy (UnitCons Joule POne UnitNil)
+joule :: (Fractional f) => Value f Energy '[ '(Joule, POne) ]
 joule = one
 
 -- |One eV.
-eV :: (Fractional f) => Value f Energy (UnitCons Ev POne UnitNil)
+eV :: (Fractional f) => Value f Energy '[ '(Ev, POne) ]
 eV = one
 
 -- |One kwh.
---kwh :: (Fractional f) => Value f Energy (UnitCons (Mul (Kilo Watt) Hour) POne UnitNil)
---kwh = one
+kwh :: (Fractional f) => Value f Energy '[ '(Kilo Watt, POne), '(Hour, POne) ]
+kwh = one
 
 -- |One watt.
-watt :: (Fractional f) => Value f Power (UnitCons Watt POne UnitNil)
+watt :: (Fractional f) => Value f Power '[ '(Watt, POne) ]
 watt = one
 
 -- |One pascal.
-pascal :: (Fractional f) => Value f Pressure (UnitCons Pascal POne UnitNil)
+pascal :: (Fractional f) => Value f Pressure '[ '(Pascal, POne) ]
 pascal = one
 
 -- |One bar.
-bar :: (Fractional f) => Value f Pressure (UnitCons Bar POne UnitNil)
+bar :: (Fractional f) => Value f Pressure '[ '(Bar, POne) ]
 bar = one
 
 -- |One mmHg.
-mmHg :: (Fractional f) => Value f Pressure (UnitCons MmHg POne UnitNil)
+mmHg :: (Fractional f) => Value f Pressure '[ '(MmHg, POne) ]
 mmHg = one
 
 -- |One coulomb.
-coulomb :: (Fractional f) => Value f Charge (UnitCons Coulomb POne UnitNil)
+coulomb :: (Fractional f) => Value f Charge '[ '(Coulomb, POne) ]
 coulomb = one
 
 -- |One volt.
-volt :: (Fractional f) => Value f Potential (UnitCons Volt POne UnitNil)
+volt :: (Fractional f) => Value f Potential '[ '(Volt, POne) ]
 volt = one
 
 -- |One farad.
-farad :: (Fractional f) => Value f Capacitance (UnitCons Farad POne UnitNil)
+farad :: (Fractional f) => Value f Capacitance '[ '(Farad, POne) ]
 farad = one
 
 -- |One ohm.
-ohm :: (Fractional f) => Value f Resistance (UnitCons Ohm POne UnitNil)
+ohm :: (Fractional f) => Value f Resistance '[ '(Ohm, POne) ]
 ohm = one
 
 -- |One siemens.
-siemens :: (Fractional f) => Value f Conductance (UnitCons Siemens POne UnitNil)
+siemens :: (Fractional f) => Value f Conductance '[ '(Siemens, POne) ]
 siemens = one
 
 -- |One weber.
-weber :: (Fractional f) => Value f Flux (UnitCons Weber POne UnitNil)
+weber :: (Fractional f) => Value f Flux '[ '(Weber, POne) ]
 weber = one
 
 -- |One tesla.
-tesla :: (Fractional f) => Value f FluxDensity (UnitCons Tesla POne UnitNil)
+tesla :: (Fractional f) => Value f FluxDensity '[ '(Tesla, POne) ]
 tesla = one
 
 -- |One henry.
-henry :: (Fractional f) => Value f Inductance (UnitCons Henry POne UnitNil)
+henry :: (Fractional f) => Value f Inductance '[ '(Henry, POne) ]
 henry = one

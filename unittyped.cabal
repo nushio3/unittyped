@@ -26,19 +26,29 @@ source-repository this
 
 library
   build-depends:   base >= 4.6 && < 4.7, time, old-locale
-  extensions:      FlexibleInstances,
-                   UndecidableInstances,
-                   FunctionalDependencies,
-                   KindSignatures,
-                   ScopedTypeVariables,
-                   FlexibleContexts,
-                   OverlappingInstances,
-                   GADTs,
-                   EmptyDataDecls,
-                   TypeOperators,
+  extensions:      FlexibleInstances
+                   UndecidableInstances
+                   FunctionalDependencies
+                   KindSignatures
+                   ScopedTypeVariables
+                   FlexibleContexts
+                   OverlappingInstances
+                   GADTs
+                   EmptyDataDecls
+                   TypeOperators
                    RankNTypes
-  exposed-modules: UnitTyped,
+  exposed-modules: UnitTyped
                    UnitTyped.SI
+                   UnitTyped.SI.Derived
+                   UnitTyped.SI.Derived.Time
+                   UnitTyped.SI.Derived.Mass
+                   UnitTyped.SI.Derived.Length
+                   UnitTyped.SI.Derived.Count
+                   UnitTyped.SI.Meta
+                   UnitTyped.SI.Show
+                   UnitTyped.SI.Constants
+                   UnitTyped.Bytes
+                   UnitTyped.NoPrelude
   hs-source-dirs:  src
 
 Test-Suite test-si

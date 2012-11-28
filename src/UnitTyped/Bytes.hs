@@ -14,7 +14,7 @@ import UnitTyped.SI
 -- |An of amount of data.
 data Data
 -- |The dimension representing @Data^1@.
-type DataUnit = UnitCons Data (Pos One) UnitNil
+type DataUnit = '[ '(Data, POne) ]
 
 -- |A byte of data.
 data Byte
@@ -33,9 +33,9 @@ instance Convertible DataUnit Bit where
 --
 
 -- |One byte.
-byte :: (Fractional f) => Value f DataUnit (UnitCons Byte POne UnitNil)
+byte :: (Fractional f) => Value f DataUnit '[ '(Byte, POne) ]
 byte = one
 
 -- |One bit.
-bit :: (Fractional f) => Value f DataUnit (UnitCons Bit POne UnitNil)
+bit :: (Fractional f) => Value f DataUnit '[ '(Bit, POne) ]
 bit = one

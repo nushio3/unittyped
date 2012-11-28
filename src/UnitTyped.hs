@@ -7,7 +7,7 @@ module UnitTyped (
 	Count,
 
 	Nat(..), Number(..),
-	MapMerge, MapEq, MapNeg, MapTimes,
+	MapMerge, MapEq, MapNeg, MapTimes, MapStrip,
 	POne, PTwo, PThree, PFour, PFive, PSix,
 	NOne, NTwo, NThree, NFour,
 	
@@ -16,7 +16,7 @@ module UnitTyped (
 
 	square, cubic,
 
-	pown3, pown2, pown1, pow0, pow1, pow2, pow3, pow4, pow5, pow6
+	{- pown3, pown2, pown1, pow0, pow1, pow2, pow3, pow4, pow5, pow6 -}
 
 ) where
 
@@ -91,24 +91,26 @@ instance And False True False
 instance And True False False
 instance And False False False
 
---class Insert unit (value :: Number) (map :: [(*, Number)]) (result :: [(*, Number)]) | unit value map -> result where
---instance Insert unit Zero map map
---instance Insert unit (Pos i) map ('(unit, (Pos i)) ': map)
---instance Insert unit (Neg i) map ('(unit, (Neg i)) ': map)
+class MapStrip (map :: [(*, Number)]) (result :: [(*, Number)]) | map -> result where
+
+instance MapStrip '[] '[]
+instance (MapStrip rec rec_result) => MapStrip ('(unit, Zero) ': rec) rec_result
+instance (MapStrip rec rec_result) => MapStrip ('(unit, (Pos value)) ': rec) ('(unit, (Pos value)) ': rec_result)
+instance (MapStrip rec rec_result) => MapStrip ('(unit, (Neg value)) ': rec) ('(unit, (Neg value)) ': rec_result)
 
 class MapInsert' q unit (value :: Number) (map :: [(*, Number)]) (rest :: [(*, Number)]) | unit value map -> rest where
 
 instance MapInsert' q unit value '[] '[ '(unit, value) ]
 
-instance (Add value value' sum) =>
-		 MapInsert' () unit value ( '(unit, value') ': rest) ( '(unit, sum) ': rest)
+instance (Add value value' sum, unit' ~ unit) =>
+		 MapInsert' () unit value ( '(unit, value') ': rec) ( '(unit', sum) ': rec)
 
 instance (MapInsert' q unit value rest rest', value'' ~ value', unit'' ~ unit') =>
 		 MapInsert' q unit value ( '(unit', value') ': rest) ( '(unit'', value'') ': rest')
 
 class MapInsert unit (value :: Number) (map :: [(*, Number)]) (rest :: [(*, Number)]) where
 
-instance (MapInsert' () unit value map rest) => MapInsert unit value map rest where
+instance (MapInsert' () unit value map inserted, MapStrip inserted stripped) => MapInsert unit value map stripped where
 
 -- |States that merging the first map with the second map produces the third argument.
 -- Merging happens by summing the two values for the same key.
@@ -184,11 +186,11 @@ class Convertible' (a :: [(*, Number)]) (b :: [(*, Number)]) where
 	-- The value should not be important for the output, its only here because it needs to be a class method.
 	showunit' :: (Fractional f) => ValueProxy' a b -> String
 
-instance Convertible' '[] '[] where
-	factor' _ = 1
-	showunit' _ = ""
+--instance Convertible' '[] '[] where
+--	factor' _ = 1
+--	showunit' _ = ""
 
-instance (Convertible' rest '[]) => Convertible' ('(a, Zero) ': rest) '[] where
+instance (MapNull a True) => Convertible' a '[] where
 	factor' _ = 1
 	showunit' _ = ""
 
@@ -196,18 +198,18 @@ instance (Convertible' rest '[]) => Convertible' ('(a, Zero) ': rest) '[] where
 --	factor' _ = 1
 --	showunit' _ = ""
 
-instance (Convertible a b) => Convertible' a ('(b, POne) ': '[]) where
+instance (Convertible a b, MapEq a a' True) => Convertible' a' ('(b, POne) ': '[]) where
 	factor' _ = factor (ValueProxy :: ValueProxy a b)
 	showunit' _ = showunit (ValueProxy :: ValueProxy a b)
 
 instance (FromNumber value, Convertible' rec_dimension rest, MapNeg unit_dimension neg_unit_dimension,
-		  MapTimes value neg_unit_dimension times_neg_unit_dimension, MapMerge dimension times_neg_unit_dimension rec_dimension,
+		  MapTimes value neg_unit_dimension times_neg_unit_dimension, MapMerge times_neg_unit_dimension dimension rec_dimension,
 		  Convertible unit_dimension unit) => Convertible' dimension ('(unit, value) ': rest) where
 	factor' _ = let
-					rec = 1 -- (factor' (ValueProxy' :: ValueProxy' rec_dimension rest))
-				in rec * (factor (ValueProxy :: ValueProxy unit_dimension unit))
+					rec = factor' (ValueProxy' :: ValueProxy' rec_dimension rest)
+				in rec * ((factor (ValueProxy :: ValueProxy unit_dimension unit)) ^^ (fromNumber (NumberProxy :: NumberProxy value)))
 	showunit' _ = let
-					rec = "" -- (showunit' (ValueProxy' :: ValueProxy' rec_dimension rest))
+					rec = showunit' (ValueProxy' :: ValueProxy' rec_dimension rest)
 					power = fromNumber (NumberProxy :: NumberProxy value)
 				  in (if null rec then "" else rec) ++ (if (not $ null rec) && (power /= 0) then "⋅" else "") ++ (if power /= 0 then (showunit (ValueProxy :: ValueProxy a'' unit)) ++ (if power /= 1 then "^" ++ show power else "") else "")
 
@@ -239,6 +241,9 @@ as = coerce
 -- |Shorthand for 'flip' 'coerce'
 to :: (Convertible' a b, Convertible' c d, Fractional f, MapEq a c True) => Value f c d -> Value f a b -> Value f c d
 to = flip coerce
+
+infixl 7 .*., ./.
+infixl 6 .+., .-.
 
 -- |Multiply two values, constructing a value with as dimension the product of the dimensions,
 -- and as unit the multplication of the units.
@@ -283,15 +288,15 @@ one = mkVal 1
 -- 
 -- >>> 100 . square meter `as` square yard
 -- 119.59900463010803 yd⋅yd⋅#
-square :: (Fractional f, Convertible' a b, Pow a b PTwo c d) => Value f a b -> Value f c d
-square = pow (NumberProxy :: NumberProxy PTwo)
+square :: (Fractional f, MapMerge c c u, MapMerge d d s, Convertible' c d) => Value f c d -> Value f u s
+square x = x .*. x
 
 -- |Calculate the third power of a value. Identical to pow3, reads better on units:
 -- 
 -- >>> 1 . cubic inch `as` mili liter
 -- 16.387063999999995 mL
-cubic :: (Fractional f, Convertible' a b, Pow a b PThree c d) => Value f a b -> Value f c d
-cubic = pow (NumberProxy :: NumberProxy PThree)
+cubic   :: (Fractional f, MapMerge a c u, MapMerge b d s, MapMerge c c a, MapMerge d d b, Convertible' a b, Convertible' c d) => Value f c d -> Value f u s
+cubic x = x .*. x .*. x
 
 -- |Calculate @x^(-3)@.
 pown3 :: (Fractional f, Convertible' a b, Pow a b NThree c d) => Value f a b -> Value f c d
@@ -335,6 +340,8 @@ pow6 = pow (NumberProxy :: NumberProxy PSix)
 
 wrapB :: (Convertible' a b, Convertible' c d, MapEq c a True) => (Rational -> Rational -> Bool) -> Value Rational a b -> Value Rational c d -> Bool
 wrapB op a b = op (val a) (val $ coerce b a)
+
+infixl 4 .==., .<., .>., .<=., .>=.
 
 (.==.), (.<.), (.>.), (.<=.), (.>=.) :: (Convertible' a b, Convertible' c d, MapEq c a True) => Value Rational a b -> Value Rational c d -> Bool
 -- |'==' for values. Only defined for values with rational contents. Can be used on any two values with the same dimension.

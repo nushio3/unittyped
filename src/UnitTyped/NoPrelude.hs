@@ -16,6 +16,7 @@ module UnitTyped.NoPrelude ((*), (/), (+), (-),
 
 import UnitTyped
 import UnitTyped.SI
+import UnitTyped.SI.Meta
 import UnitTyped.SI.Derived.Count
 
 import qualified Prelude
@@ -25,45 +26,25 @@ infixl 6 +, -
 infixl 7 *, /
 
 -- |See '.*.'
-(*) :: (Fractional f, Convertible' a b, Convertible' c d, UnitMerge a c u, UnitMerge b d s) => Value f a b -> Value f c d -> Value f u s
+(*) :: (Fractional f, Convertible' a b, Convertible' c d, MapMerge a c u, MapMerge b d s) => Value f a b -> Value f c d -> Value f u s
 (*) = (.*.)
 
 -- |See './.'
-(/) :: (Fractional f, Convertible' a b, Convertible' c d, UnitMerge a c' u, UnitNeg c c', UnitNeg d d', UnitMerge b d' s) => Value f a b -> Value f c d -> Value f u s
+(/) :: (Fractional f, Convertible' a b, Convertible' c d, MapMerge a c' u, MapNeg c c', MapNeg d d', MapMerge b d' s) => Value f a b -> Value f c d -> Value f u s
 (/) = (./.)
 
 -- |See '.+.'
-(+) :: (Fractional f, Convertible' a b, Convertible' c d, UnitEq c a True) => Value f a b -> Value f c d -> Value f a b
+(+) :: (Fractional f, Convertible' a b, Convertible' c d, MapEq c a True) => Value f a b -> Value f c d -> Value f a b
 (+) = (.+.)
 
 -- |See '.-.'
-(-) :: (Fractional f, Convertible' a b, Convertible' c d, UnitEq c a True) => Value f a b -> Value f c d -> Value f a b
+(-) :: (Fractional f, Convertible' a b, Convertible' c d, MapEq c a True) => Value f a b -> Value f c d -> Value f a b
 (-) = (.-.)
 
-instance (Fractional f, Convertible' a b, t ~ Value f a b) => (Prelude.Num (Value f a b -> t)) where
-	fromInteger i x = Prelude.fromInteger i ~> x
-	(+) = error "This should not happen"
-	(*) = error "This should not happen"
-	abs = error "This should not happen"
-	signum = error "This should not happen"
-
-instance (Fractional f, Convertible' a b, t ~ Value f a b) => (Fractional (Value f a b -> t)) where
-	fromRational r x = Prelude.fromRational r ~> x
-
-instance (Fractional f, Convertible a (m b), c ~ (Value f a b -> Value f a (UnitCons (m b) POne UnitNil))) => (Prelude.Num ((Value f a b -> Value f a (UnitCons (m b) POne UnitNil)) -> c)) where
-	fromInteger i x y = Prelude.fromInteger i ~> x y
-	(+) = error "This should not happen"
-	(*) = error "This should not happen"
-	abs = error "This should not happen"
-	signum = error "This should not happen"
-
-instance (Fractional f, Convertible a (m b), c ~ (Value f a b -> Value f a (UnitCons (m b) POne UnitNil))) => (Fractional ((Value f a b -> Value f a (UnitCons (m b) POne UnitNil)) -> c)) where
-	fromRational i x y = Prelude.fromRational i ~> x y
-
-wrap1 :: (Floating f, Convertible' NoDimension b) => (f -> f) -> Value f NoDimension b -> Value f NoDimension UnitNil
+wrap1 :: (Floating f, Convertible' '[] b) => (f -> f) -> Value f '[] b -> Value f '[] '[]
 wrap1 op v = op (val $ coerce v rad) ~> one
 
-sin, cos, tan :: (Floating f, Convertible' NoDimension b) => Value f NoDimension b -> Value f NoDimension UnitNil
+sin, cos, tan :: (Floating f, Convertible' '[] b) => Value f '[] b -> Value f '[] '[]
 -- |Calculate the sinus of a value. Works on 'Degree' and 'Radian'.
 sin = wrap1 Prelude.sin
 -- |Calculate the cosinus of a value. Works on 'Degree' and 'Radian'.
@@ -71,10 +52,10 @@ cos = wrap1 Prelude.cos
 -- |Calculate the tangens of a value. Works on 'Degree' and 'Radian'.
 tan = wrap1 Prelude.tan
 
-wrap2 :: (Floating f) => (f -> f) -> Value f NoDimension UnitNil -> Value f NoDimension (UnitCons Radian POne UnitNil)
+wrap2 :: (Floating f) => (f -> f) -> Value f '[] '[] -> Value f '[] '[ '(Radian, POne) ]
 wrap2 op v = op (val v) ~> one
 
-asin, acos, atan :: (Floating f) => Value f NoDimension UnitNil -> Value f NoDimension (UnitCons Radian POne UnitNil)
+asin, acos, atan :: (Floating f) => Value f '[] '[] -> Value f '[] '[ '(Radian, POne) ]
 -- |Calculate the arcsinus of a value. Always computes 'Radian's.
 asin = wrap2 Prelude.asin
 -- |Calculate the arccosinus of a value. Always computes 'Radian's.
@@ -84,7 +65,7 @@ atan = wrap2 Prelude.atan
 
 infixl 5 ==, <, <=, >, >=
 
-(==), (<), (<=), (>), (>=) :: (Convertible' a b, Convertible' c d, UnitEq c a 'True) => Value Prelude.Rational a b -> Value Prelude.Rational c d -> Bool
+(==), (<), (<=), (>), (>=) :: (Convertible' a b, Convertible' c d, MapEq c a 'True) => Value Prelude.Rational a b -> Value Prelude.Rational c d -> Bool
 -- |See '.==.'
 (==) = (.==.)
 -- |See '.<.'

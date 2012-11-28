@@ -12,78 +12,78 @@ import UnitTyped.SI
 -- |Percentage: 1% == 0.001
 data Percentage
 
-instance Convertible NoDimension Percentage where
+instance Convertible '[] Percentage where
 	factor _ = 0.01
 	showunit _ = "%"
 
 -- |Per mille: 1‰ == 0.001
 data Permil
 
-instance Convertible NoDimension Permil where
+instance Convertible '[] Permil where
 	factor _ = 0.001
 	showunit _ = "‰"
 
 -- |Parts per million: 1 ppm == 0.1^6
 data Ppm
 
-instance Convertible NoDimension Ppm where
+instance Convertible '[] Ppm where
 	factor _ = 0.1^6
 	showunit _ = "ppm"
 
 -- |Parts per billion: 1 ppb == 0.1^9
 data Ppb
 
-instance Convertible NoDimension Ppb where
+instance Convertible '[] Ppb where
 	factor _ = 0.1^9
 	showunit _ = "ppb"
 
 -- |Parts per trillion: 1 ppt == 0.1^12
 data Ppt
 
-instance Convertible NoDimension Ppt where
+instance Convertible '[] Ppt where
 	factor _ = 0.1^12
 	showunit _ = "ppt"
 
 -- |Angles are dimensionless, these are radians (rad).
 data Radian
 
-instance Convertible NoDimension Radian where
+instance Convertible '[] Radian where
 	factor _ = 1
 	showunit _ = "rad"
 
 -- |Angles are dimensionless, these are degrees (˚).
 data Degree
 
-instance Convertible NoDimension Degree where
+instance Convertible '[] Degree where
 	factor _ = 3.141592653589793 / 180
 	showunit _ = "°"
 
 --
 
 -- |One percent (%).
-percent :: (Fractional f) => Value f NoDimension (UnitCons Percentage POne UnitNil)
+percent :: (Fractional f) => Value f '[] '[ '(Percentage, POne) ]
 percent = one
 
 -- |One per mille (‰).
-permil :: (Fractional f) => Value f NoDimension (UnitCons Permil POne UnitNil)
+permil :: (Fractional f) => Value f '[] '[ '(Permil, POne) ]
 permil = one
 
 -- |One part per million (ppm).
-ppm :: (Fractional f) => Value f NoDimension (UnitCons Ppm POne UnitNil)
+ppm :: (Fractional f) => Value f '[] '[ '(Ppm, POne) ]
 ppm = one
 
 -- |One part per billion (ppb).
-ppb :: (Fractional f) => Value f NoDimension (UnitCons Ppb POne UnitNil)
+ppb :: (Fractional f) => Value f '[] '[ '(Ppb, POne) ]
 ppb = one
 
 -- |One part per trillion (ppt).
-ppt :: (Fractional f) => Value f NoDimension (UnitCons Ppt POne UnitNil)
+ppt :: (Fractional f) => Value f '[] '[ '(Ppt, POne) ]
 ppt = one
 
 -- |One rad (rad).
-rad :: (Fractional f) => Value f NoDimension (UnitCons Radian POne UnitNil)
+rad :: (Fractional f) => Value f '[] '[ '(Radian, POne) ]
 rad = one
 
 -- |One degree (˚).
-deg :: (Fractional f) => Value f NoDimension (UnitCons Degree POne UnitNil)
+deg :: (Fractional f) => Value f '[] '[ '(Degree, POne) ]
 deg = one
