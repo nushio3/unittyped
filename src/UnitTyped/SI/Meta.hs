@@ -5,8 +5,6 @@
 -- >>> 42 kilo meter
 -- 42.0 km
 module UnitTyped.SI.Meta (
-	MetaUnit,
-
 	Deca, Hecto, Kilo, Mega, Giga, Tera, Peta, Exa, Zetta, Yotta,
 	Deci, Centi, Mili, Micro, Nano, Pico, Femto, Atto, Zepto, Yocto,
 

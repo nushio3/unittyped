@@ -1,10 +1,8 @@
 {-# LANGUAGE DataKinds #-}
 -- |A module renaming operators on values to names that would normally collide with the "Prelude".
--- E.g. '+', '*', 'sin'.
+-- E.g. '+', '*', 'sin'. This allows, for example:
 -- 
--- Also adds instances for 'Num' that makes it possible to write:
--- 
--- >>> 1 meter / second
+-- >>> 1 ~> meter / second
 module UnitTyped.NoPrelude ((*), (/), (+), (-),
 	sin, cos, tan,
 	asin, acos, atan,

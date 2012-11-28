@@ -2,7 +2,7 @@
 -- |Module defining values with dimensions and units, and mathematical operations on those.
 module UnitTyped (
 	Convertible(..), Convertible'(..), Unit(..),
-	Value(..), ValueProxy(..), proxy',
+	Value, ValueProxy, ValueProxy', proxy',
 
 	Count,
 
@@ -91,6 +91,7 @@ instance And False True False
 instance And True False False
 instance And False False False
 
+-- |Remove all 'Zero' values from a map.
 class MapStrip (map :: [(*, Number)]) (result :: [(*, Number)]) | map -> result where
 
 instance MapStrip '[] '[]
@@ -120,6 +121,7 @@ class MapMerge (map1 :: [(*, Number)]) (map2 :: [(*, Number)]) (rest :: [(*, Num
 instance MapMerge '[] map2 map2
 instance (MapMerge rest map2 rest2, MapInsert unit value rest2 rec) => MapMerge ('(unit, value) ': rest) map2 rec
 
+-- |Multiply all the values in a map with a specified value.
 class MapTimes (value :: Number) (map :: [(*, Number)]) (result :: [(*, Number)]) | value map -> result where
 
 instance MapTimes Zero map '[]
@@ -148,12 +150,16 @@ instance (MapNeg map2 map2', MapMerge map1 map2' sum, MapNull sum b) => MapEq ma
 
 -- |A value tagged with its dimension a and unit b.
 data Value f (a :: [(*, Number)]) (b :: [(*, Number)]) = Value f
+-- |Used as fake argument for the 'Convertible' class.
 data ValueProxy (a :: [(*, Number)]) b
+-- |Used as fake argument for the 'Convertible'' class.
 data ValueProxy' (a :: [(*, Number)]) (b :: [(*, Number)])
+-- |Used as fake argument containing a type-level integer.
 data NumberProxy (a :: Number)
 
+-- |Obtain a 'ValueProxy'' from a 'Value'.
 proxy' :: (Convertible' a b) => Value f a b -> ValueProxy' a b
-proxy' _ = undefined
+proxy' _ = error "proxy'"
 
 class FromNumber (a :: Number) where
 	fromNumber :: NumberProxy a -> Integer
@@ -173,11 +179,15 @@ instance FromNumber (Neg One) where
 instance (FromNumber (Neg a)) => FromNumber (Neg (Suc a)) where
 	fromNumber _ = -1 + (fromNumber (undefined :: NumberProxy (Neg a)))
 
--- |Convertible is a class that models the fact that the simple unit 'b' has dimension 'a'.
+-- |Convertible is a class that models the fact that the base unit 'b' has dimension 'a'.
 class Convertible (a :: [(*, Number)]) b | b -> a where
+	-- |The multiplication factor to convert this base unit between other units in the same dimension.
+	-- Only the ratio matters, which one is '1' is not important, as long as all are consistent.
 	factor :: (Fractional f) => ValueProxy a b -> f
+	-- |String representation of a base unit.
 	showunit :: ValueProxy a b -> String
 
+-- |Shorthand to create a composed unit containing just one base unit.
 type Unit a = '[ '(a, POne) ]
 
 -- |Convertible' is a class that models the fact that the composed unit 'b' has dimension 'a'.
@@ -185,21 +195,12 @@ class Convertible' (a :: [(*, Number)]) (b :: [(*, Number)]) where
 	-- |The multiplication factor to convert this unit between other units in the same dimension.
 	-- Only the ratio matters, which one is '1' is not important, as long as all are consistent.
 	factor' :: (Fractional f) => ValueProxy' a b -> f
-	-- |String representation of a unit. The boolean determines wether to use brackets (only important for the denomiator).
-	-- The value should not be important for the output, its only here because it needs to be a class method.
+	-- |String representation of a unit.
 	showunit' :: ValueProxy' a b -> String
-
---instance Convertible' '[] '[] where
---	factor' _ = 1
---	showunit' _ = ""
 
 instance (MapNull a True) => Convertible' a '[] where
 	factor' _ = 1
 	showunit' _ = ""
-
---instance (MapNull a True) => Convertible' a '[] where
---	factor' _ = 1
---	showunit' _ = ""
 
 instance (Convertible a b, MapEq a a' True) => Convertible' a' ('(b, POne) ': '[]) where
 	factor' _ = factor (undefined :: ValueProxy a b)
@@ -235,7 +236,7 @@ instance (Fractional f, Show f, Convertible' a b) => Show (Value f a b) where
 -- |coerce something of a specific dimension into any other unit in the same dimension.
 -- The second argument is only used for its type, but it allows nice syntax like:
 --
--- >>> coerce (120 meter / second) (kilo meter / hour)
+-- >>> coerce (120 ~> meter / second) (kilo meter / hour)
 -- 432.0 km/h
 coerce :: (Convertible' a b, Convertible' c d, Fractional f, MapEq a c True) => Value f a b -> Value f c d -> Value f c d
 coerce u _ = let result = mkVal (factor' (proxy' u) * val u / factor' (proxy' result)) in result
@@ -301,14 +302,14 @@ one = mkVal 1
 
 -- |Calculate the square of a value. Identical to pow2, reads better on units:
 -- 
--- >>> 100 . square meter `as` square yard
+-- >>> 100 ~> square meter `as` square yard
 -- 119.59900463010803 yd⋅yd⋅#
 square :: (Fractional f, MapMerge c c u, MapMerge d d s, Convertible' c d) => Value f c d -> Value f u s
 square x = x .*. x
 
 -- |Calculate the third power of a value. Identical to pow3, reads better on units:
 -- 
--- >>> 1 . cubic inch `as` mili liter
+-- >>> 1 ~> cubic inch `as` mili liter
 -- 16.387063999999995 mL
 cubic   :: (Fractional f, MapMerge a c u, MapMerge b d s, MapMerge c c a, MapMerge d d b, Convertible' a b, Convertible' c d) => Value f c d -> Value f u s
 cubic x = x .*. x .*. x
