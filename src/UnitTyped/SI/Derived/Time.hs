@@ -1,4 +1,16 @@
+{-# LANGUAGE FlexibleInstances #-}
+{-# LANGUAGE UndecidableInstances #-}
+{-# LANGUAGE FunctionalDependencies #-}
+{-# LANGUAGE KindSignatures #-}
+{-# LANGUAGE ScopedTypeVariables #-}
+{-# LANGUAGE FlexibleContexts #-}
+{-# LANGUAGE OverlappingInstances #-}
+{-# LANGUAGE GADTs #-}
+{-# LANGUAGE EmptyDataDecls #-}
+{-# LANGUAGE TypeOperators #-}
+{-# LANGUAGE RankNTypes #-}
 {-# LANGUAGE DataKinds #-}
+
 -- |Units derived from the SI unit for time: 'second'.
 module UnitTyped.SI.Derived.Time where
 

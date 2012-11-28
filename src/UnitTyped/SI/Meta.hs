@@ -1,4 +1,16 @@
-{-# LANGUAGE DataKinds, PolyKinds #-}
+{-# LANGUAGE FlexibleInstances #-}
+{-# LANGUAGE UndecidableInstances #-}
+{-# LANGUAGE FunctionalDependencies #-}
+{-# LANGUAGE KindSignatures #-}
+{-# LANGUAGE ScopedTypeVariables #-}
+{-# LANGUAGE FlexibleContexts #-}
+{-# LANGUAGE OverlappingInstances #-}
+{-# LANGUAGE GADTs #-}
+{-# LANGUAGE EmptyDataDecls #-}
+{-# LANGUAGE TypeOperators #-}
+{-# LANGUAGE RankNTypes #-}
+{-# LANGUAGE DataKinds #-}
+
 -- |This module creates the SI prefixes for units.
 -- This module allows syntax like:
 -- 
@@ -22,7 +34,7 @@ import UnitTyped
 -- Meta-units
 ----
 
-data MetaProxy m a b
+data MetaProxy (m :: * -> *) (a :: [(*, Number)]) b
 
 class (Convertible a b) => MetaUnit (m :: * -> *) a b where
 	metafactor :: (Fractional f) => MetaProxy m a b -> f

@@ -1,4 +1,16 @@
+{-# LANGUAGE FlexibleInstances #-}
+{-# LANGUAGE UndecidableInstances #-}
+{-# LANGUAGE FunctionalDependencies #-}
+{-# LANGUAGE KindSignatures #-}
+{-# LANGUAGE ScopedTypeVariables #-}
+{-# LANGUAGE FlexibleContexts #-}
+{-# LANGUAGE OverlappingInstances #-}
+{-# LANGUAGE GADTs #-}
+{-# LANGUAGE EmptyDataDecls #-}
+{-# LANGUAGE TypeOperators #-}
+{-# LANGUAGE RankNTypes #-}
 {-# LANGUAGE DataKinds #-}
+
 -- |A module with dimensions and units derived from combining SI units.
 module UnitTyped.SI.Derived where
 
