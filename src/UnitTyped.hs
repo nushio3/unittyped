@@ -229,17 +229,17 @@ instance (FromNumber value, Convertible' rec_dimension rest, MapNeg unit_dimensi
 					power = fromNumber (undefined :: NumberProxy value)
 				  in (if null rec then "" else rec) ++ (if (not $ null rec) && (power /= 0) then "⋅" else "") ++ (if power /= 0 then (showunit (undefined :: ValueProxy a'' unit)) ++ if power /= 1 then show_power power else "" else "")
 
-show_power 1 = "¹"
-show_power 2 = "²"
-show_power 3 = "³"
-show_power 4 = "⁴"
-show_power 5 = "⁵"
-show_power 6 = "⁶"
-show_power 7 = "⁷"
-show_power 8 = "⁸"
-show_power 9 = "⁹"
+show_power 1 = "\185"
+show_power 2 = "\178"
+show_power 3 = "\179"
+show_power 4 = "\8308"
+show_power 5 = "\8309"
+show_power 6 = "\8310"
+show_power 7 = "\8311"
+show_power 8 = "\8312"
+show_power 9 = "\8313"
 show_power n
-	| n < 0 = "⁻" ++ (show_power (-n))
+	| n < 0 = "\8315" ++ (show_power (-n))
 	| otherwise = (show_power (n `div` 10)) ++ (show_power (n `mod` 10))
 
 instance (Fractional f, Show f, Convertible' a b) => Show (Value f a b) where
