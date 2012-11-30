@@ -227,20 +227,20 @@ instance (FromNumber value, Convertible' rec_dimension rest, MapNeg unit_dimensi
 	showunit' _ = let
 					rec = showunit' (undefined :: ValueProxy' rec_dimension rest)
 					power = fromNumber (undefined :: NumberProxy value)
-				  in (if null rec then "" else rec) ++ (if (not $ null rec) && (power /= 0) then "⋅" else "") ++ (if power /= 0 then (showunit (undefined :: ValueProxy a'' unit)) ++ if power /= 1 then show_power power else "" else "")
+				  in (if null rec then "" else rec) ++ (if (not $ null rec) && (power /= 0) then "⋅" else "") ++ (if power /= 0 then (showunit (undefined :: ValueProxy a'' unit)) ++ if power /= 1 then map toSuperScript $ show power else "" else "")
 
-show_power 1 = "\185"
-show_power 2 = "\178"
-show_power 3 = "\179"
-show_power 4 = "\8308"
-show_power 5 = "\8309"
-show_power 6 = "\8310"
-show_power 7 = "\8311"
-show_power 8 = "\8312"
-show_power 9 = "\8313"
-show_power n
-	| n < 0 = "\8315" ++ (show_power (-n))
-	| otherwise = (show_power (n `div` 10)) ++ (show_power (n `mod` 10))
+toSuperScript '0' = '\8304'
+toSuperScript '1' = '\185'
+toSuperScript '2' = '\178'
+toSuperScript '3' = '\179'
+toSuperScript '4' = '\8308'
+toSuperScript '5' = '\8309'
+toSuperScript '6' = '\8310'
+toSuperScript '7' = '\8311'
+toSuperScript '8' = '\8312'
+toSuperScript '9' = '\8313'
+toSuperScript '-' = '\8315'
+toSuperScript x = x
 
 instance (Fractional f, Show f, Convertible' a b) => Show (Value f a b) where
 	show u = show (val u) ++ " " ++ showunit' (proxy' u)
