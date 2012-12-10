@@ -14,7 +14,7 @@
 -- |Module defining values with dimensions and units, and mathematical operations on those.
 module UnitTyped (
         Convertible(..), Convertible'(..), Unit(..),
-        Value, ValueProxy, ValueProxy', proxy',
+        Value(..), ValueProxy, ValueProxy', proxy',
 
         Count,
 

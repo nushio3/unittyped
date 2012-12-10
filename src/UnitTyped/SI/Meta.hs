@@ -251,114 +251,114 @@ instance (Convertible a b) => MetaUnit Yobi a b where
 
 -- |Take a unit and return one deca(unit).
 deca :: (Convertible a b, Fractional f) => Value f a (Unit b) -> Value f a (Unit (Deca b))
-deca _ = one
+deca (Value x) = (Value x)
 
 -- |Take a unit and return one hecto(unit).
 hecto :: (Convertible a b, Fractional f) => Value f a (Unit b) -> Value f a (Unit (Hecto b))
-hecto _ = one
+hecto (Value x) = (Value x)
 
 -- |Take a unit and return one kilo(unit).
 kilo :: (Convertible a b, Fractional f) => Value f a (Unit b) -> Value f a (Unit (Kilo b))
-kilo _ = one
+kilo (Value x) = (Value x)
 
 -- |Take a unit and return one mega(unit).
 mega :: (Convertible a b, Fractional f) => Value f a (Unit b) -> Value f a (Unit (Mega b))
-mega _ = one
+mega (Value x) = (Value x)
 
 -- |Take a unit and return one giga(unit).
 giga :: (Convertible a b, Fractional f) => Value f a (Unit b) -> Value f a (Unit (Giga b))
-giga _ = one
+giga (Value x) = (Value x)
 
 -- |Take a unit and return one tera(unit).
 tera :: (Convertible a b, Fractional f) => Value f a (Unit b) -> Value f a (Unit (Tera b))
-tera _ = one
+tera (Value x) = (Value x)
 
 -- |Take a unit and return one peta(unit).
 peta :: (Convertible a b, Fractional f) => Value f a (Unit b) -> Value f a (Unit (Peta b))
-peta _ = one
+peta (Value x) = (Value x)
 
 -- |Take a unit and return one exa(unit).
 exa :: (Convertible a b, Fractional f) => Value f a (Unit b) -> Value f a (Unit (Exa b))
-exa _ = one
+exa (Value x) = (Value x)
 
 -- |Take a unit and return one zetta(unit).
 zetta :: (Convertible a b, Fractional f) => Value f a (Unit b) -> Value f a (Unit (Zetta b))
-zetta _ = one
+zetta (Value x) = (Value x)
 
 -- |Take a unit and return one yotta(unit).
 yotta :: (Convertible a b, Fractional f) => Value f a (Unit b) -> Value f a (Unit (Yotta b))
-yotta _ = one
+yotta (Value x) = (Value x)
 
 -- |Take a unit and return one deci(unit).
 deci :: (Convertible a b, Fractional f) => Value f a (Unit b) -> Value f a (Unit (Deci b))
-deci _ = one
+deci (Value x) = (Value x)
 
 -- |Take a unit and return one centi(unit).
 centi :: (Convertible a b, Fractional f) => Value f a (Unit b) -> Value f a (Unit (Centi b))
-centi _ = one
+centi (Value x) = (Value x)
 
 -- |Take a unit and return one mili(unit).
 mili :: (Convertible a b, Fractional f) => Value f a (Unit b) -> Value f a (Unit (Mili b))
-mili _ = one
+mili (Value x) = (Value x)
 
 -- |Take a unit and return one micro(unit).
 micro :: (Convertible a b, Fractional f) => Value f a (Unit b) -> Value f a (Unit (Micro b))
-micro _ = one
+micro (Value x) = (Value x)
 
 -- |Take a unit and return one nano(unit).
 nano :: (Convertible a b, Fractional f) => Value f a (Unit b) -> Value f a (Unit (Nano b))
-nano _ = one
+nano (Value x) = (Value x)
 
 -- |Take a unit and return one pico(unit).
 pico :: (Convertible a b, Fractional f) => Value f a (Unit b) -> Value f a (Unit (Pico b))
-pico _ = one
+pico (Value x) = (Value x)
 
 -- |Take a unit and return one femto(unit).
 femto :: (Convertible a b, Fractional f) => Value f a (Unit b) -> Value f a (Unit (Femto b))
-femto _ = one
+femto (Value x) = (Value x)
 
 -- |Take a unit and return one atto(unit).
 atto :: (Convertible a b, Fractional f) => Value f a (Unit b) -> Value f a (Unit (Atto b))
-atto _ = one
+atto (Value x) = (Value x)
 
 -- |Take a unit and return one zepto(unit).
 zepto :: (Convertible a b, Fractional f) => Value f a (Unit b) -> Value f a (Unit (Zepto b))
-zepto _ = one
+zepto (Value x) = (Value x)
 
 -- |Take a unit and return one yocto(unit).
 yocto :: (Convertible a b, Fractional f) => Value f a (Unit b) -> Value f a (Unit (Yocto b))
-yocto _ = one
+yocto (Value x) = (Value x)
 
 --
 
 -- |Take a unit and return one kibi(unit).
 kibi :: (Convertible a b, Fractional f) => Value f a (Unit b) -> Value f a (Unit (Kibi b))
-kibi _ = one
+kibi (Value x) = (Value x)
 
 -- |Take a unit and return one mebi(unit).
 mebi :: (Convertible a b, Fractional f) => Value f a (Unit b) -> Value f a (Unit (Mebi b))
-mebi _ = one
+mebi (Value x) = (Value x)
 
 -- |Take a unit and return one gibi(unit).
 gibi :: (Convertible a b, Fractional f) => Value f a (Unit b) -> Value f a (Unit (Gibi b))
-gibi _ = one
+gibi (Value x) = (Value x)
 
 -- |Take a unit and return one tebi(unit).
 tebi :: (Convertible a b, Fractional f) => Value f a (Unit b) -> Value f a (Unit (Tebi b))
-tebi _ = one
+tebi (Value x) = (Value x)
 
 -- |Take a unit and return one pebi(unit).
 pebi :: (Convertible a b, Fractional f) => Value f a (Unit b) -> Value f a (Unit (Pebi b))
-pebi _ = one
+pebi (Value x) = (Value x)
 
 -- |Take a unit and return one exbi(unit).
 exbi :: (Convertible a b, Fractional f) => Value f a (Unit b) -> Value f a (Unit (Exbi b))
-exbi _ = one
+exbi (Value x) = (Value x)
 
 -- |Take a unit and return one zebi(unit).
 zebi :: (Convertible a b, Fractional f) => Value f a (Unit b) -> Value f a (Unit (Zebi b))
-zebi _ = one
+zebi (Value x) = (Value x)
 
 -- |Take a unit and return one yobi(unit).
 yobi :: (Convertible a b, Fractional f) => Value f a (Unit b) -> Value f a (Unit (Yobi b))
-yobi _ = one
+yobi (Value x) = (Value x)

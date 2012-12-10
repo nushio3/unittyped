@@ -56,12 +56,16 @@ t26 = True -- pown3 meter * pow3 meter == pown1 meter * pow1 meter
 t27 = True -- pown3 meter * pow3 meter == pown2 meter * pow2 meter
 t28 = True -- pow0 meter == count
 
+t29 = 3e9 *| gram == mega solarMass
+  where
+    solarMass = 3 *| kilo gram
+
 runTest :: Bool -> (Bool, Integer) -> IO Bool
 runTest b (True, _) = return b
 runTest b (False, i) = do { putStrLn ("Test " ++ show i ++ " failed.")
                                                   ; return False
                                                   }
 
-main = do { b <- foldM runTest True (zip [t1, t2, t3, t4, t5, t6, t7, t8, t9, t10, t11, t12, t13, t14, t15, t16, t17, t18, t19, t20, t21, t22, t23, t24, t25, t26, t27, t28] [1..])
+main = do { b <- foldM runTest True (zip [t1, t2, t3, t4, t5, t6, t7, t8, t9, t10, t11, t12, t13, t14, t15, t16, t17, t18, t19, t20, t21, t22, t23, t24, t25, t26, t27, t28, t29] [1..])
                   ; unless b exitFailure
                   }
