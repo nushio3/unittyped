@@ -13,7 +13,7 @@
 
 -- |Module that allows pretty-printing of a value into multiple units. For example:
 --
--- >>> length_str (42 ~> mile)
+-- >>> length_str (42 *| mile)
 --  "67 km, 592 m, 448 mm"
 module UnitTyped.SI.Show where
 
@@ -50,7 +50,7 @@ time_str = format_end (mili second) . format second . format minute . format hou
 -- |Show a unit with all possible SI-prefixes.
 -- For instance, a light year in meters:
 --
--- >>> meta_str meter (c .*. 1 ~> year)
+-- >>> meta_str meter (c .*. 1 *| year)
 -- "9 Pm, 460 Tm, 536 Gm, 207 Mm, 68 km, 16 m"
 meta_str :: (Convertible' a b, Convertible c d, MapEq a c 'True) => Value Rational c (Unit d) -> Value Rational a b -> String
 meta_str unit v = format_end (yocto unit) $ format (zepto unit) $ format (atto unit) $ format (femto unit)

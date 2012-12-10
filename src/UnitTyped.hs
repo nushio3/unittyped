@@ -13,22 +13,22 @@
 
 -- |Module defining values with dimensions and units, and mathematical operations on those.
 module UnitTyped (
-	Convertible(..), Convertible'(..), Unit(..),
-	Value, ValueProxy, ValueProxy', proxy',
+        Convertible(..), Convertible'(..), Unit(..),
+        Value, ValueProxy, ValueProxy', proxy',
 
-	Count,
+        Count,
 
-	Nat(..), Number(..),
-	MapMerge, MapEq, MapNeg, MapTimes, MapStrip,
-	POne, PTwo, PThree, PFour, PFive, PSix,
-	NOne, NTwo, NThree, NFour,
-	
-	coerce, as, to, one, mkVal, val, mapVal, (.*.), (./.), (.+.), (.-.), (~>), (~.),
-	(.==.), (.<=.), (.<.), (.>=.), (.>.),
+        Nat(..), Number(..),
+        MapMerge, MapEq, MapNeg, MapTimes, MapStrip,
+        POne, PTwo, PThree, PFour, PFive, PSix,
+        NOne, NTwo, NThree, NFour,
 
-	square, cubic,
+        coerce, as, to, one, mkVal, val, mapVal, (.*.), (./.), (.+.), (.-.), (*|), (~.),
+        (.==.), (.<=.), (.<.), (.>=.), (.>.),
 
-	{- pown3, pown2, pown1, pow0, pow1, pow2, pow3, pow4, pow5, pow6 -}
+        square, cubic,
+
+        {- pown3, pown2, pown1, pow0, pow1, pow2, pow3, pow4, pow5, pow6 -}
 
 ) where
 
@@ -116,10 +116,10 @@ class MapInsert' q unit (value :: Number) (map :: [(*, Number)]) (rest :: [(*, N
 instance MapInsert' q unit value '[] '[ '(unit, value) ]
 
 instance (Add value value' sum, unit' ~ unit) =>
-		 MapInsert' () unit value ( '(unit, value') ': rec) ( '(unit', sum) ': rec)
+                 MapInsert' () unit value ( '(unit, value') ': rec) ( '(unit', sum) ': rec)
 
 instance (MapInsert' q unit value rest rest', value'' ~ value', unit'' ~ unit') =>
-		 MapInsert' q unit value ( '(unit', value') ': rest) ( '(unit'', value'') ': rest')
+                 MapInsert' q unit value ( '(unit', value') ': rest) ( '(unit'', value'') ': rest')
 
 class MapInsert unit (value :: Number) (map :: [(*, Number)]) (rest :: [(*, Number)]) where
 
@@ -174,60 +174,60 @@ proxy' :: (Convertible' a b) => Value f a b -> ValueProxy' a b
 proxy' _ = error "proxy'"
 
 class FromNumber (a :: Number) where
-	fromNumber :: NumberProxy a -> Integer
+        fromNumber :: NumberProxy a -> Integer
 
 instance FromNumber Zero where
-	fromNumber _ = 0
+        fromNumber _ = 0
 
 instance FromNumber (Pos One) where
-	fromNumber _ = 1
+        fromNumber _ = 1
 
 instance (FromNumber (Pos a)) => FromNumber (Pos (Suc a)) where
-	fromNumber _ = 1 + (fromNumber (undefined :: NumberProxy (Pos a)))
+        fromNumber _ = 1 + (fromNumber (undefined :: NumberProxy (Pos a)))
 
 instance FromNumber (Neg One) where
-	fromNumber _ = -1
+        fromNumber _ = -1
 
 instance (FromNumber (Neg a)) => FromNumber (Neg (Suc a)) where
-	fromNumber _ = -1 + (fromNumber (undefined :: NumberProxy (Neg a)))
+        fromNumber _ = -1 + (fromNumber (undefined :: NumberProxy (Neg a)))
 
 -- |Convertible is a class that models the fact that the base unit 'b' has dimension 'a'.
 class Convertible (a :: [(*, Number)]) b | b -> a where
-	-- |The multiplication factor to convert this base unit between other units in the same dimension.
-	-- Only the ratio matters, which one is '1' is not important, as long as all are consistent.
-	factor :: (Fractional f) => ValueProxy a b -> f
-	-- |String representation of a base unit.
-	showunit :: ValueProxy a b -> String
+        -- |The multiplication factor to convert this base unit between other units in the same dimension.
+        -- Only the ratio matters, which one is '1' is not important, as long as all are consistent.
+        factor :: (Fractional f) => ValueProxy a b -> f
+        -- |String representation of a base unit.
+        showunit :: ValueProxy a b -> String
 
 -- |Shorthand to create a composed unit containing just one base unit.
 type Unit a = '[ '(a, POne) ]
 
 -- |Convertible' is a class that models the fact that the composed unit 'b' has dimension 'a'.
 class Convertible' (a :: [(*, Number)]) (b :: [(*, Number)]) where
-	-- |The multiplication factor to convert this unit between other units in the same dimension.
-	-- Only the ratio matters, which one is '1' is not important, as long as all are consistent.
-	factor' :: (Fractional f) => ValueProxy' a b -> f
-	-- |String representation of a unit.
-	showunit' :: ValueProxy' a b -> String
+        -- |The multiplication factor to convert this unit between other units in the same dimension.
+        -- Only the ratio matters, which one is '1' is not important, as long as all are consistent.
+        factor' :: (Fractional f) => ValueProxy' a b -> f
+        -- |String representation of a unit.
+        showunit' :: ValueProxy' a b -> String
 
 instance (MapNull a True) => Convertible' a '[] where
-	factor' _ = 1
-	showunit' _ = ""
+        factor' _ = 1
+        showunit' _ = ""
 
 instance (Convertible a b, MapEq a a' True) => Convertible' a' ('(b, POne) ': '[]) where
-	factor' _ = factor (undefined :: ValueProxy a b)
-	showunit' _ = showunit (undefined :: ValueProxy a b)
+        factor' _ = factor (undefined :: ValueProxy a b)
+        showunit' _ = showunit (undefined :: ValueProxy a b)
 
 instance (FromNumber value, Convertible' rec_dimension rest, MapNeg unit_dimension neg_unit_dimension,
-		  MapTimes value neg_unit_dimension times_neg_unit_dimension, MapMerge times_neg_unit_dimension dimension rec_dimension,
-		  Convertible unit_dimension unit) => Convertible' dimension ('(unit, value) ': rest) where
-	factor' _ = let
-					rec = factor' (undefined :: ValueProxy' rec_dimension rest)
-				in rec * ((factor (undefined :: ValueProxy unit_dimension unit)) ^^ (fromNumber (undefined :: NumberProxy value)))
-	showunit' _ = let
-					rec = showunit' (undefined :: ValueProxy' rec_dimension rest)
-					power = fromNumber (undefined :: NumberProxy value)
-				  in (if null rec then "" else rec) ++ (if (not $ null rec) && (power /= 0) then "⋅" else "") ++ (if power /= 0 then (showunit (undefined :: ValueProxy a'' unit)) ++ if power /= 1 then map toSuperScript $ show power else "" else "")
+                  MapTimes value neg_unit_dimension times_neg_unit_dimension, MapMerge times_neg_unit_dimension dimension rec_dimension,
+                  Convertible unit_dimension unit) => Convertible' dimension ('(unit, value) ': rest) where
+        factor' _ = let
+                                        rec = factor' (undefined :: ValueProxy' rec_dimension rest)
+                                in rec * ((factor (undefined :: ValueProxy unit_dimension unit)) ^^ (fromNumber (undefined :: NumberProxy value)))
+        showunit' _ = let
+                                        rec = showunit' (undefined :: ValueProxy' rec_dimension rest)
+                                        power = fromNumber (undefined :: NumberProxy value)
+                                  in (if null rec then "" else rec) ++ (if (not $ null rec) && (power /= 0) then "⋅" else "") ++ (if power /= 0 then (showunit (undefined :: ValueProxy a'' unit)) ++ if power /= 1 then map toSuperScript $ show power else "" else "")
 
 toSuperScript '0' = '\8304'
 toSuperScript '1' = '\185'
@@ -243,18 +243,18 @@ toSuperScript '-' = '\8315'
 toSuperScript x = x
 
 instance (Fractional f, Show f, Convertible' a b) => Show (Value f a b) where
-	show u = show (val u) ++ " " ++ showunit' (proxy' u)
+        show u = show (val u) ++ " " ++ showunit' (proxy' u)
 
 -- |coerce something of a specific dimension into any other unit in the same dimension.
 -- The second argument is only used for its type, but it allows nice syntax like:
 --
--- >>> coerce (120 ~> meter / second) (kilo meter / hour)
+-- >>> coerce (120 *| meter / second) (kilo meter / hour)
 -- 432.0 km/h
 coerce :: (Convertible' a b, Convertible' c d, Fractional f, MapEq a c True) => Value f a b -> Value f c d -> Value f c d
 coerce u _ = let result = mkVal (factor' (proxy' u) * val u / factor' (proxy' result)) in result
 
 infixl 5 ~.
-infixl 8 ~>
+infixl 8 *|
 
 -- |Shorthand for 'coerce'.
 (~.) :: (Convertible' a b, Convertible' c d, Fractional f, MapEq a c True) => Value f a b -> Value f c d -> Value f c d
@@ -293,8 +293,8 @@ a .+. b = mkVal (val a + val (coerce b a))
 a .-. b = mkVal (val a - val (coerce b a))
 
 -- |Multiply a unit by a scalar.
-(~>) :: (Convertible' a b, Fractional f) => f -> Value f a b -> Value f a b
-d ~> u = mkVal (d * val u)
+(*|) :: (Convertible' a b, Fractional f) => f -> Value f a b -> Value f a b
+d *| u = mkVal (d * val u)
 
 -- |Create a new value with given scalar as value.
 mkVal :: (Fractional f) => f -> Value f a b
@@ -313,15 +313,15 @@ one :: (Fractional f, Convertible' a b) => Value f a b
 one = mkVal 1
 
 -- |Calculate the square of a value. Identical to pow2, reads better on units:
--- 
--- >>> 100 ~> square meter `as` square yard
+--
+-- >>> 100 *| square meter `as` square yard
 -- 119.59900463010803 yd⋅yd⋅#
 square :: (Fractional f, MapMerge c c u, MapMerge d d s, Convertible' c d) => Value f c d -> Value f u s
 square x = x .*. x
 
 -- |Calculate the third power of a value. Identical to pow3, reads better on units:
--- 
--- >>> 1 ~> cubic inch `as` mili liter
+--
+-- >>> 1 *| cubic inch `as` mili liter
 -- 16.387063999999995 mL
 cubic   :: (Fractional f, MapMerge a c u, MapMerge b d s, MapMerge c c a, MapMerge d d b, Convertible' a b, Convertible' c d) => Value f c d -> Value f u s
 cubic x = x .*. x .*. x
@@ -393,26 +393,26 @@ infixl 4 .==., .<., .>., .<=., .>=.
 data Count
 
 instance Convertible '[] Count where
-	factor _ = 1
-	showunit _ = "#"
+        factor _ = 1
+        showunit _ = "#"
 
 --
 
 class (Convertible' a b, Convertible' c d) => Pow' q a b (i :: Number) c d | q a b i -> c d where
-	_pow :: (Fractional f) => q -> NumberProxy i -> Value f a b -> Value f c d
+        _pow :: (Fractional f) => q -> NumberProxy i -> Value f a b -> Value f c d
 
 instance (Convertible' c d, MapNull c True, MapNull d True, Convertible' a b) => Pow' () a b Zero c d where
-	_pow _ _ _ = one
+        _pow _ _ _ = one
 
 instance (Convertible' a b, Convertible' a'' b'', Pow' q a b i' a' b', Pre' (Pos i) i', MapMerge a a' a'', MapMerge b b' b'') => Pow' q a b (Pos i) a'' b'' where
-	_pow _ _ _ = one
+        _pow _ _ _ = one
 
 -- |'^' is not definable on 'Value's in general, as the result depends on the exponent.
 -- However, we can use this class to raise a unit to a type level 'Number'.
 class (Convertible' a b, Convertible' c d, Pow' () a b i c d) => Pow a b (i :: Number) c d | a b -> c d where
-	pow :: (Fractional f) => NumberProxy i -> Value f a b -> Value f c d
+        pow :: (Fractional f) => NumberProxy i -> Value f a b -> Value f c d
 
 instance (Convertible' a b, Pow' () a b i c d) => Pow a b (i :: Number) c d where
-	pow = _pow ()
+        pow = _pow ()
 
 --
