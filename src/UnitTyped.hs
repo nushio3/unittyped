@@ -283,8 +283,8 @@ a |+| b = mkVal (val a + val (coerce b a))
 (|-|) :: (Fractional f, Convertible' a b, Convertible' c d, MapEq c a True) => Value f a b -> Value f c d -> Value f a b
 a |-| b = mkVal (val a - val (coerce b a))
 
-infixl 7 *|, |*, |/, /|
-infixl 6 +|, |+, -|, |-
+infixl 9 *|, |*, |/, /|
+infixl 8 +|, |+, -|, |-
 
 -- |Multiply a scalar by a unit.
 (*|) :: (Convertible' a b, Fractional f) => f -> Value f a b -> Value f a b
