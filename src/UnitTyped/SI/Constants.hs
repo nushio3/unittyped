@@ -37,7 +37,7 @@ h = mkVal 6.6260695729e-34
 
 -- |Reduced Planck constant
 hbar :: Fractional f => Value f '[ '(Time, NOne), '(Length, PTwo), '(Mass, POne)] '[ '(Second, POne), '(Joule, POne) ]
-hbar = coerce (h ./. (2 *| UnitTyped.SI.Constants.pi)) (joule .*. second)
+hbar = coerce (h |/| (2 *| UnitTyped.SI.Constants.pi)) (joule |*| second)
 
 -- |Atomic unit of charge (elementary charge)
 e :: (Fractional f) => Value f Charge (Unit Coulomb)
@@ -65,8 +65,8 @@ g = mkVal 6.6738480e-11
 
 ---- |Planck mass
 --m_P :: (Fractional f, Floating f) => Value f MassDimension (Unit (Kilo Gram))
---m_P = mkVal (sqrt (val $ hbar .*. c ./. g))
+--m_P = mkVal (sqrt (val $ hbar |*| c |/| g))
 
 ---- |Reduced Planck mass
 --m_P' :: (Fractional f, Floating f) => Value f MassDimension (Unit (Kilo Gram))
---m_P' = mkVal (sqrt (val $ hbar .*. c ./. ((Prelude.pi * 8) *| g)))
+--m_P' = mkVal (sqrt (val $ hbar |*| c |/| ((Prelude.pi * 8) *| g)))

@@ -19,7 +19,7 @@ import Control.Monad (foldM, unless)
 import Prelude (zip, show, (++), IO, Bool(..), Integer, return, error, putStrLn)
 import System.Exit (exitFailure)
 
-t1 = hertz == (count / second)
+t1 = hertz == (1 /| second)
 t2 = rad == (meter / meter)
 t3 = newton == kilo gram * meter / square second
 t4 = pascal == newton / square meter
@@ -52,11 +52,7 @@ t24 = percent + permil + ppm + ppb + ppt == percent + permil + ppm + ppb + ppt
 
 t25 = hbar == (h / (2 *| pi))
 
-t26 = True -- pown3 meter * pow3 meter == pown1 meter * pow1 meter
-t27 = True -- pown3 meter * pow3 meter == pown2 meter * pow2 meter
-t28 = True -- pow0 meter == count
-
-t29 = 3e9 *| gram == mega solarMass
+t26 = 3e9 *| gram == mega solarMass
   where
     solarMass = 3 *| kilo gram
 
@@ -66,6 +62,6 @@ runTest b (False, i) = do { putStrLn ("Test " ++ show i ++ " failed.")
                                                   ; return False
                                                   }
 
-main = do { b <- foldM runTest True (zip [t1, t2, t3, t4, t5, t6, t7, t8, t9, t10, t11, t12, t13, t14, t15, t16, t17, t18, t19, t20, t21, t22, t23, t24, t25, t26, t27, t28, t29] [1..])
+main = do { b <- foldM runTest True (zip [t1, t2, t3, t4, t5, t6, t7, t8, t9, t10, t11, t12, t13, t14, t15, t16, t17, t18, t19, t20, t21, t22, t23, t24, t25, t26] [1..])
                   ; unless b exitFailure
                   }

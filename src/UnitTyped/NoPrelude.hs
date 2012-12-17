@@ -35,21 +35,21 @@ import Prelude (Show(..), Fractional, Floating, ($), (.), (++), Double, const, B
 infixl 6 +, -
 infixl 7 *, /
 
--- |See '.*.'
+-- |See '|*|'
 (*) :: (Fractional f, Convertible' a b, Convertible' c d, MapMerge a c u, MapMerge b d s) => Value f a b -> Value f c d -> Value f u s
-(*) = (.*.)
+(*) = (|*|)
 
--- |See './.'
+-- |See '|/|'
 (/) :: (Fractional f, Convertible' a b, Convertible' c d, MapMerge a c' u, MapNeg c c', MapNeg d d', MapMerge b d' s) => Value f a b -> Value f c d -> Value f u s
-(/) = (./.)
+(/) = (|/|)
 
--- |See '.+.'
+-- |See '|+|'
 (+) :: (Fractional f, Convertible' a b, Convertible' c d, MapEq c a True) => Value f a b -> Value f c d -> Value f a b
-(+) = (.+.)
+(+) = (|+|)
 
--- |See '.-.'
+-- |See '|-|'
 (-) :: (Fractional f, Convertible' a b, Convertible' c d, MapEq c a True) => Value f a b -> Value f c d -> Value f a b
-(-) = (.-.)
+(-) = (|-|)
 
 wrap1 :: (Floating f, Convertible' '[] b) => (f -> f) -> Value f '[] b -> Value f '[] '[]
 wrap1 op v = op (val $ coerce v rad) *| one
@@ -76,16 +76,16 @@ atan = wrap2 Prelude.atan
 infixl 5 ==, <, <=, >, >=
 
 (==), (<), (<=), (>), (>=) :: (Convertible' a b, Convertible' c d, MapEq c a 'True) => Value Prelude.Rational a b -> Value Prelude.Rational c d -> Bool
--- |See '.==.'
-(==) = (.==.)
--- |See '.<.'
-(<) = (.<.)
--- |See '.<=.'
-(<=) = (.<=.)
--- |See '.>.'
-(>) = (.>.)
--- |See '.>.'
-(>=) = (.>=.)
+-- |See '|==|'
+(==) = (|==|)
+-- |See '|<|'
+(<) = (|<|)
+-- |See '|<=|'
+(<=) = (|<=|)
+-- |See '|>|'
+(>) = (|>|)
+-- |See '|>|'
+(>=) = (|>=|)
 
 -- |Obtain the 'Prelude.floor' of a value.
 floor :: (Prelude.RealFrac f) => Value f a b -> Value f a b
@@ -93,7 +93,7 @@ floor = mapVal (Prelude.fromInteger . Prelude.floor)
 
 -- |Obtain @x - floor x@ of a value.
 diff :: (Convertible' a b, Prelude.RealFrac f) => Value f a b -> Value f a b
-diff x = x .-. (floor x)
+diff x = x |-| (floor x)
 
 -- |Obtain the 'Prelude.abs' of a value.
 abs :: (Fractional f) => Value f a b -> Value f a b
