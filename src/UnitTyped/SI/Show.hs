@@ -29,7 +29,7 @@ import Data.Ratio
 -- |Start a chain of units. For example:
 --
 -- > format_end second $ format minute $ format_start hour x
-format_start :: (Convertible' a b, Convertible' c d, MapEq a c 'True) => Value Rational c d -> Value Rational a b -> (String, Value Rational c d)
+format_start :: (Convertible' a b, Convertible' c d, MapEq a c) => Value Rational c d -> Value Rational a b -> (String, Value Rational c d)
 format_start u v = format u ("", (NP.abs v) `as` u)
 
 -- |Add a unit in between 'format_start' and 'format_end'.
@@ -44,7 +44,7 @@ format_end :: (Convertible' a b, Convertible' a d) => Value Rational a d -> (Str
 format_end u (s, v) = (s ++ (if val v == 0 then "" else ((if not $ null s then ", " else "") ++ (show $ fromRational $ val (coerce v u)) ++ " " ++ (showunit' $ proxy' u))))
 
 -- |Show a time range as years, days, hours, minutes, seconds and miliseconds.
-time_str :: (Convertible' a b, MapEq a TimeDimension 'True) => Value Rational a b -> String
+time_str :: (Convertible' a b, MapEq a TimeDimension) => Value Rational a b -> String
 time_str = format_end (mili second) . format second . format minute . format hour . format day . format_start year
 
 -- |Show a unit with all possible SI-prefixes.
@@ -52,7 +52,7 @@ time_str = format_end (mili second) . format second . format minute . format hou
 --
 -- >>> meta_str meter (c |*| 1 *| year)
 -- "9 Pm, 460 Tm, 536 Gm, 207 Mm, 68 km, 16 m"
-meta_str :: (Convertible' a b, Convertible c d, MapEq a c 'True) => Value Rational c (Unit d) -> Value Rational a b -> String
+meta_str :: (Convertible' a b, Convertible c d, MapEq a c) => Value Rational c (Unit d) -> Value Rational a b -> String
 meta_str unit v = format_end (yocto unit) $ format (zepto unit) $ format (atto unit) $ format (femto unit)
 					$ format (pico unit) $ format (nano unit) $ format (micro unit) $ format (mili unit)
 					$ format unit $ format (kilo unit) $ format (mega unit) $ format (giga unit)

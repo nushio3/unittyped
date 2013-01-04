@@ -36,19 +36,19 @@ infixl 6 +, -
 infixl 7 *, /
 
 -- |See '|*|'
-(*) :: (Fractional f, Convertible' a b, Convertible' c d, MapMerge a c u, MapMerge b d s) => Value f a b -> Value f c d -> Value f u s
+(*) :: (Fractional f, Convertible' a b, Convertible' c d) => Value f a b -> Value f c d -> Value f (MapMerge a c) (MapMerge b d)
 (*) = (|*|)
 
 -- |See '|/|'
-(/) :: (Fractional f, Convertible' a b, Convertible' c d, MapMerge a c' u, MapNeg c c', MapNeg d d', MapMerge b d' s) => Value f a b -> Value f c d -> Value f u s
+(/) :: (Fractional f, Convertible' a b, Convertible' c d) => Value f a b -> Value f c d -> Value f (MapMerge a (MapNeg c)) (MapMerge b (MapNeg d))
 (/) = (|/|)
 
 -- |See '|+|'
-(+) :: (Fractional f, Convertible' a b, Convertible' c d, MapEq c a True) => Value f a b -> Value f c d -> Value f a b
+(+) :: (Fractional f, Convertible' a b, Convertible' c d, MapEq c a) => Value f a b -> Value f c d -> Value f a b
 (+) = (|+|)
 
 -- |See '|-|'
-(-) :: (Fractional f, Convertible' a b, Convertible' c d, MapEq c a True) => Value f a b -> Value f c d -> Value f a b
+(-) :: (Fractional f, Convertible' a b, Convertible' c d, MapEq c a) => Value f a b -> Value f c d -> Value f a b
 (-) = (|-|)
 
 wrap1 :: (Floating f, Convertible' '[] b) => (f -> f) -> Value f '[] b -> Value f '[] '[]
@@ -75,7 +75,7 @@ atan = wrap2 Prelude.atan
 
 infixl 5 ==, <, <=, >, >=
 
-(==), (<), (<=), (>), (>=) :: (Convertible' a b, Convertible' c d, MapEq c a 'True) => Value Prelude.Rational a b -> Value Prelude.Rational c d -> Bool
+(==), (<), (<=), (>), (>=) :: (Convertible' a b, Convertible' c d, MapEq c a) => Value Prelude.Rational a b -> Value Prelude.Rational c d -> Bool
 -- |See '|==|'
 (==) = (|==|)
 -- |See '|<|'

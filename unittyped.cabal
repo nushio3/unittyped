@@ -25,7 +25,7 @@ source-repository this
   tag: 0.2
 
 library
-  build-depends:   base >= 4.6 && < 4.7, time, old-locale
+  build-depends:   base >= 4.7 && < 4.8, time, old-locale
   extensions:      FlexibleInstances
                    UndecidableInstances
                    FunctionalDependencies
@@ -54,4 +54,4 @@ library
 Test-Suite test-si
     type:          exitcode-stdio-1.0
     main-is:       tests/TestSI.hs
-    build-depends: base >= 4.6 && < 4.7, unittyped
+    build-depends: base >= 4.7 && < 4.8, unittyped

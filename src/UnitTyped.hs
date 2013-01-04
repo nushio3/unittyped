@@ -10,6 +10,7 @@
 {-# LANGUAGE TypeOperators #-}
 {-# LANGUAGE RankNTypes #-}
 {-# LANGUAGE DataKinds #-}
+{-# LANGUAGE TypeFamilies #-}
 
 -- |Module defining values with dimensions and units, and mathematical operations on those.
 module UnitTyped (
@@ -19,7 +20,7 @@ module UnitTyped (
         Count,
 
         Nat(..), Number(..),
-        MapMerge, MapEq, MapNeg, MapTimes, MapStrip,
+        MapMerge, MapEq, MapNeg, MapTimes,
         POne, PTwo, PThree, PFour, PFive, PSix,
         NOne, NTwo, NThree, NFour,
 
@@ -60,103 +61,74 @@ type NFour = Neg (Suc (Suc (Suc One)))
 
 -- These two are useful for Add
 
-class Suc' (a :: Number) (b :: Number) | a -> b where
+type family Suc' (a :: Number) :: Number
+type instance where
+    Suc' Zero = Pos One
+    Suc' (Pos a) = Pos (Suc a)
+    Suc' (Neg One) = Zero
+    Suc' (Neg (Suc a)) = Neg a
 
-instance Suc' Zero (Pos One)
-instance Suc' (Pos a) (Pos (Suc a))
-instance Suc' (Neg One) Zero
-instance Suc' (Neg (Suc a)) (Neg a)
+type family Pre' (a :: Number) :: Number
+type instance where
+    Pre' Zero = Neg One
+    Pre' (Neg a) = Neg (Suc a)
+    Pre' (Pos One) = Zero
+    Pre' (Pos (Suc a)) = Pos a
 
-class Pre' (a :: Number) (b :: Number) | a -> b where
+type family Add (a :: Number) (b :: Number) :: Number
+type instance where
+    Add Zero b = b
+    Add (Pos One) b = Suc' b
+    Add (Neg One) b = Pre' b
+    Add (Neg (Suc a)) b = Pre' (Add (Neg a) b)
+    Add (Pos (Suc a)) b = Suc' (Add (Pos a) b)
 
-instance Pre' Zero (Neg One)
-instance Pre' (Neg a) (Neg (Suc a))
-instance Pre' (Pos One) Zero
-instance Pre' (Pos (Suc a)) (Pos a)
+type family Negate (a :: Number) :: Number
+type instance where
+    Negate Zero = Zero
+    Negate (Pos a) = Neg a
+    Negate (Neg a) = Pos a
 
-class Add (a :: Number) (b :: Number) (sum :: Number) | a b -> sum where
+type family MapInsert unit (value :: Number) (map :: [(*, Number)]) :: [(*, Number)]
+type instance where
+    MapInsert unit value '[] = '[ '(unit, value) ]
+    MapInsert unit (Neg value) ( '(unit, (Pos value)) ': rec) = rec
+    MapInsert unit (Pos value) ( '(unit, (Neg value)) ': rec) = rec
+    MapInsert unit value ( '(unit, value') ': rec) = ( '(unit, Add value value') ': rec)
+    MapInsert unit value ( '(unit', value') ': rest) = ( '(unit', value') ': MapInsert unit value rest)
 
-instance Add Zero b b
-instance (Suc' b b') => Add (Pos One) b b'
-instance (Pre' b b') => Add (Neg One) b b'
-instance (Add (Neg a) b sum, Pre' sum sump) => Add (Neg (Suc a)) b sump
-instance (Add (Pos a) b sum, Suc' sum sump) => Add (Pos (Suc a)) b sump
-
-class Negate (a :: Number) (b :: Number) | a -> b, b -> a where
-
-instance Negate Zero Zero
-instance Negate (Pos a) (Neg a)
-instance Negate (Neg a) (Pos a)
-
-class IsZero (a :: Number) (b :: Bool) | a -> b where
-
-instance IsZero Zero True
-instance IsZero (Pos s) False
-instance IsZero (Neg s) False
-
-class And (a :: Bool) (b :: Bool) (c :: Bool) | a b -> c where
-
-instance And True True True
-instance And False True False
-instance And True False False
-instance And False False False
-
--- |Remove all 'Zero' values from a map.
-class MapStrip (map :: [(*, Number)]) (result :: [(*, Number)]) | map -> result where
-
-instance MapStrip '[] '[]
-instance (MapStrip rec rec_result) => MapStrip ('(unit, Zero) ': rec) rec_result
-instance (MapStrip rec rec_result) => MapStrip ('(unit, (Pos value)) ': rec) ('(unit, (Pos value)) ': rec_result)
-instance (MapStrip rec rec_result) => MapStrip ('(unit, (Neg value)) ': rec) ('(unit, (Neg value)) ': rec_result)
-
-class MapInsert' q unit (value :: Number) (map :: [(*, Number)]) (rest :: [(*, Number)]) | unit value map -> rest where
-
-instance MapInsert' q unit value '[] '[ '(unit, value) ]
-
-instance (Add value value' sum, unit' ~ unit) =>
-                 MapInsert' () unit value ( '(unit, value') ': rec) ( '(unit', sum) ': rec)
-
-instance (MapInsert' q unit value rest rest', value'' ~ value', unit'' ~ unit') =>
-                 MapInsert' q unit value ( '(unit', value') ': rest) ( '(unit'', value'') ': rest')
-
-class MapInsert unit (value :: Number) (map :: [(*, Number)]) (rest :: [(*, Number)]) where
-
-instance (MapInsert' () unit value map inserted, MapStrip inserted stripped) => MapInsert unit value map stripped where
-
--- |States that merging the first map with the second map produces the third argument.
--- Merging happens by summing the two values for the same key.
+-- |Merges two maps. Merging happens by summing the two values for the same key.
 -- Typically, dimensions are merged when multiplicing two values.
-class MapMerge (map1 :: [(*, Number)]) (map2 :: [(*, Number)]) (rest :: [(*, Number)]) | map1 map2 -> rest, map1 rest -> map2 where
-
-instance MapMerge '[] map2 map2
-instance (MapMerge rest map2 rest2, MapInsert unit value rest2 rec) => MapMerge ('(unit, value) ': rest) map2 rec
+type family MapMerge (map1 :: [(*, Number)]) (map2 :: [(*, Number)]) :: [(*, Number)]
+type instance where
+    MapMerge '[] map2 = map2
+    MapMerge ('(unit, value) ': rest) map2 = MapInsert unit value (MapMerge rest map2)
 
 -- |Multiply all the values in a map with a specified value.
-class MapTimes (value :: Number) (map :: [(*, Number)]) (result :: [(*, Number)]) | value map -> result where
+type family MapTimes (value :: Number) (map :: [(*, Number)]) :: [(*, Number)]
+type instance where
+    MapTimes Zero map = '[]
+    MapTimes (Pos One) map = map
+    MapTimes (Neg One) map = MapNeg map
+    MapTimes (Pos (Suc n)) map = MapMerge map (MapTimes (Pos n) map)
+    MapTimes (Neg (Suc n)) map = MapMerge (MapNeg map) (MapTimes (Neg n) map)
 
-instance MapTimes Zero map '[]
-instance MapTimes (Pos One) map map
-instance (MapNeg map result) => MapTimes (Neg One) map result
-instance (MapTimes (Pos n) map rec, MapMerge map rec result) => MapTimes (Pos (Suc n)) map result
-instance (MapTimes (Neg n) map rec, MapNeg map neg_map, MapMerge neg_map rec result) => MapTimes (Neg (Suc n)) map result
+-- |Negates all the values in the given map.
+type family MapNeg (map1 :: [(*, Number)]) :: [(*, Number)]
+type instance where
+    MapNeg '[] = '[]
+    MapNeg ('(unit, value) ': rest) = ('(unit, (Negate value)) ': (MapNeg rest))
 
--- |States that 'rest' is the same dimension as 'map1', but all integers inverted.
--- Used for division.
-class MapNeg (map1 :: [(*, Number)]) (rest :: [(*, Number)]) | map1 -> rest where
+type family MapNull (map :: [(*, Number)]) :: Bool
+type instance where
+    MapNull '[] = True
+    MapNull ('(unit, Zero) ': rest) = MapNull rest
+    MapNull ('(unit, value) ': rest) = False
 
-instance MapNeg '[] '[]
-instance (Negate value value', MapNeg rest rest') => MapNeg ('(unit, value) ': rest) ('(unit, value') ': rest')
-
-class MapNull (map :: [(*, Number)]) (b :: Bool) | map -> b where
-
-instance MapNull '[] True
-instance (MapNull rest b', IsZero value b, And b b' result) => MapNull ('(unit, value) ': rest) result
-
--- |'b' is equal to 'True' if and only if 'map1' and 'map2' represent the same dimension.
-class MapEq (map1 :: [(*, Number)]) (map2 :: [(*, Number)]) (b :: Bool) | map1 map2 -> b where
-
-instance MapEq a a True
-instance (MapNeg map2 map2', MapMerge map1 map2' sum, MapNull sum b) => MapEq map1 map2 b
+-- |This constraint holds if and only if 'map1' and 'map2' represent the same dimension.
+class MapEq (map1 :: [(*, Number)]) (map2 :: [(*, Number)]) where
+instance MapEq a a where
+instance (True ~ MapNull (MapMerge map1 (MapNeg map2))) => MapEq map1 map2 where
 
 -- |A value tagged with its dimension a and unit b.
 data Value f (a :: [(*, Number)]) (b :: [(*, Number)]) = Value f
@@ -208,16 +180,16 @@ class Convertible' (a :: [(*, Number)]) (b :: [(*, Number)]) where
         -- |String representation of a unit.
         showunit' :: ValueProxy' a b -> String
 
-instance (MapNull a True) => Convertible' a '[] where
+instance (True ~ MapNull a) => Convertible' a '[] where
         factor' _ = 1
         showunit' _ = ""
 
-instance (Convertible a b, MapEq a a' True) => Convertible' a' ('(b, POne) ': '[]) where
+instance (Convertible a b, MapEq a a') => Convertible' a' ('(b, POne) ': '[]) where
         factor' _ = factor (undefined :: ValueProxy a b)
         showunit' _ = showunit (undefined :: ValueProxy a b)
 
-instance (FromNumber value, Convertible' rec_dimension rest, MapNeg unit_dimension neg_unit_dimension,
-                  MapTimes value neg_unit_dimension times_neg_unit_dimension, MapMerge times_neg_unit_dimension dimension rec_dimension,
+instance (FromNumber value, Convertible' rec_dimension rest, neg_unit_dimension ~ MapNeg unit_dimension,
+                  times_neg_unit_dimension ~ MapTimes value neg_unit_dimension, rec_dimension ~ MapMerge times_neg_unit_dimension dimension,
                   Convertible unit_dimension unit) => Convertible' dimension ('(unit, value) ': rest) where
         factor' _ = let
                                         rec = factor' (undefined :: ValueProxy' rec_dimension rest)
@@ -248,17 +220,17 @@ instance (Fractional f, Show f, Convertible' a b) => Show (Value f a b) where
 --
 -- >>> coerce (120 *| meter / second) (kilo meter / hour)
 -- 432.0 km/h
-coerce :: (Convertible' a b, Convertible' c d, Fractional f, MapEq a c True) => Value f a b -> Value f c d -> Value f c d
+coerce :: (Convertible' a b, Convertible' c d, Fractional f, MapEq a c) => Value f a b -> Value f c d -> Value f c d
 coerce u _ = let result = mkVal (factor' (proxy' u) * val u / factor' (proxy' result)) in result
 
 infixl 5 `as`
 
 -- |Shorthand for 'coerce'.
-as :: (Convertible' a b, Convertible' c d, Fractional f, MapEq a c True) => Value f a b -> Value f c d -> Value f c d
+as :: (Convertible' a b, Convertible' c d, Fractional f, MapEq a c) => Value f a b -> Value f c d -> Value f c d
 as = coerce
 
 -- |Shorthand for 'flip' 'coerce'
-to :: (Convertible' a b, Convertible' c d, Fractional f, MapEq a c True) => Value f c d -> Value f a b -> Value f c d
+to :: (Convertible' a b, Convertible' c d, Fractional f, MapEq a c) => Value f c d -> Value f a b -> Value f c d
 to = flip coerce
 
 infixl 7 |*|, |/|
@@ -266,21 +238,21 @@ infixl 6 |+|, |-|
 
 -- |Multiply two values, constructing a value with as dimension the product of the dimensions,
 -- and as unit the multplication of the units.
-(|*|) :: (Fractional f, Convertible' a b, Convertible' c d, MapMerge a c u, MapMerge b d s) => Value f a b -> Value f c d -> Value f u s
+(|*|) :: (Fractional f, Convertible' a b, Convertible' c d) => Value f a b -> Value f c d -> Value f (MapMerge a c) (MapMerge b d)
 a |*| b = mkVal (val a * val b)
 
 -- |Divide two values, constructing a value with as dimension the division of the dimension of the lhs by the dimension of the rhs,
 -- and the same for the units.
-(|/|), per :: (Fractional f, Convertible' a b, Convertible' c d, MapMerge a c' u, MapNeg c c', MapNeg d d', MapMerge b d' s) => Value f a b -> Value f c d -> Value f u s
+(|/|), per :: (Fractional f, Convertible' a b, Convertible' c d) => Value f a b -> Value f c d -> Value f (MapMerge a (MapNeg c)) (MapMerge b (MapNeg d))
 a |/| b = mkVal (val a / val b)
 per = (|/|)
 
 -- |Add two values with matching dimensions. Units are automatically resolved. The result will have the same unit as the lhs.
-(|+|) :: (Fractional f, Convertible' a b, Convertible' c d, MapEq c a True) => Value f a b -> Value f c d -> Value f a b
+(|+|) :: (Fractional f, Convertible' a b, Convertible' c d, MapEq c a) => Value f a b -> Value f c d -> Value f a b
 a |+| b = mkVal (val a + val (coerce b a))
 
 -- |Subtract two values with matching dimensions. Units are automatically resolved. The result will have the same unit as the lhs.
-(|-|) :: (Fractional f, Convertible' a b, Convertible' c d, MapEq c a True) => Value f a b -> Value f c d -> Value f a b
+(|-|) :: (Fractional f, Convertible' a b, Convertible' c d, MapEq c a) => Value f a b -> Value f c d -> Value f a b
 a |-| b = mkVal (val a - val (coerce b a))
 
 infixl 9 *|, |*, |/, /|
@@ -295,7 +267,7 @@ d *| u = mkVal (d * val u)
 u |* d = mkVal (val u * d)
 
 -- |Divide a scalar by a unit.
-(/|) :: (Convertible' a b, Fractional f, MapNeg a a', MapNeg b b') => f -> Value f a b -> Value f a' b'
+(/|) :: (Convertible' a b, Fractional f) => f -> Value f a b -> Value f (MapNeg a) (MapNeg b)
 d /| u = mkVal (d / val u)
 
 -- |Divide a unit by a scalar.
@@ -338,22 +310,22 @@ one = mkVal 1
 --
 -- >>> 100 *| square meter `as` square yard
 -- 119.59900463010803 yd⋅yd⋅#
-square :: (Fractional f, MapMerge c c u, MapMerge d d s, Convertible' c d) => Value f c d -> Value f u s
+square :: (Fractional f, Convertible' c d) => Value f c d -> Value f (MapMerge c c) (MapMerge d d)
 square x = x |*| x
 
 -- |Calculate the third power of a value. Identical to pow3, reads better on units:
 --
 -- >>> 1 *| cubic inch `as` mili liter
 -- 16.387063999999995 mL
-cubic   :: (Fractional f, MapMerge a c u, MapMerge b d s, MapMerge c c a, MapMerge d d b, Convertible' a b, Convertible' c d) => Value f c d -> Value f u s
+cubic :: (Fractional f, Convertible' t t1, Convertible' c d, MapMerge d d ~ t1, MapMerge c c ~ t) => Value f c d -> Value f (MapMerge (MapMerge c c) c) (MapMerge (MapMerge d d) d)
 cubic x = x |*| x |*| x
 
-wrapB :: (Convertible' a b, Convertible' c d, MapEq c a True) => (Rational -> Rational -> Bool) -> Value Rational a b -> Value Rational c d -> Bool
+wrapB :: (Convertible' a b, Convertible' c d, MapEq c a) => (Rational -> Rational -> Bool) -> Value Rational a b -> Value Rational c d -> Bool
 wrapB op a b = op (val a) (val $ coerce b a)
 
 infixl 4 |==|, |<|, |>|, |<=|, |>=|
 
-(|==|), (|<|), (|>|), (|<=|), (|>=|) :: (Convertible' a b, Convertible' c d, MapEq c a True) => Value Rational a b -> Value Rational c d -> Bool
+(|==|), (|<|), (|>|), (|<=|), (|>=|) :: (Convertible' a b, Convertible' c d, MapEq c a) => Value Rational a b -> Value Rational c d -> Bool
 -- |'==' for values. Only defined for values with rational contents. Can be used on any two values with the same dimension.
 (|==|) = wrapB (==)
 -- |'<' on values. Only defined for values with rational contents. Can be used on any two values with the same dimension.
