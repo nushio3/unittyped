@@ -31,5 +31,5 @@ instance Convertible MassDimension Pound where
 --
 
 -- |One pound (lb).
-pound :: (Fractional f) => Value f MassDimension (Unit Pound)
+pound :: (Fractional f) => Value MassDimension (Unit Pound) f
 pound = one

@@ -200,69 +200,69 @@ instance Convertible Inductance Henry where
 --
 
 -- |One knot.
-knot :: (Fractional f) => Value f Speed (Unit Knot)
+knot :: (Fractional f) => Value Speed (Unit Knot) f
 knot = one
 
 -- |One newton.
-newton :: (Fractional f) => Value f '[ '(Time, NTwo), '(Mass, POne), '(Length, POne)] (Unit Newton)
+newton :: (Fractional f) => Value '[ '(Time, NTwo), '(Mass, POne), '(Length, POne)] (Unit Newton) f
 newton = one
 
 -- |One joule.
-joule :: (Fractional f) => Value f Energy (Unit Joule)
+joule :: (Fractional f) => Value Energy (Unit Joule) f
 joule = one
 
 -- |One eV.
-eV :: (Fractional f) => Value f Energy (Unit Ev)
+eV :: (Fractional f) => Value Energy (Unit Ev) f
 eV = one
 
 -- |One kwh.
-kwh :: (Fractional f) => Value f Energy '[ '(Kilo Watt, POne), '(Hour, POne) ]
+kwh :: (Fractional f) => Value Energy '[ '(Kilo Watt, POne), '(Hour, POne) ] f
 kwh = one
 
 -- |One watt.
-watt :: (Fractional f) => Value f Power (Unit Watt)
+watt :: (Fractional f) => Value Power (Unit Watt) f
 watt = one
 
 -- |One pascal.
-pascal :: (Fractional f) => Value f Pressure (Unit Pascal)
+pascal :: (Fractional f) => Value Pressure (Unit Pascal) f
 pascal = one
 
 -- |One bar.
-bar :: (Fractional f) => Value f Pressure (Unit Bar)
+bar :: (Fractional f) => Value Pressure (Unit Bar) f
 bar = one
 
 -- |One mmHg.
-mmHg :: (Fractional f) => Value f Pressure (Unit MmHg)
+mmHg :: (Fractional f) => Value Pressure (Unit MmHg) f
 mmHg = one
 
 -- |One coulomb.
-coulomb :: (Fractional f) => Value f Charge (Unit Coulomb)
+coulomb :: (Fractional f) => Value Charge (Unit Coulomb) f
 coulomb = one
 
 -- |One volt.
-volt :: (Fractional f) => Value f Potential (Unit Volt)
+volt :: (Fractional f) => Value Potential (Unit Volt) f
 volt = one
 
 -- |One farad.
-farad :: (Fractional f) => Value f Capacitance (Unit Farad)
+farad :: (Fractional f) => Value Capacitance (Unit Farad) f
 farad = one
 
 -- |One ohm.
-ohm :: (Fractional f) => Value f Resistance (Unit Ohm)
+ohm :: (Fractional f) => Value Resistance (Unit Ohm) f
 ohm = one
 
 -- |One siemens.
-siemens :: (Fractional f) => Value f Conductance (Unit Siemens)
+siemens :: (Fractional f) => Value Conductance (Unit Siemens) f
 siemens = one
 
 -- |One weber.
-weber :: (Fractional f) => Value f Flux (Unit Weber)
+weber :: (Fractional f) => Value Flux (Unit Weber) f
 weber = one
 
 -- |One tesla.
-tesla :: (Fractional f) => Value f FluxDensity (Unit Tesla)
+tesla :: (Fractional f) => Value FluxDensity (Unit Tesla) f
 tesla = one
 
 -- |One henry.
-henry :: (Fractional f) => Value f Inductance (Unit Henry)
+henry :: (Fractional f) => Value Inductance (Unit Henry) f
 henry = one

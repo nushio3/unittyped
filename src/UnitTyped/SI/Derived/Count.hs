@@ -73,29 +73,29 @@ instance Convertible '[] Degree where
 --
 
 -- |One percent (%).
-percent :: (Fractional f) => Value f '[] (Unit Percentage)
+percent :: (Fractional f) => Value '[] (Unit Percentage) f
 percent = one
 
 -- |One per mille (‰).
-permil :: (Fractional f) => Value f '[] (Unit Permil)
+permil :: (Fractional f) => Value '[] (Unit Permil) f
 permil = one
 
 -- |One part per million (ppm).
-ppm :: (Fractional f) => Value f '[] (Unit Ppm)
+ppm :: (Fractional f) => Value '[] (Unit Ppm) f
 ppm = one
 
 -- |One part per billion (ppb).
-ppb :: (Fractional f) => Value f '[] (Unit Ppb)
+ppb :: (Fractional f) => Value '[] (Unit Ppb) f
 ppb = one
 
 -- |One part per trillion (ppt).
-ppt :: (Fractional f) => Value f '[] (Unit Ppt)
+ppt :: (Fractional f) => Value '[] (Unit Ppt) f
 ppt = one
 
 -- |One rad (rad).
-rad :: (Fractional f) => Value f '[] (Unit Radian)
+rad :: (Fractional f) => Value '[] (Unit Radian) f
 rad = one
 
 -- |One degree (˚).
-deg :: (Fractional f) => Value f '[] (Unit Degree)
+deg :: (Fractional f) => Value '[] (Unit Degree) f
 deg = one

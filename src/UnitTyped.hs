@@ -23,12 +23,17 @@ module UnitTyped (
         POne, PTwo, PThree, PFour, PFive, PSix,
         NOne, NTwo, NThree, NFour,
 
-        coerce, as, to, one, mkVal, val, mapVal, (|*|), (|/|), (|+|), (|-|),
+        coerce, as, to, one, mkVal, val, (|*|), (|/|), (|+|), (|-|),
         (*|), (|*), (|/), (/|), (|+), (+|), (|-), (-|),
         (|==|), (|<=|), (|<|), (|>=|), (|>|),
 
         square, cubic
 ) where
+
+import Control.Applicative
+import Data.Monoid
+import Data.Foldable
+import Data.Traversable
 
 -- |Type level natural numbers (excluding zero, though).
 data Nat = One | Suc Nat
@@ -159,7 +164,7 @@ instance MapEq a a True
 instance (MapNeg map2 map2', MapMerge map1 map2' sum, MapNull sum b) => MapEq map1 map2 b
 
 -- |A value tagged with its dimension a and unit b.
-data Value f (a :: [(*, Number)]) (b :: [(*, Number)]) = Value f
+data Value (a :: [(*, Number)]) (b :: [(*, Number)]) f = Value f
 -- |Used as fake argument for the 'Convertible' class.
 data ValueProxy (a :: [(*, Number)]) b
 -- |Used as fake argument for the 'Convertible'' class.
@@ -168,7 +173,7 @@ data ValueProxy' (a :: [(*, Number)]) (b :: [(*, Number)])
 data NumberProxy (a :: Number)
 
 -- |Obtain a 'ValueProxy'' from a 'Value'.
-proxy' :: (Convertible' a b) => Value f a b -> ValueProxy' a b
+proxy' :: (Convertible' a b) => Value a b f -> ValueProxy' a b
 proxy' _ = error "proxy'"
 
 class FromNumber (a :: Number) where
@@ -240,7 +245,7 @@ toSuperScript '9' = '\8313'
 toSuperScript '-' = '\8315'
 toSuperScript x = x
 
-instance (Fractional f, Show f, Convertible' a b) => Show (Value f a b) where
+instance (Fractional f, Show f, Convertible' a b) => Show (Value a b f) where
         show u = show (val u) ++ " " ++ showunit' (proxy' u)
 
 -- |coerce something of a specific dimension into any other unit in the same dimension.
@@ -248,17 +253,17 @@ instance (Fractional f, Show f, Convertible' a b) => Show (Value f a b) where
 --
 -- >>> coerce (120 *| meter / second) (kilo meter / hour)
 -- 432.0 km/h
-coerce :: (Convertible' a b, Convertible' c d, Fractional f, MapEq a c True) => Value f a b -> Value f c d -> Value f c d
+coerce :: (Convertible' a b, Convertible' c d, Fractional f, MapEq a c True) => Value a b f -> Value c d f -> Value c d f
 coerce u _ = let result = mkVal (factor' (proxy' u) * val u / factor' (proxy' result)) in result
 
 infixl 5 `as`
 
 -- |Shorthand for 'coerce'.
-as :: (Convertible' a b, Convertible' c d, Fractional f, MapEq a c True) => Value f a b -> Value f c d -> Value f c d
+as :: (Convertible' a b, Convertible' c d, Fractional f, MapEq a c True) => Value a b f -> Value c d f -> Value c d f
 as = coerce
 
 -- |Shorthand for 'flip' 'coerce'
-to :: (Convertible' a b, Convertible' c d, Fractional f, MapEq a c True) => Value f c d -> Value f a b -> Value f c d
+to :: (Convertible' a b, Convertible' c d, Fractional f, MapEq a c True) => Value c d f -> Value a b f -> Value c d f
 to = flip coerce
 
 infixl 7 |*|, |/|
@@ -266,94 +271,111 @@ infixl 6 |+|, |-|
 
 -- |Multiply two values, constructing a value with as dimension the product of the dimensions,
 -- and as unit the multplication of the units.
-(|*|) :: (Fractional f, Convertible' a b, Convertible' c d, MapMerge a c u, MapMerge b d s) => Value f a b -> Value f c d -> Value f u s
+(|*|) :: (Fractional f, Convertible' a b, Convertible' c d, MapMerge a c u, MapMerge b d s) => Value a b f -> Value c d f -> Value u s f
 a |*| b = mkVal (val a * val b)
 
 -- |Divide two values, constructing a value with as dimension the division of the dimension of the lhs by the dimension of the rhs,
 -- and the same for the units.
-(|/|), per :: (Fractional f, Convertible' a b, Convertible' c d, MapMerge a c' u, MapNeg c c', MapNeg d d', MapMerge b d' s) => Value f a b -> Value f c d -> Value f u s
+(|/|), per :: (Fractional f, Convertible' a b, Convertible' c d, MapMerge a c' u, MapNeg c c', MapNeg d d', MapMerge b d' s) => Value a b f -> Value c d f -> Value u s f
 a |/| b = mkVal (val a / val b)
 per = (|/|)
 
 -- |Add two values with matching dimensions. Units are automatically resolved. The result will have the same unit as the lhs.
-(|+|) :: (Fractional f, Convertible' a b, Convertible' c d, MapEq c a True) => Value f a b -> Value f c d -> Value f a b
+(|+|) :: (Fractional f, Convertible' a b, Convertible' c d, MapEq c a True) => Value a b f -> Value c d f -> Value a b f
 a |+| b = mkVal (val a + val (coerce b a))
 
 -- |Subtract two values with matching dimensions. Units are automatically resolved. The result will have the same unit as the lhs.
-(|-|) :: (Fractional f, Convertible' a b, Convertible' c d, MapEq c a True) => Value f a b -> Value f c d -> Value f a b
+(|-|) :: (Fractional f, Convertible' a b, Convertible' c d, MapEq c a True) => Value a b f -> Value c d f -> Value a b f
 a |-| b = mkVal (val a - val (coerce b a))
 
 infixl 9 *|, |*, |/, /|
 infixl 8 +|, |+, -|, |-
 
 -- |Multiply a scalar by a unit.
-(*|) :: (Convertible' a b, Fractional f) => f -> Value f a b -> Value f a b
+(*|) :: (Convertible' a b, Fractional f) => f -> Value a b f -> Value a b f
 d *| u = mkVal (d * val u)
 
 -- |Multiply a unit by a scalar.
-(|*) :: (Convertible' a b, Fractional f) => Value f a b -> f -> Value f a b
+(|*) :: (Convertible' a b, Fractional f) => Value a b f -> f -> Value a b f
 u |* d = mkVal (val u * d)
 
 -- |Divide a scalar by a unit.
-(/|) :: (Convertible' a b, Fractional f, MapNeg a a', MapNeg b b') => f -> Value f a b -> Value f a' b'
+(/|) :: (Convertible' a b, Fractional f, MapNeg a a', MapNeg b b') => f -> Value a b f -> Value a' b' f
 d /| u = mkVal (d / val u)
 
 -- |Divide a unit by a scalar.
-(|/) :: (Convertible' a b, Fractional f) => Value f a b -> f -> Value f a b
+(|/) :: (Convertible' a b, Fractional f) => Value a b f -> f -> Value a b f
 u |/ d = mkVal (val u / d)
 
 -- |Add a unit to a scalar.
-(+|) :: (Convertible' a b, Fractional f) => f -> Value f a b -> Value f a b
+(+|) :: (Convertible' a b, Fractional f) => f -> Value a b f -> Value a b f
 d +| u = mkVal (d + val u)
 
 -- |Add a scalar to a unit.
-(|+) :: (Convertible' a b, Fractional f) => Value f a b -> f -> Value f a b
+(|+) :: (Convertible' a b, Fractional f) => Value a b f -> f -> Value a b f
 u |+ d = mkVal (val u + d)
 
 -- |Subtract a unit from a scalar.
-(-|) :: (Convertible' a b, Fractional f) => f -> Value f a b -> Value f a b
+(-|) :: (Convertible' a b, Fractional f) => f -> Value a b f -> Value a b f
 d -| u = mkVal (d - val u)
 
 -- |Subtract a scalar from a unit.
-(|-) :: (Convertible' a b, Fractional f) => Value f a b -> f -> Value f a b
+(|-) :: (Convertible' a b, Fractional f) => Value a b f -> f -> Value a b f
 u |- d = mkVal (val u - d)
 
 -- |Create a new value with given scalar as value.
-mkVal :: (Fractional f) => f -> Value f a b
+mkVal :: f -> Value a b f
 mkVal = Value
 
 -- |Obtain the value of a value wrapped in a type.
-val :: (Fractional f) => Value f a b -> f
+val :: Value a b f -> f
 val (Value f) = f
 
--- |Map over values. The 'Fractional' constraints make it impossible to define a 'Functor' instance, therefore this.
-mapVal :: (Fractional f, Fractional g) => (f -> g) -> Value f a b -> Value g a b
-mapVal f = mkVal . f . val
+instance Functor (Value a b) where
+    fmap f = mkVal . f . val
+
+instance Monad (Value a b) where
+    x >>= f = f $ val x
+    return = mkVal
+
+instance Applicative (Value a b) where
+    pure = mkVal
+    f <*> x = mkVal $ (val f) (val x)
+
+instance (Convertible' a b, Fractional f) => Monoid (Value a b f) where
+    mempty = mkVal 0
+    mappend = (|+|)
+
+instance Foldable (Value a b) where
+    foldMap f x = f $ val x
+
+instance Traversable (Value a b) where
+    traverse f x = mkVal <$> (f $ val x)
 
 -- |A wrapped value with scalar value 1.
-one :: (Fractional f, Convertible' a b) => Value f a b
+one :: (Fractional f, Convertible' a b) => Value a b f
 one = mkVal 1
 
 -- |Calculate the square of a value. Identical to pow2, reads better on units:
 --
 -- >>> 100 *| square meter `as` square yard
 -- 119.59900463010803 yd⋅yd⋅#
-square :: (Fractional f, MapMerge c c u, MapMerge d d s, Convertible' c d) => Value f c d -> Value f u s
+square :: (Fractional f, MapMerge c c u, MapMerge d d s, Convertible' c d) => Value c d f -> Value u s f
 square x = x |*| x
 
 -- |Calculate the third power of a value. Identical to pow3, reads better on units:
 --
 -- >>> 1 *| cubic inch `as` mili liter
 -- 16.387063999999995 mL
-cubic   :: (Fractional f, MapMerge a c u, MapMerge b d s, MapMerge c c a, MapMerge d d b, Convertible' a b, Convertible' c d) => Value f c d -> Value f u s
+cubic :: (Fractional f, MapMerge a c u, MapMerge b d s, MapMerge c c a, MapMerge d d b, Convertible' a b, Convertible' c d) => Value c d f -> Value u s f
 cubic x = x |*| x |*| x
 
-wrapB :: (Convertible' a b, Convertible' c d, MapEq c a True) => (Rational -> Rational -> Bool) -> Value Rational a b -> Value Rational c d -> Bool
+wrapB :: (Convertible' a b, Convertible' c d, MapEq c a True) => (Rational -> Rational -> Bool) -> Value a b Rational -> Value c d Rational -> Bool
 wrapB op a b = op (val a) (val $ coerce b a)
 
 infixl 4 |==|, |<|, |>|, |<=|, |>=|
 
-(|==|), (|<|), (|>|), (|<=|), (|>=|) :: (Convertible' a b, Convertible' c d, MapEq c a True) => Value Rational a b -> Value Rational c d -> Bool
+(|==|), (|<|), (|>|), (|<=|), (|>=|) :: (Convertible' a b, Convertible' c d, MapEq c a True) => Value a b Rational -> Value c d Rational -> Bool
 -- |'==' for values. Only defined for values with rational contents. Can be used on any two values with the same dimension.
 (|==|) = wrapB (==)
 -- |'<' on values. Only defined for values with rational contents. Can be used on any two values with the same dimension.

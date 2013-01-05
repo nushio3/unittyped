@@ -112,47 +112,47 @@ instance Convertible VolumeUnit FluidOunce where
 --
 
 -- |One mile (mile).
-mile :: (Fractional f) => Value f LengthDimension (Unit Mile)
+mile :: (Fractional f) => Value LengthDimension (Unit Mile) f
 mile = one
 
 -- |One inch (in).
-inch :: (Fractional f) => Value f LengthDimension (Unit Inch)
+inch :: (Fractional f) => Value LengthDimension (Unit Inch) f
 inch = one
 
 -- |One yard (yd).
-yard :: (Fractional f) => Value f LengthDimension (Unit Yard)
+yard :: (Fractional f) => Value LengthDimension (Unit Yard) f
 yard = one
 
 -- |One foot (ft).
-foot :: (Fractional f) => Value f LengthDimension (Unit Foot)
+foot :: (Fractional f) => Value LengthDimension (Unit Foot) f
 foot = one
 
-ångström, angstrom :: (Fractional f) => Value f LengthDimension (Unit Ångström)
+ångström, angstrom :: (Fractional f) => Value LengthDimension (Unit Ångström) f
 -- |One ångström (Å).
 ångström = one
 -- |One ångström, for those with bad UTF-8 support (Å).
 angstrom = one
 
 -- |One nautical mile (M).
-nautical_mile :: (Fractional f) => Value f LengthDimension (Unit NauticalMile)
+nautical_mile :: (Fractional f) => Value LengthDimension (Unit NauticalMile) f
 nautical_mile = one
 
 --
 
 -- |One barn (b).
-barn :: (Fractional f) => Value f AreaUnit (Unit Barn)
+barn :: (Fractional f) => Value AreaUnit (Unit Barn) f
 barn = one
 
 --
 
 -- |One liter (L).
-liter :: (Fractional f) => Value f VolumeUnit (Unit Liter)
+liter :: (Fractional f) => Value VolumeUnit (Unit Liter) f
 liter = one
 
 -- |One gallon (gallon).
-gallon :: (Fractional f) => Value f VolumeUnit (Unit Gallon)
+gallon :: (Fractional f) => Value VolumeUnit (Unit Gallon) f
 gallon = one
 
 -- |One fluid ounce (fl oz).
-fluid_ounce :: (Fractional f) => Value f VolumeUnit (Unit FluidOunce)
+fluid_ounce :: (Fractional f) => Value VolumeUnit (Unit FluidOunce) f
 fluid_ounce = one

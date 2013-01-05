@@ -133,45 +133,45 @@ instance Convertible LuminousDimension Candela where
 ----
 
 -- |One thing (#).
-count :: (Fractional f) => Value f '[] '[]
+count :: (Fractional f) => Value '[] '[] f
 count = one
 
 -- |One mole (mol).
-mole :: (Fractional f) => Value f '[] '[]
+mole :: (Fractional f) => Value '[] '[] f
 mole = one
 
 --
 
 -- |One meter (m).
-meter :: (Fractional f) => Value f LengthDimension (Unit Meter)
+meter :: (Fractional f) => Value LengthDimension (Unit Meter) f
 meter = one
 
 --
 
 -- |One second (s).
-second :: (Fractional f) => Value f TimeDimension (Unit Second)
+second :: (Fractional f) => Value TimeDimension (Unit Second) f
 second = one
 
 --
 
 -- |One gram (g).
-gram :: (Fractional f) => Value f MassDimension (Unit Gram)
+gram :: (Fractional f) => Value MassDimension (Unit Gram) f
 gram = one
 
 --
 
 -- |One Kelvin (K).
-kelvin :: (Fractional f) => Value f TemperatureDimension (Unit Kelvin)
+kelvin :: (Fractional f) => Value TemperatureDimension (Unit Kelvin) f
 kelvin = one
 
 --
 
 -- |One ampere (A).
-ampere :: (Fractional f) => Value f CurrentDimension (Unit Ampere)
+ampere :: (Fractional f) => Value CurrentDimension (Unit Ampere) f
 ampere = one
 
 --
 
 -- |One candela (cd).
-candela :: (Fractional f) => Value f LuminousDimension (Unit Candela)
+candela :: (Fractional f) => Value LuminousDimension (Unit Candela) f
 candela = one

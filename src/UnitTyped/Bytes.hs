@@ -33,9 +33,9 @@ instance Convertible DataDimension Bit where
 --
 
 -- |One byte.
-byte :: (Fractional f) => Value f DataDimension (Unit Byte)
+byte :: (Fractional f) => Value DataDimension (Unit Byte) f
 byte = one
 
 -- |One bit.
-bit :: (Fractional f) => Value f DataDimension (Unit Bit)
+bit :: (Fractional f) => Value DataDimension (Unit Bit) f
 bit = one
