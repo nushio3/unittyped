@@ -17,12 +17,15 @@ module UnitTyped.SI.Derived.Mass where
 import UnitTyped
 import UnitTyped.SI
 
+import Data.Typeable
+
 ----
 -- Mass
 ----
 
 -- |Pound, imperial unit of mass (lb).
 data Pound
+	deriving Typeable
 
 instance Convertible MassDimension Pound where
 	factor _ = 0.45359237
@@ -31,5 +34,5 @@ instance Convertible MassDimension Pound where
 --
 
 -- |One pound (lb).
-pound :: (Fractional f) => Value MassDimension (Unit Pound) f
+pound :: (Fractional f) => Value MassDimension (U Pound) f
 pound = one

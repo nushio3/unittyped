@@ -13,10 +13,12 @@
 -- |Module definig all SI units and their dimensions.
 module UnitTyped.SI where
 
+import Data.Typeable
 import UnitTyped
 
--- |Unit for moles. Officially, this is a SI unit, but we definite it in terms of 'Count'.
+-- |U for moles. Officially, this is a SI unit, but we definite it in terms of 'Count'.
 data Mole
+	deriving Typeable
 
 instance Convertible '[] Mole where
 	factor _ = 6.0221417930e23
@@ -28,6 +30,7 @@ instance Convertible '[] Mole where
 
 -- |Dimension of length.
 data Length
+	deriving Typeable
 -- |The dimension defining @Length^1@.
 type LengthDimension = '[ '(Length, (Pos One)) ]
 
@@ -35,6 +38,7 @@ type LengthDimension = '[ '(Length, (Pos One)) ]
 
 -- |The SI unit for 'Length': meter (m).
 data Meter
+	deriving Typeable
 
 instance Convertible LengthDimension Meter where
 	factor _ = 1
@@ -46,6 +50,7 @@ instance Convertible LengthDimension Meter where
 
 -- |Dimension of time.
 data Time
+	deriving Typeable
 -- |The dimension defining @Time^1@.
 type TimeDimension = '[ '(Time, (Pos One)) ]
 
@@ -53,6 +58,7 @@ type TimeDimension = '[ '(Time, (Pos One)) ]
 
 -- |The SI unit for 'Time': second (s).
 data Second
+	deriving Typeable
 
 instance Convertible TimeDimension Second where
 	factor _ = 1
@@ -64,6 +70,7 @@ instance Convertible TimeDimension Second where
 
 -- |Dimension of mass.
 data Mass
+	deriving Typeable
 -- |The dimension defining @Mass^1@.
 type MassDimension = '[ '(Mass, (Pos One)) ]
 
@@ -71,6 +78,7 @@ type MassDimension = '[ '(Mass, (Pos One)) ]
 
 -- |The SI unit for 'Mass' is officially kilogram, but we define grams (g) here, so @kilo gram@ will work when using 'UnitTyped.SI.Meta'.
 data Gram
+	deriving Typeable
 
 instance Convertible MassDimension Gram where
 	factor _ = 0.001
@@ -82,6 +90,7 @@ instance Convertible MassDimension Gram where
 
 -- |Dimension of temperature.
 data Temperature
+	deriving Typeable
 -- |The dimension defining @Temperature^1@.
 type TemperatureDimension = '[ '(Temperature, (Pos One)) ]
 
@@ -89,6 +98,7 @@ type TemperatureDimension = '[ '(Temperature, (Pos One)) ]
 
 -- |The SI unit for 'Temperature': Kelvin (K).
 data Kelvin
+	deriving Typeable
 
 instance Convertible TemperatureDimension Kelvin where
 	factor _ = 1
@@ -100,6 +110,7 @@ instance Convertible TemperatureDimension Kelvin where
 
 -- |Dimension of electric current.
 data Current
+	deriving Typeable
 -- |The dimension defining @Current^1@.
 type CurrentDimension = '[ '(Current, (Pos One)) ]
 
@@ -107,6 +118,7 @@ type CurrentDimension = '[ '(Current, (Pos One)) ]
 
 -- |The SI unit for 'Current': ampere (A).
 data Ampere
+	deriving Typeable
 
 instance Convertible CurrentDimension Ampere where
 	factor _ = 1
@@ -118,6 +130,7 @@ instance Convertible CurrentDimension Ampere where
 
 -- |Dimension of luminous intensity.
 data Luminous
+	deriving Typeable
 -- |The dimension defining @Luminous^1@.
 type LuminousDimension = '[ '(Luminous, (Pos One)) ]
 
@@ -125,6 +138,7 @@ type LuminousDimension = '[ '(Luminous, (Pos One)) ]
 
 -- |The SI unit for 'Luminous' intensity: candela (cd).
 data Candela
+	deriving Typeable
 
 instance Convertible LuminousDimension Candela where
 	factor _ = 1
@@ -143,35 +157,35 @@ mole = one
 --
 
 -- |One meter (m).
-meter :: (Fractional f) => Value LengthDimension (Unit Meter) f
+meter :: (Fractional f) => Value LengthDimension (U Meter) f
 meter = one
 
 --
 
 -- |One second (s).
-second :: (Fractional f) => Value TimeDimension (Unit Second) f
+second :: (Fractional f) => Value TimeDimension (U Second) f
 second = one
 
 --
 
 -- |One gram (g).
-gram :: (Fractional f) => Value MassDimension (Unit Gram) f
+gram :: (Fractional f) => Value MassDimension (U Gram) f
 gram = one
 
 --
 
 -- |One Kelvin (K).
-kelvin :: (Fractional f) => Value TemperatureDimension (Unit Kelvin) f
+kelvin :: (Fractional f) => Value TemperatureDimension (U Kelvin) f
 kelvin = one
 
 --
 
 -- |One ampere (A).
-ampere :: (Fractional f) => Value CurrentDimension (Unit Ampere) f
+ampere :: (Fractional f) => Value CurrentDimension (U Ampere) f
 ampere = one
 
 --
 
 -- |One candela (cd).
-candela :: (Fractional f) => Value LuminousDimension (Unit Candela) f
+candela :: (Fractional f) => Value LuminousDimension (U Candela) f
 candela = one

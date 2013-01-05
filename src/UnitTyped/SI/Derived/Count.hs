@@ -17,12 +17,15 @@ module UnitTyped.SI.Derived.Count where
 import UnitTyped
 import UnitTyped.SI
 
+import Data.Typeable
+
 ---
 -- Count
 ---
 
 -- |Percentage: 1% == 0.001
 data Percentage
+	deriving Typeable
 
 instance Convertible '[] Percentage where
 	factor _ = 0.01
@@ -30,6 +33,7 @@ instance Convertible '[] Percentage where
 
 -- |Per mille: 1‰ == 0.001
 data Permil
+	deriving Typeable
 
 instance Convertible '[] Permil where
 	factor _ = 0.001
@@ -37,6 +41,7 @@ instance Convertible '[] Permil where
 
 -- |Parts per million: 1 ppm == 0.1^6
 data Ppm
+	deriving Typeable
 
 instance Convertible '[] Ppm where
 	factor _ = 0.1^6
@@ -44,6 +49,7 @@ instance Convertible '[] Ppm where
 
 -- |Parts per billion: 1 ppb == 0.1^9
 data Ppb
+	deriving Typeable
 
 instance Convertible '[] Ppb where
 	factor _ = 0.1^9
@@ -51,6 +57,7 @@ instance Convertible '[] Ppb where
 
 -- |Parts per trillion: 1 ppt == 0.1^12
 data Ppt
+	deriving Typeable
 
 instance Convertible '[] Ppt where
 	factor _ = 0.1^12
@@ -58,6 +65,7 @@ instance Convertible '[] Ppt where
 
 -- |Angles are dimensionless, these are radians (rad).
 data Radian
+	deriving Typeable
 
 instance Convertible '[] Radian where
 	factor _ = 1
@@ -65,6 +73,7 @@ instance Convertible '[] Radian where
 
 -- |Angles are dimensionless, these are degrees (˚).
 data Degree
+	deriving Typeable
 
 instance Convertible '[] Degree where
 	factor _ = 3.141592653589793 / 180
@@ -73,29 +82,29 @@ instance Convertible '[] Degree where
 --
 
 -- |One percent (%).
-percent :: (Fractional f) => Value '[] (Unit Percentage) f
+percent :: (Fractional f) => Value '[] (U Percentage) f
 percent = one
 
 -- |One per mille (‰).
-permil :: (Fractional f) => Value '[] (Unit Permil) f
+permil :: (Fractional f) => Value '[] (U Permil) f
 permil = one
 
 -- |One part per million (ppm).
-ppm :: (Fractional f) => Value '[] (Unit Ppm) f
+ppm :: (Fractional f) => Value '[] (U Ppm) f
 ppm = one
 
 -- |One part per billion (ppb).
-ppb :: (Fractional f) => Value '[] (Unit Ppb) f
+ppb :: (Fractional f) => Value '[] (U Ppb) f
 ppb = one
 
 -- |One part per trillion (ppt).
-ppt :: (Fractional f) => Value '[] (Unit Ppt) f
+ppt :: (Fractional f) => Value '[] (U Ppt) f
 ppt = one
 
 -- |One rad (rad).
-rad :: (Fractional f) => Value '[] (Unit Radian) f
+rad :: (Fractional f) => Value '[] (U Radian) f
 rad = one
 
 -- |One degree (˚).
-deg :: (Fractional f) => Value '[] (Unit Degree) f
+deg :: (Fractional f) => Value '[] (U Degree) f
 deg = one

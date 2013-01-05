@@ -62,10 +62,10 @@ cos = wrap1 Prelude.cos
 -- |Calculate the tangens of a value. Works on 'Degree' and 'Radian'.
 tan = wrap1 Prelude.tan
 
-wrap2 :: (Floating f) => (f -> f) -> Value '[] '[] f -> Value '[] (Unit Radian) f
+wrap2 :: (Floating f) => (f -> f) -> Value '[] '[] f -> Value '[] (U Radian) f
 wrap2 op v = op (val v) *| one
 
-asin, acos, atan :: (Floating f) => Value '[] '[] f -> Value '[] (Unit Radian) f
+asin, acos, atan :: (Floating f) => Value '[] '[] f -> Value '[] (U Radian) f
 -- |Calculate the arcsinus of a value. Always computes 'Radian's.
 asin = wrap2 Prelude.asin
 -- |Calculate the arccosinus of a value. Always computes 'Radian's.

@@ -10,10 +10,11 @@
 {-# LANGUAGE TypeOperators #-}
 {-# LANGUAGE RankNTypes #-}
 {-# LANGUAGE DataKinds #-}
+{-# LANGUAGE InstanceSigs #-}
 
 -- |Module defining values with dimensions and units, and mathematical operations on those.
 module UnitTyped (
-        Convertible(..), Convertible'(..), Unit(..),
+        Convertible(..), Convertible'(..), U(..),
         Value(..), ValueProxy, ValueProxy', proxy',
 
         Count,
@@ -27,6 +28,8 @@ module UnitTyped (
         (*|), (|*), (|/), (/|), (|+), (+|), (|-), (-|),
         (|==|), (|<=|), (|<|), (|>=|), (|>|),
 
+        dimension, unit,
+
         square, cubic
 ) where
 
@@ -34,6 +37,9 @@ import Control.Applicative
 import Data.Monoid
 import Data.Foldable
 import Data.Traversable
+
+import qualified Data.Map as M
+import Data.Typeable
 
 -- |Type level natural numbers (excluding zero, though).
 data Nat = One | Suc Nat
@@ -194,6 +200,26 @@ instance FromNumber (Neg One) where
 instance (FromNumber (Neg a)) => FromNumber (Neg (Suc a)) where
         fromNumber _ = -1 + (fromNumber (undefined :: NumberProxy (Neg a)))
 
+class Dimension a where
+    dimension :: Value a b f -> M.Map TypeRep Integer
+
+instance Dimension '[] where
+    dimension _ = M.empty
+
+instance (Typeable dim, FromNumber value, Dimension rest) => Dimension ('(dim, value) ': rest) where
+    dimension :: forall (b :: [(*, Number)]) f . Value ('(dim, value) ': rest) b f -> M.Map TypeRep Integer
+    dimension _ = M.insert (typeOf (error "typeOf" :: dim)) (fromNumber (error "fromNumber" :: NumberProxy value)) (dimension (undefined :: Value rest b f))
+
+class Unit b where
+    unit :: Value a b f -> M.Map TypeRep Integer
+
+instance Unit '[] where
+    unit _ = M.empty
+
+instance (Typeable uni, FromNumber value, Unit rest) => Unit ('(uni, value) ': rest) where
+    unit :: forall (a :: [(*, Number)]) f . Value a ('(uni, value) ': rest) f -> M.Map TypeRep Integer
+    unit _ = M.insert (typeOf (error "typeOf" :: uni)) (fromNumber (error "fromNumber" :: NumberProxy value)) (unit (undefined :: Value a rest f))
+
 -- |Convertible is a class that models the fact that the base unit 'b' has dimension 'a'.
 class Convertible (a :: [(*, Number)]) b | b -> a where
         -- |The multiplication factor to convert this base unit between other units in the same dimension.
@@ -203,7 +229,7 @@ class Convertible (a :: [(*, Number)]) b | b -> a where
         showunit :: ValueProxy a b -> String
 
 -- |Shorthand to create a composed unit containing just one base unit.
-type Unit a = '[ '(a, POne) ]
+type U a = '[ '(a, POne) ]
 
 -- |Convertible' is a class that models the fact that the composed unit 'b' has dimension 'a'.
 class Convertible' (a :: [(*, Number)]) (b :: [(*, Number)]) where

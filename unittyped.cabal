@@ -25,7 +25,7 @@ source-repository this
   tag: 0.2
 
 library
-  build-depends:   base >= 4.6 && < 4.7, time, old-locale
+  build-depends:   base >= 4.6 && < 4.7, time, old-locale, containers
   extensions:      FlexibleInstances
                    UndecidableInstances
                    FunctionalDependencies
@@ -37,6 +37,7 @@ library
                    EmptyDataDecls
                    TypeOperators
                    RankNTypes
+                   DeriveDataTypeable
   exposed-modules: UnitTyped
                    UnitTyped.SI
                    UnitTyped.SI.Derived
