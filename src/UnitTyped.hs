@@ -160,10 +160,6 @@ instance (MapNull a, MapNull b) => Convertible' a b where
         factor' _ = 1
         showunit' _ = ""
 
---instance (Convertible a b, MapEq a a') => Convertible' a' ('(b, value) ': '[]) where
-        --factor' _ = factor (undefined :: ValueProxy a b)
-        --showunit' _ = showunit (undefined :: ValueProxy a b)
-
 instance (SingI value, Convertible' rec_dimension rest,
           neg_unit_dimension ~ MapNeg unit_dimension,
           times_neg_unit_dimension ~ MapTimes value neg_unit_dimension,
