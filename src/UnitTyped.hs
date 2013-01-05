@@ -20,7 +20,7 @@ module UnitTyped (
         Count,
 
         Nat(..), Number(..),
-        MapMerge, MapEq, MapNeg, MapTimes,
+        MapMerge, MapEq, MapNeg, MapTimes, MapNull, P, N,
         POne, PTwo, PThree, PFour, PFive, PSix,
         NOne, NTwo, NThree, NFour,
 
@@ -31,69 +31,69 @@ module UnitTyped (
         square, cubic
 ) where
 
--- |Type level natural numbers (excluding zero, though).
-data Nat = One | Suc Nat
+import GHC.TypeLits
 
--- |Type level integers.
-data Number = Zero | Neg Nat | Pos Nat
+-- |Type level integers. I a b represents a - b.
+data Number = I Nat Nat
 
--- |Type level +1
-type POne = Pos One
+newtype instance Sing (n :: Number) = SNumber (Integer, Integer)
+
+instance (SingI a, SingI b) => SingI (I a b) where
+    sing = SNumber (fromSing (sing :: Sing a), fromSing (sing :: Sing b))
+
+instance SingE (KindParam :: OfKind Number) where
+    type DemoteRep (KindParam :: OfKind Number) = Integer
+    fromSing (SNumber (a, b)) = a - b
+
+type family P (n :: Nat) :: Number
+type instance where
+    P n = I n 0
+
+type family N (n :: Nat) :: Number
+type instance where
+    N n = I 0 n
+
+type POne = I 1 0
 -- |Type level +2
-type PTwo = Pos (Suc One)
+type PTwo = I 2 0
 -- |Type level +3
-type PThree = Pos (Suc (Suc One))
+type PThree = I 3 0
 -- |Type level +4
-type PFour = Pos (Suc (Suc (Suc One)))
+type PFour = I 4 0
 -- |Type level +5
-type PFive = Pos (Suc (Suc (Suc (Suc One))))
+type PFive = I 5 0
 -- |Type level +6
-type PSix = Pos (Suc (Suc (Suc (Suc (Suc One)))))
+type PSix = I 6 0
 
 -- |Type level -1
-type NOne = Neg One
+type NOne = I 0 1
 -- |Type level -2
-type NTwo = Neg (Suc One)
+type NTwo = I 0 2
 -- |Type level -3
-type NThree = Neg (Suc (Suc One))
+type NThree = I 0 3
 -- |Type level -4
-type NFour = Neg (Suc (Suc (Suc One)))
-
--- These two are useful for Add
-
-type family Suc' (a :: Number) :: Number
-type instance where
-    Suc' Zero = Pos One
-    Suc' (Pos a) = Pos (Suc a)
-    Suc' (Neg One) = Zero
-    Suc' (Neg (Suc a)) = Neg a
-
-type family Pre' (a :: Number) :: Number
-type instance where
-    Pre' Zero = Neg One
-    Pre' (Neg a) = Neg (Suc a)
-    Pre' (Pos One) = Zero
-    Pre' (Pos (Suc a)) = Pos a
+type NFour = I 0 4
 
 type family Add (a :: Number) (b :: Number) :: Number
 type instance where
-    Add Zero b = b
-    Add (Pos One) b = Suc' b
-    Add (Neg One) b = Pre' b
-    Add (Neg (Suc a)) b = Pre' (Add (Neg a) b)
-    Add (Pos (Suc a)) b = Suc' (Add (Pos a) b)
+    Add (I a b) (I c d) = I (a + c) (b + d)
+
+-- (a - b) * (c - d) = (a * c + b * d) - (a * d + b * c)
+type family Times (a :: Number) (b :: Number) :: Number
+type instance where
+    Times (I a b) (I c d) = I ((a * c) + (b * d)) ((a * d) + (b * c))
 
 type family Negate (a :: Number) :: Number
 type instance where
-    Negate Zero = Zero
-    Negate (Pos a) = Neg a
-    Negate (Neg a) = Pos a
+    Negate (I a b) = I b a
+
+class NumberEq (a :: Number) (b :: Number) where
+-- a - b = c - d => a + d = c + b
+instance ((a + d) <= (c + b), (c + b) <= (a + d)) => NumberEq (I a b) (I c d) where
 
 type family MapInsert unit (value :: Number) (map :: [(*, Number)]) :: [(*, Number)]
 type instance where
     MapInsert unit value '[] = '[ '(unit, value) ]
-    MapInsert unit (Neg value) ( '(unit, (Pos value)) ': rec) = rec
-    MapInsert unit (Pos value) ( '(unit, (Neg value)) ': rec) = rec
     MapInsert unit value ( '(unit, value') ': rec) = ( '(unit, Add value value') ': rec)
     MapInsert unit value ( '(unit', value') ': rest) = ( '(unit', value') ': MapInsert unit value rest)
 
@@ -107,28 +107,24 @@ type instance where
 -- |Multiply all the values in a map with a specified value.
 type family MapTimes (value :: Number) (map :: [(*, Number)]) :: [(*, Number)]
 type instance where
-    MapTimes Zero map = '[]
-    MapTimes (Pos One) map = map
-    MapTimes (Neg One) map = MapNeg map
-    MapTimes (Pos (Suc n)) map = MapMerge map (MapTimes (Pos n) map)
-    MapTimes (Neg (Suc n)) map = MapMerge (MapNeg map) (MapTimes (Neg n) map)
+    MapTimes (I a a) map = '[]
+    MapTimes n '[] = '[]
+    MapTimes n ('(unit, value) ': rest) = '(unit, Times n value) ': (MapTimes n rest)
 
 -- |Negates all the values in the given map.
 type family MapNeg (map1 :: [(*, Number)]) :: [(*, Number)]
 type instance where
-    MapNeg '[] = '[]
-    MapNeg ('(unit, value) ': rest) = ('(unit, (Negate value)) ': (MapNeg rest))
+    MapNeg map = MapTimes NOne map
 
-type family MapNull (map :: [(*, Number)]) :: Bool
-type instance where
-    MapNull '[] = True
-    MapNull ('(unit, Zero) ': rest) = MapNull rest
-    MapNull ('(unit, value) ': rest) = False
+class MapNull (map :: [(*, Number)]) where
+
+instance MapNull '[] where
+instance (MapNull rest) => MapNull ('(unit, I a a) ': rest) where
 
 -- |This constraint holds if and only if 'map1' and 'map2' represent the same dimension.
 class MapEq (map1 :: [(*, Number)]) (map2 :: [(*, Number)]) where
 instance MapEq a a where
-instance (True ~ MapNull (MapMerge map1 (MapNeg map2))) => MapEq map1 map2 where
+instance (MapNull (MapMerge map1 (MapNeg map2))) => MapEq map1 map2 where
 
 -- |A value tagged with its dimension a and unit b.
 data Value f (a :: [(*, Number)]) (b :: [(*, Number)]) = Value f
@@ -136,30 +132,10 @@ data Value f (a :: [(*, Number)]) (b :: [(*, Number)]) = Value f
 data ValueProxy (a :: [(*, Number)]) b
 -- |Used as fake argument for the 'Convertible'' class.
 data ValueProxy' (a :: [(*, Number)]) (b :: [(*, Number)])
--- |Used as fake argument containing a type-level integer.
-data NumberProxy (a :: Number)
 
 -- |Obtain a 'ValueProxy'' from a 'Value'.
 proxy' :: (Convertible' a b) => Value f a b -> ValueProxy' a b
 proxy' _ = error "proxy'"
-
-class FromNumber (a :: Number) where
-        fromNumber :: NumberProxy a -> Integer
-
-instance FromNumber Zero where
-        fromNumber _ = 0
-
-instance FromNumber (Pos One) where
-        fromNumber _ = 1
-
-instance (FromNumber (Pos a)) => FromNumber (Pos (Suc a)) where
-        fromNumber _ = 1 + (fromNumber (undefined :: NumberProxy (Pos a)))
-
-instance FromNumber (Neg One) where
-        fromNumber _ = -1
-
-instance (FromNumber (Neg a)) => FromNumber (Neg (Suc a)) where
-        fromNumber _ = -1 + (fromNumber (undefined :: NumberProxy (Neg a)))
 
 -- |Convertible is a class that models the fact that the base unit 'b' has dimension 'a'.
 class Convertible (a :: [(*, Number)]) b | b -> a where
@@ -170,7 +146,7 @@ class Convertible (a :: [(*, Number)]) b | b -> a where
         showunit :: ValueProxy a b -> String
 
 -- |Shorthand to create a composed unit containing just one base unit.
-type Unit a = '[ '(a, POne) ]
+type Unit a = '[ '(a, P 1) ]
 
 -- |Convertible' is a class that models the fact that the composed unit 'b' has dimension 'a'.
 class Convertible' (a :: [(*, Number)]) (b :: [(*, Number)]) where
@@ -180,23 +156,25 @@ class Convertible' (a :: [(*, Number)]) (b :: [(*, Number)]) where
         -- |String representation of a unit.
         showunit' :: ValueProxy' a b -> String
 
-instance (True ~ MapNull a) => Convertible' a '[] where
+instance (MapNull a, MapNull b) => Convertible' a b where
         factor' _ = 1
         showunit' _ = ""
 
-instance (Convertible a b, MapEq a a') => Convertible' a' ('(b, POne) ': '[]) where
-        factor' _ = factor (undefined :: ValueProxy a b)
-        showunit' _ = showunit (undefined :: ValueProxy a b)
+--instance (Convertible a b, MapEq a a') => Convertible' a' ('(b, value) ': '[]) where
+        --factor' _ = factor (undefined :: ValueProxy a b)
+        --showunit' _ = showunit (undefined :: ValueProxy a b)
 
-instance (FromNumber value, Convertible' rec_dimension rest, neg_unit_dimension ~ MapNeg unit_dimension,
-                  times_neg_unit_dimension ~ MapTimes value neg_unit_dimension, rec_dimension ~ MapMerge times_neg_unit_dimension dimension,
-                  Convertible unit_dimension unit) => Convertible' dimension ('(unit, value) ': rest) where
+instance (SingI value, Convertible' rec_dimension rest,
+          neg_unit_dimension ~ MapNeg unit_dimension,
+          times_neg_unit_dimension ~ MapTimes value neg_unit_dimension,
+          rec_dimension ~ MapMerge times_neg_unit_dimension dimension,
+          Convertible unit_dimension unit) => Convertible' dimension ('(unit, value) ': rest) where
         factor' _ = let
                                         rec = factor' (undefined :: ValueProxy' rec_dimension rest)
-                                in rec * ((factor (undefined :: ValueProxy unit_dimension unit)) ^^ (fromNumber (undefined :: NumberProxy value)))
+                                in rec * ((factor (undefined :: ValueProxy unit_dimension unit)) ^^ (fromSing (sing :: Sing value)))
         showunit' _ = let
                                         rec = showunit' (undefined :: ValueProxy' rec_dimension rest)
-                                        power = fromNumber (undefined :: NumberProxy value)
+                                        power = fromSing (sing :: Sing value)
                                   in (if null rec then "" else rec) ++ (if (not $ null rec) && (power /= 0) then "⋅" else "") ++ (if power /= 0 then (showunit (undefined :: ValueProxy a'' unit)) ++ if power /= 1 then map toSuperScript $ show power else "" else "")
 
 toSuperScript '0' = '\8304'

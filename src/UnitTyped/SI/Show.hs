@@ -52,7 +52,7 @@ time_str = format_end (mili second) . format second . format minute . format hou
 --
 -- >>> meta_str meter (c |*| 1 *| year)
 -- "9 Pm, 460 Tm, 536 Gm, 207 Mm, 68 km, 16 m"
-meta_str :: (Convertible' a b, Convertible c d, MapEq a c) => Value Rational c (Unit d) -> Value Rational a b -> String
+meta_str :: (Convertible' a b, Convertible c d, MapEq a c, MapNull (MapMerge (MapTimes POne (MapNeg c)) c)) => Value Rational c (Unit d) -> Value Rational a b -> String
 meta_str unit v = format_end (yocto unit) $ format (zepto unit) $ format (atto unit) $ format (femto unit)
 					$ format (pico unit) $ format (nano unit) $ format (micro unit) $ format (mili unit)
 					$ format unit $ format (kilo unit) $ format (mega unit) $ format (giga unit)

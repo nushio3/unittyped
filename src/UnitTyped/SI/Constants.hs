@@ -32,12 +32,12 @@ c :: (Fractional f) => Value f Speed '[ '(Second, NOne), '(Meter, POne)]
 c = mkVal 299792458
 
 -- |Planck constant
-h :: Fractional f => Value f '[ '(Time, ('Neg 'One)), '(Mass, ('Pos 'One)), '(Length, ('Pos ('Suc 'One))) ] '[ '(Joule, ('Pos 'One)), '(Second, ('Pos 'One)) ]
+h :: Fractional f => Value f '[ '(Time, NOne), '(Mass, POne), '(Length, PTwo) ] '[ '(Joule, POne), '(Second, POne) ]
 h = mkVal 6.6260695729e-34
 
 -- |Reduced Planck constant
 hbar :: Fractional f => Value f '[ '(Time, NOne), '(Length, PTwo), '(Mass, POne)] '[ '(Second, POne), '(Joule, POne) ]
-hbar = coerce (h |/| (2 *| UnitTyped.SI.Constants.pi)) (joule |*| second)
+hbar = coerce (h |/| (2 *| UnitTyped.SI.Constants.pi)) (error "hbar")
 
 -- |Atomic unit of charge (elementary charge)
 e :: (Fractional f) => Value f Charge (Unit Coulomb)

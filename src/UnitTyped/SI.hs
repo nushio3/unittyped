@@ -29,7 +29,7 @@ instance Convertible '[] Mole where
 -- |Dimension of length.
 data Length
 -- |The dimension defining @Length^1@.
-type LengthDimension = '[ '(Length, (Pos One)) ]
+type LengthDimension = '[ '(Length, POne) ]
 
 --
 
@@ -47,7 +47,7 @@ instance Convertible LengthDimension Meter where
 -- |Dimension of time.
 data Time
 -- |The dimension defining @Time^1@.
-type TimeDimension = '[ '(Time, (Pos One)) ]
+type TimeDimension = '[ '(Time, POne) ]
 
 --
 
@@ -65,7 +65,7 @@ instance Convertible TimeDimension Second where
 -- |Dimension of mass.
 data Mass
 -- |The dimension defining @Mass^1@.
-type MassDimension = '[ '(Mass, (Pos One)) ]
+type MassDimension = '[ '(Mass, POne) ]
 
 --
 
@@ -83,7 +83,7 @@ instance Convertible MassDimension Gram where
 -- |Dimension of temperature.
 data Temperature
 -- |The dimension defining @Temperature^1@.
-type TemperatureDimension = '[ '(Temperature, (Pos One)) ]
+type TemperatureDimension = '[ '(Temperature, POne) ]
 
 --
 
@@ -101,7 +101,7 @@ instance Convertible TemperatureDimension Kelvin where
 -- |Dimension of electric current.
 data Current
 -- |The dimension defining @Current^1@.
-type CurrentDimension = '[ '(Current, (Pos One)) ]
+type CurrentDimension = '[ '(Current, POne) ]
 
 --
 
@@ -119,7 +119,7 @@ instance Convertible CurrentDimension Ampere where
 -- |Dimension of luminous intensity.
 data Luminous
 -- |The dimension defining @Luminous^1@.
-type LuminousDimension = '[ '(Luminous, (Pos One)) ]
+type LuminousDimension = '[ '(Luminous, POne) ]
 
 --
 

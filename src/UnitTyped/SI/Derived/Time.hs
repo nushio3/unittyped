@@ -74,7 +74,7 @@ instance Convertible TimeDimension JulianYear where
 -- |Frequency in Hertz. (Hz)
 data Hertz
 
-instance Convertible '[ '(Time, Neg One) ] Hertz where
+instance Convertible '[ '(Time, NOne) ] Hertz where
 	factor _ = 1
 	showunit _ = "Hz"
 
