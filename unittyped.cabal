@@ -60,4 +60,4 @@ Test-Suite test-si
 Test-Suite test-unbox
     type:          exitcode-stdio-1.0
     main-is:       tests/TestUnbox.hs
-    build-depends: base >= 4.6 && < 4.7, unittyped, vector >= 0.10
+    build-depends: base >= 4.6 && < 4.7, unittyped, vector >= 0.10, repa >= 3.2.3
