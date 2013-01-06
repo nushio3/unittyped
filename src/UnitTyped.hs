@@ -191,18 +191,23 @@ class FromNumber (a :: Number) where
         fromNumber :: NumberProxy a -> Integer
 
 instance FromNumber Zero where
+        {-# INLINE fromNumber #-}
         fromNumber _ = 0
 
 instance FromNumber (Pos One) where
+        {-# INLINE fromNumber #-}
         fromNumber _ = 1
 
 instance (FromNumber (Pos a)) => FromNumber (Pos (Suc a)) where
+        {-# INLINE fromNumber #-}
         fromNumber _ = 1 + (fromNumber (undefined :: NumberProxy (Pos a)))
 
 instance FromNumber (Neg One) where
+        {-# INLINE fromNumber #-}
         fromNumber _ = -1
 
 instance (FromNumber (Neg a)) => FromNumber (Neg (Suc a)) where
+        {-# INLINE fromNumber #-}
         fromNumber _ = -1 + (fromNumber (undefined :: NumberProxy (Neg a)))
 
 class Dimension a where
@@ -245,11 +250,15 @@ class Convertible' (a :: [(*, Number)]) (b :: [(*, Number)]) where
         showunit' :: ValueProxy' a b -> String
 
 instance (MapNull a True) => Convertible' a '[] where
+        {-# INLINE factor' #-}
         factor' _ = 1
+        {-# INLINE showunit' #-}
         showunit' _ = ""
 
 instance (Convertible a b, MapEq a a' True) => Convertible' a' ('(b, POne) ': '[]) where
+        {-# INLINE factor' #-}
         factor' _ = factor (undefined :: ValueProxy a b)
+        {-# INLINE showunit' #-}
         showunit' _ = showunit (undefined :: ValueProxy a b)
 
 instance (FromNumber value, Convertible' rec_dimension rest, MapNeg unit_dimension neg_unit_dimension,
@@ -263,6 +272,7 @@ instance (FromNumber value, Convertible' rec_dimension rest, MapNeg unit_dimensi
                                         power = fromNumber (undefined :: NumberProxy value)
                                   in (if null rec then "" else rec) ++ (if (not $ null rec) && (power /= 0) then "⋅" else "") ++ (if power /= 0 then (showunit (undefined :: ValueProxy a'' unit)) ++ if power /= 1 then map toSuperScript $ show power else "" else "")
 
+toSuperScript :: Char -> Char
 toSuperScript '0' = '\8304'
 toSuperScript '1' = '\185'
 toSuperScript '2' = '\178'
@@ -285,16 +295,19 @@ instance (Fractional f, Show f, Convertible' a b) => Show (Value a b f) where
 -- >>> coerce (120 *| meter / second) (kilo meter / hour)
 -- 432.0 km/h
 coerce :: (Convertible' a b, Convertible' c d, Fractional f, MapEq a c True) => Value a b f -> Value c d f -> Value c d f
+{-# INLINE coerce #-}
 coerce u _ = let result = mkVal (factor' (proxy' u) * val u / factor' (proxy' result)) in result
 
 infixl 5 `as`
 
 -- |Shorthand for 'coerce'.
 as :: (Convertible' a b, Convertible' c d, Fractional f, MapEq a c True) => Value a b f -> Value c d f -> Value c d f
+{-# INLINE as #-}
 as = coerce
 
 -- |Shorthand for 'flip' 'coerce'
 to :: (Convertible' a b, Convertible' c d, Fractional f, MapEq a c True) => Value c d f -> Value a b f -> Value c d f
+{-# INLINE to #-}
 to = flip coerce
 
 infixl 7 |*|, |/|
@@ -356,10 +369,12 @@ u |- d = mkVal (val u - d)
 
 -- |Create a new value with given scalar as value.
 mkVal :: f -> Value a b f
+{-# INLINE mkVal #-}
 mkVal = Value
 
 -- |Obtain the value of a value wrapped in a type.
 val :: Value a b f -> f
+{-# INLINE val #-}
 val (Value f) = f
 
 instance (Enum f) => Enum (Value a b f) where
@@ -386,7 +401,7 @@ instance (Convertible' a b, Fractional f) => Monoid (Value a b f) where
     mappend = (|+|)
 
 instance Foldable (Value a b) where
-    foldMap f x = f $ val x
+    foldMap f = f . val
 
 instance Traversable (Value a b) where
     traverse f x = mkVal <$> (f $ val x)
@@ -399,6 +414,7 @@ deriving instance VU.Unbox f => VU.Unbox (Value a b f)
 
 -- |A wrapped value with scalar value 1.
 one :: (Fractional f, Convertible' a b) => Value a b f
+{-# INLINE one #-}
 one = mkVal 1
 
 -- |Calculate the square of a value. Identical to pow2, reads better on units:
@@ -406,6 +422,7 @@ one = mkVal 1
 -- >>> 100 *| square meter `as` square yard
 -- 119.59900463010803 yd⋅yd⋅#
 square :: (Fractional f, MapMerge c c u, MapMerge d d s, Convertible' c d) => Value c d f -> Value u s f
+{-# INLINE square #-}
 square x = x |*| x
 
 -- |Calculate the third power of a value. Identical to pow3, reads better on units:
@@ -413,6 +430,7 @@ square x = x |*| x
 -- >>> 1 *| cubic inch `as` mili liter
 -- 16.387063999999995 mL
 cubic :: (Fractional f, MapMerge a c u, MapMerge b d s, MapMerge c c a, MapMerge d d b, Convertible' a b, Convertible' c d) => Value c d f -> Value u s f
+{-# INLINE cubic #-}
 cubic x = x |*| x |*| x
 
 wrapB :: (Convertible' a b, Convertible' c d, MapEq c a True) => (Rational -> Rational -> Bool) -> Value a b Rational -> Value c d Rational -> Bool
