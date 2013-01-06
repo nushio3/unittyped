@@ -357,6 +357,12 @@ mkVal = Value
 val :: Value a b f -> f
 val (Value f) = f
 
+instance (Enum f, RealFrac f, Convertible' a b, Fractional f) => Enum (Value a b f) where
+    succ = (+|) 1
+    pred = (-|) 1
+    toEnum = mkVal . fromInteger . toInteger
+    fromEnum = fromInteger . round . val
+
 instance Functor (Value a b) where
     fmap f = mkVal . f . val
 
