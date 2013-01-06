@@ -362,6 +362,8 @@ mkVal = Value
 val :: Value a b f -> f
 val (Value f) = f
 
+deriving instance (Eq f) => Eq (Value a b f)
+
 instance Functor (Value a b) where
     fmap f = mkVal . f . val
 

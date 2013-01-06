@@ -1,4 +1,7 @@
 {-# LANGUAGE KindSignatures, DataKinds, MultiParamTypeClasses, FunctionalDependencies, ExistentialQuantification, TypeFamilies #-}
+{-# LANGUAGE GeneralizedNewtypeDeriving #-}
+{-# LANGUAGE StandaloneDeriving #-}
+
 module Main where
 
 import UnitTyped
@@ -18,6 +21,7 @@ import qualified Prelude
 import Control.Monad (foldM, unless)
 import Data.Ratio
 import qualified Data.Array.Repa as Repa
+import qualified Data.Array.Repa.Eval as Repa
 import qualified Data.Vector as V
 import qualified Data.Vector.Unboxed as VU
 import Prelude (zip, show, (++), IO, Bool(..), Integer, Double, return, error, putStrLn, fromIntegral)
@@ -40,7 +44,9 @@ vux2d = VU.generate 100 (\i -> fromIntegral i *| meter)
 rux2d :: Repa.Array Repa.U Repa.DIM1 DoubleMeter
 rux2d = Repa.fromUnboxed (Repa.ix1 100) vux2d
 
-t2 = (Repa.sumAllS rux2d) == 4950
+t2 = (Repa.foldAllS (|+|) (0*| meter) rux2d) Prelude.== 4950 *| meter
+
+deriving instance Repa.Elt f => Repa.Elt (Value a b f)
 
 runTest :: Bool -> (Bool, Integer) -> IO Bool
 runTest b (True, _) = return b
