@@ -11,6 +11,8 @@
 {-# LANGUAGE RankNTypes #-}
 {-# LANGUAGE DataKinds #-}
 {-# LANGUAGE InstanceSigs #-}
+{-# LANGUAGE GeneralizedNewtypeDeriving #-}
+{-# LANGUAGE StandaloneDeriving #-}
 
 -- |Module defining values with dimensions and units, and mathematical operations on those.
 module UnitTyped (
@@ -37,6 +39,9 @@ import Control.Applicative
 import Data.Monoid
 import Data.Foldable
 import Data.Traversable
+import qualified Data.Vector.Generic as VG
+import qualified Data.Vector.Generic.Mutable as VGM
+import qualified Data.Vector.Unboxed as VU
 
 import qualified Data.Map as M
 import Data.Typeable
@@ -170,7 +175,7 @@ instance MapEq a a True
 instance (MapNeg map2 map2', MapMerge map1 map2' sum, MapNull sum b) => MapEq map1 map2 b
 
 -- |A value tagged with its dimension a and unit b.
-data Value (a :: [(*, Number)]) (b :: [(*, Number)]) f = Value f
+newtype Value (a :: [(*, Number)]) (b :: [(*, Number)]) f = Value f
 -- |Used as fake argument for the 'Convertible' class.
 data ValueProxy (a :: [(*, Number)]) b
 -- |Used as fake argument for the 'Convertible'' class.
@@ -377,6 +382,12 @@ instance Foldable (Value a b) where
 
 instance Traversable (Value a b) where
     traverse f x = mkVal <$> (f $ val x)
+
+deriving instance VG.Vector VU.Vector f => VG.Vector VU.Vector (Value a b f) 
+deriving instance VGM.MVector VU.MVector f => VGM.MVector VU.MVector (Value a b f) 
+deriving instance VU.Unbox f => VU.Unbox (Value a b f) 
+
+    
 
 -- |A wrapped value with scalar value 1.
 one :: (Fractional f, Convertible' a b) => Value a b f
