@@ -40,8 +40,7 @@ vux2d = VU.generate 100 (\i -> fromIntegral i *| meter)
 rux2d :: Repa.Array Repa.U Repa.DIM1 DoubleMeter
 rux2d = Repa.fromUnboxed (Repa.ix1 100) vux2d
 
--- t2 = (Repa.sumAllS rux2d) == 4950
-t2 = True
+t2 = (Repa.sumAllS rux2d) == 4950
 
 runTest :: Bool -> (Bool, Integer) -> IO Bool
 runTest b (True, _) = return b
