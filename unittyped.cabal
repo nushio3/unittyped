@@ -25,7 +25,7 @@ source-repository this
   tag: 0.2
 
 library
-  build-depends:   base >= 4.6 && < 4.7, time, old-locale, containers
+  build-depends:   base >= 4.6 && < 4.7, vector >= 0.10, time, old-locale, containers
   extensions:      FlexibleInstances
                    UndecidableInstances
                    FunctionalDependencies
@@ -56,3 +56,8 @@ Test-Suite test-si
     type:          exitcode-stdio-1.0
     main-is:       tests/TestSI.hs
     build-depends: base >= 4.6 && < 4.7, unittyped
+
+Test-Suite test-unbox
+    type:          exitcode-stdio-1.0
+    main-is:       tests/TestUnbox.hs
+    build-depends: base >= 4.6 && < 4.7, unittyped, vector >= 0.10
