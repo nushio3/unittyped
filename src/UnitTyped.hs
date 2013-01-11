@@ -60,13 +60,8 @@ instance SingE (KindParam :: OfKind Number) where
     type DemoteRep (KindParam :: OfKind Number) = Integer
     fromSing (SNumber (a, b)) = a - b
 
-type family P (n :: Nat) :: Number
-type instance where
-    P n = I n 0
-
-type family N (n :: Nat) :: Number
-type instance where
-    N n = I 0 n
+type P n = I n 0
+type N n = I 0 n
 
 type POne = I 1 0
 -- |Type level +2
