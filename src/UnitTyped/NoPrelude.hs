@@ -30,31 +30,31 @@ import UnitTyped.SI.Meta
 import UnitTyped.SI.Derived.Count
 
 import qualified Prelude
-import Prelude (Show(..), Fractional, Floating, ($), (.), (++), Double, const, Bool(..), otherwise, undefined, String(..), error)
+import Prelude (Show(..), Fractional, Floating, ($), (.), (++), Double, const, Bool(..), otherwise, undefined, String(..), error, fmap)
 
 infixl 6 +, -
 infixl 7 *, /
 
 -- |See '|*|'
-(*) :: (Fractional f, Convertible' a b, Convertible' c d) => Value f a b -> Value f c d -> Value f (MapMerge a c) (MapMerge b d)
+(*) :: (Fractional f, Convertible' a b, Convertible' c d) => Value a b f -> Value c d f -> Value (MapMerge a c) (MapMerge b d) f
 (*) = (|*|)
 
 -- |See '|/|'
-(/) :: (Fractional f, Convertible' a b, Convertible' c d) => Value f a b -> Value f c d -> Value f (MapMerge a (MapNeg c)) (MapMerge b (MapNeg d))
+(/) :: (Fractional f, Convertible' a b, Convertible' c d) => Value a b f -> Value c d f -> Value (MapMerge a (MapNeg c)) (MapMerge b (MapNeg d)) f
 (/) = (|/|)
 
 -- |See '|+|'
-(+) :: (Fractional f, Convertible' a b, Convertible' c d, MapEq c a) => Value f a b -> Value f c d -> Value f a b
+(+) :: (Fractional f, Convertible' a b, Convertible' c d, MapEq c a) => Value a b f -> Value c d f -> Value a b f
 (+) = (|+|)
 
 -- |See '|-|'
-(-) :: (Fractional f, Convertible' a b, Convertible' c d, MapEq c a) => Value f a b -> Value f c d -> Value f a b
+(-) :: (Fractional f, Convertible' a b, Convertible' c d, MapEq c a) => Value a b f -> Value c d f -> Value a b f
 (-) = (|-|)
 
-wrap1 :: (Floating f, Convertible' '[] b) => (f -> f) -> Value f '[] b -> Value f '[] '[]
+wrap1 :: (Floating f, Convertible' '[] b) => (f -> f) -> Value '[] b f -> Value '[] '[] f
 wrap1 op v = op (val $ coerce v rad) *| one
 
-sin, cos, tan :: (Floating f, Convertible' '[] b) => Value f '[] b -> Value f '[] '[]
+sin, cos, tan :: (Floating f, Convertible' '[] b) => Value '[] b f -> Value '[] '[] f
 -- |Calculate the sinus of a value. Works on 'Degree' and 'Radian'.
 sin = wrap1 Prelude.sin
 -- |Calculate the cosinus of a value. Works on 'Degree' and 'Radian'.
@@ -62,10 +62,10 @@ cos = wrap1 Prelude.cos
 -- |Calculate the tangens of a value. Works on 'Degree' and 'Radian'.
 tan = wrap1 Prelude.tan
 
-wrap2 :: (Floating f) => (f -> f) -> Value f '[] '[] -> Value f '[] (Unit Radian)
+wrap2 :: (Floating f) => (f -> f) -> Value '[] '[] f -> Value '[] (U Radian) f
 wrap2 op v = op (val v) *| one
 
-asin, acos, atan :: (Floating f) => Value f '[] '[] -> Value f '[] (Unit Radian)
+asin, acos, atan :: (Floating f) => Value '[] '[] f -> Value '[] (U Radian) f
 -- |Calculate the arcsinus of a value. Always computes 'Radian's.
 asin = wrap2 Prelude.asin
 -- |Calculate the arccosinus of a value. Always computes 'Radian's.
@@ -75,7 +75,7 @@ atan = wrap2 Prelude.atan
 
 infixl 5 ==, <, <=, >, >=
 
-(==), (<), (<=), (>), (>=) :: (Convertible' a b, Convertible' c d, MapEq c a) => Value Prelude.Rational a b -> Value Prelude.Rational c d -> Bool
+(==), (<), (<=), (>), (>=) :: (Convertible' a b, Convertible' c d, MapEq c a) => Value a b Prelude.Rational -> Value c d Prelude.Rational -> Bool
 -- |See '|==|'
 (==) = (|==|)
 -- |See '|<|'
@@ -88,13 +88,13 @@ infixl 5 ==, <, <=, >, >=
 (>=) = (|>=|)
 
 -- |Obtain the 'Prelude.floor' of a value.
-floor :: (Prelude.RealFrac f) => Value f a b -> Value f a b
-floor = mapVal (Prelude.fromInteger . Prelude.floor)
+floor :: (Prelude.RealFrac f) => Value a b f -> Value a b f
+floor = fmap (Prelude.fromInteger . Prelude.floor)
 
 -- |Obtain @x - floor x@ of a value.
-diff :: (Convertible' a b, Prelude.RealFrac f) => Value f a b -> Value f a b
+diff :: (Convertible' a b, Prelude.RealFrac f) => Value a b f -> Value a b f
 diff x = x |-| (floor x)
 
 -- |Obtain the 'Prelude.abs' of a value.
-abs :: (Fractional f) => Value f a b -> Value f a b
-abs = mapVal Prelude.abs
+abs :: (Fractional f) => Value a b f -> Value a b f
+abs = fmap Prelude.abs

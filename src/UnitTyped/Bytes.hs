@@ -7,17 +7,21 @@ import UnitTyped.SI.Meta
 import UnitTyped.SI.Derived
 import UnitTyped.SI
 
+import Data.Typeable
+
 ----
 -- Data
 ----
 
 -- |An of amount of data.
 data Data
+	deriving Typeable
 -- |The dimension representing @Data^1@.
 type DataDimension = '[ '(Data, POne) ]
 
 -- |A byte of data.
 data Byte
+	deriving Typeable
 
 instance Convertible DataDimension Byte where
 	factor _ = 1
@@ -25,6 +29,7 @@ instance Convertible DataDimension Byte where
 
 -- |A bit of data.
 data Bit
+	deriving Typeable
 
 instance Convertible DataDimension Bit where
 	factor _ = 0.125
@@ -33,9 +38,9 @@ instance Convertible DataDimension Bit where
 --
 
 -- |One byte.
-byte :: (Fractional f) => Value f DataDimension (Unit Byte)
+byte :: (Fractional f) => Value DataDimension (U Byte) f
 byte = one
 
 -- |One bit.
-bit :: (Fractional f) => Value f DataDimension (Unit Bit)
+bit :: (Fractional f) => Value DataDimension (U Bit) f
 bit = one
