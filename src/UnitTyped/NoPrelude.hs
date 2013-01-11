@@ -44,11 +44,11 @@ infixl 7 *, /
 (/) = (|/|)
 
 -- |See '|+|'
-(+) :: (Fractional f, Convertible' a b, Convertible' c d, MapEq c a True) => Value a b f -> Value c d f -> Value a b f
+(+) :: (Fractional f, Convertible' a b, Convertible' c d, MapEq c a) => Value a b f -> Value c d f -> Value a b f
 (+) = (|+|)
 
 -- |See '|-|'
-(-) :: (Fractional f, Convertible' a b, Convertible' c d, MapEq c a True) => Value a b f -> Value c d f -> Value a b f
+(-) :: (Fractional f, Convertible' a b, Convertible' c d, MapEq c a) => Value a b f -> Value c d f -> Value a b f
 (-) = (|-|)
 
 wrap1 :: (Floating f, Convertible' '[] b) => (f -> f) -> Value '[] b f -> Value '[] '[] f
@@ -75,7 +75,7 @@ atan = wrap2 Prelude.atan
 
 infixl 5 ==, <, <=, >, >=
 
-(==), (<), (<=), (>), (>=) :: (Convertible' a b, Convertible' c d, MapEq c a 'True) => Value a b Prelude.Rational -> Value c d Prelude.Rational -> Bool
+(==), (<), (<=), (>), (>=) :: (Convertible' a b, Convertible' c d, MapEq c a) => Value a b Prelude.Rational -> Value c d Prelude.Rational -> Bool
 -- |See '|==|'
 (==) = (|==|)
 -- |See '|<|'

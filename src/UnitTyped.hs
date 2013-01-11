@@ -169,10 +169,10 @@ instance MapNull '[] True
 instance (MapNull rest b', IsZero value b, And b b' result) => MapNull ('(unit, value) ': rest) result
 
 -- |'b' is equal to 'True' if and only if 'map1' and 'map2' represent the same dimension.
-class MapEq (map1 :: [(*, Number)]) (map2 :: [(*, Number)]) (b :: Bool) | map1 map2 -> b where
+class MapEq (map1 :: [(*, Number)]) (map2 :: [(*, Number)]) where
 
-instance MapEq a a True
-instance (MapNeg map2 map2', MapMerge map1 map2' sum, MapNull sum b) => MapEq map1 map2 b
+instance MapEq a a
+instance (MapNeg map2 map2', MapMerge map1 map2' sum, MapNull sum True) => MapEq map1 map2
 
 -- |A value tagged with its dimension a and unit b.
 newtype Value (a :: [(*, Number)]) (b :: [(*, Number)]) f = Value f
@@ -255,7 +255,7 @@ instance (MapNull a True) => Convertible' a '[] where
         {-# INLINE showunit' #-}
         showunit' _ = ""
 
-instance (Convertible a b, MapEq a a' True) => Convertible' a' ('(b, POne) ': '[]) where
+instance (Convertible a b, MapEq a a') => Convertible' a' ('(b, POne) ': '[]) where
         {-# INLINE factor' #-}
         factor' _ = factor (undefined :: ValueProxy a b)
         {-# INLINE showunit' #-}
@@ -265,12 +265,19 @@ instance (FromNumber value, Convertible' rec_dimension rest, MapNeg unit_dimensi
                   MapTimes value neg_unit_dimension times_neg_unit_dimension, MapMerge times_neg_unit_dimension dimension rec_dimension,
                   Convertible unit_dimension unit) => Convertible' dimension ('(unit, value) ': rest) where
         factor' _ = let
-                                        rec = factor' (undefined :: ValueProxy' rec_dimension rest)
-                                in rec * ((factor (undefined :: ValueProxy unit_dimension unit)) ^^ (fromNumber (undefined :: NumberProxy value)))
+                        rec = factor' (undefined :: ValueProxy' rec_dimension rest)
+                    in rec * ((factor (undefined :: ValueProxy unit_dimension unit)) ^^ (fromNumber (undefined :: NumberProxy value)))
         showunit' _ = let
-                                        rec = showunit' (undefined :: ValueProxy' rec_dimension rest)
-                                        power = fromNumber (undefined :: NumberProxy value)
-                                  in (if null rec then "" else rec) ++ (if (not $ null rec) && (power /= 0) then "⋅" else "") ++ (if power /= 0 then (showunit (undefined :: ValueProxy a'' unit)) ++ if power /= 1 then map toSuperScript $ show power else "" else "")
+                          rec = showunit' (undefined :: ValueProxy' rec_dimension rest)
+                          power = fromNumber (undefined :: NumberProxy value)
+                      in rec
+                          ++ (if (not $ null rec) && (power /= 0) then "⋅" else "")
+                          ++ (if power /= 0
+                              then (showunit (undefined :: ValueProxy a'' unit))
+                                    ++ if power /= 1
+                                       then map toSuperScript $ show power
+                                       else ""
+                              else "")
 
 toSuperScript :: Char -> Char
 toSuperScript '0' = '\8304'
@@ -294,20 +301,26 @@ instance (Fractional f, Show f, Convertible' a b) => Show (Value a b f) where
 --
 -- >>> coerce (120 *| meter / second) (kilo meter / hour)
 -- 432.0 km/h
-coerce :: (Convertible' a b, Convertible' c d, Fractional f, MapEq a c True) => Value a b f -> Value c d f -> Value c d f
-{-# INLINE coerce #-}
-coerce u _ = let result = mkVal (factor' (proxy' u) * val u / factor' (proxy' result)) in result
+coerce :: (Convertible' a b, Convertible' c d, Fractional f, MapEq a c) => Value a b f -> Value c d f -> Value c d f
+{-# INLINE[1] coerce #-}
+coerce u into = mkVal (factor' (proxy' u) * val u / factor' (proxy' into))
+
+{-# RULES
+"coerce/id" [10] forall (x :: Value a b f) (u :: Value a b f) . coerce u x = u
+"coerce/twice" [10] forall (x :: Value a b f) (y :: Value a d f) (u :: Value a i f) . coerce (coerce u y) x = coerce u x
+"coerce/twice2" [10] forall (x :: Value a b f) (y :: Value a d f) (u :: Value a i f) . coerce u (coerce y x) = coerce u x
+  #-}
 
 infixl 5 `as`
 
 -- |Shorthand for 'coerce'.
-as :: (Convertible' a b, Convertible' c d, Fractional f, MapEq a c True) => Value a b f -> Value c d f -> Value c d f
-{-# INLINE as #-}
+as :: (Convertible' a b, Convertible' c d, Fractional f, MapEq a c) => Value a b f -> Value c d f -> Value c d f
+{-# INLINE[20] as #-}
 as = coerce
 
 -- |Shorthand for 'flip' 'coerce'
-to :: (Convertible' a b, Convertible' c d, Fractional f, MapEq a c True) => Value c d f -> Value a b f -> Value c d f
-{-# INLINE to #-}
+to :: (Convertible' a b, Convertible' c d, Fractional f, MapEq a c) => Value c d f -> Value a b f -> Value c d f
+{-# INLINE[20] to #-}
 to = flip coerce
 
 infixl 7 |*|, |/|
@@ -316,56 +329,69 @@ infixl 6 |+|, |-|
 -- |Multiply two values, constructing a value with as dimension the product of the dimensions,
 -- and as unit the multplication of the units.
 (|*|) :: (Fractional f, Convertible' a b, Convertible' c d, MapMerge a c u, MapMerge b d s) => Value a b f -> Value c d f -> Value u s f
+{-# INLINE (|*|) #-}
 a |*| b = mkVal (val a * val b)
 
 -- |Divide two values, constructing a value with as dimension the division of the dimension of the lhs by the dimension of the rhs,
 -- and the same for the units.
 (|/|), per :: (Fractional f, Convertible' a b, Convertible' c d, MapMerge a c' u, MapNeg c c', MapNeg d d', MapMerge b d' s) => Value a b f -> Value c d f -> Value u s f
+{-# INLINE (|/|) #-}
 a |/| b = mkVal (val a / val b)
+{-# INLINE per #-}
 per = (|/|)
 
 -- |Add two values with matching dimensions. Units are automatically resolved. The result will have the same unit as the lhs.
-(|+|) :: (Fractional f, Convertible' a b, Convertible' c d, MapEq c a True) => Value a b f -> Value c d f -> Value a b f
-a |+| b = mkVal (val a + val (coerce b a))
+(|+|) :: (Fractional f, Convertible' a b, Convertible' c d, MapEq c a) => Value a b f -> Value c d f -> Value a b f
+{-# INLINE (|+|) #-}
+a |+| b = fmap (+ val (coerce b a)) a
 
 -- |Subtract two values with matching dimensions. Units are automatically resolved. The result will have the same unit as the lhs.
-(|-|) :: (Fractional f, Convertible' a b, Convertible' c d, MapEq c a True) => Value a b f -> Value c d f -> Value a b f
-a |-| b = mkVal (val a - val (coerce b a))
+(|-|) :: (Fractional f, Convertible' a b, Convertible' c d, MapEq c a) => Value a b f -> Value c d f -> Value a b f
+{-# INLINE (|-|) #-}
+a |-| b = fmap (\x -> x - val (coerce b a)) a
 
 infixl 9 *|, |*, |/, /|
 infixl 8 +|, |+, -|, |-
 
 -- |Multiply a scalar by a unit.
 (*|) :: (Convertible' a b, Fractional f) => f -> Value a b f -> Value a b f
-d *| u = mkVal (d * val u)
+{-# INLINE (*|) #-}
+d *| u = fmap (d*) u
 
 -- |Multiply a unit by a scalar.
 (|*) :: (Convertible' a b, Fractional f) => Value a b f -> f -> Value a b f
-u |* d = mkVal (val u * d)
+{-# INLINE (|*) #-}
+u |* d = fmap (*d) u
 
 -- |Divide a scalar by a unit.
 (/|) :: (Convertible' a b, Fractional f, MapNeg a a', MapNeg b b') => f -> Value a b f -> Value a' b' f
+{-# INLINE (/|) #-}
 d /| u = mkVal (d / val u)
 
 -- |Divide a unit by a scalar.
 (|/) :: (Convertible' a b, Fractional f) => Value a b f -> f -> Value a b f
-u |/ d = mkVal (val u / d)
+{-# INLINE (|/) #-}
+u |/ d = fmap (/d) u
 
 -- |Add a unit to a scalar.
 (+|) :: (Convertible' a b, Fractional f) => f -> Value a b f -> Value a b f
-d +| u = mkVal (d + val u)
+{-# INLINE (+|) #-}
+d +| u = fmap (d+) u
 
 -- |Add a scalar to a unit.
 (|+) :: (Convertible' a b, Fractional f) => Value a b f -> f -> Value a b f
-u |+ d = mkVal (val u + d)
+{-# INLINE (|+) #-}
+u |+ d = fmap (+d) u
 
 -- |Subtract a unit from a scalar.
 (-|) :: (Convertible' a b, Fractional f) => f -> Value a b f -> Value a b f
-d -| u = mkVal (d - val u)
+{-# INLINE (-|) #-}
+d -| u = fmap (d-) u
 
 -- |Subtract a scalar from a unit.
 (|-) :: (Convertible' a b, Fractional f) => Value a b f -> f -> Value a b f
-u |- d = mkVal (val u - d)
+{-# INLINE (|-) #-}
+u |- d = fmap (\x -> x - d) u
 
 -- |Create a new value with given scalar as value.
 mkVal :: f -> Value a b f
@@ -377,15 +403,12 @@ val :: Value a b f -> f
 {-# INLINE val #-}
 val (Value f) = f
 
-instance (Enum f) => Enum (Value a b f) where
-    succ = mkVal . succ . val
-    pred = mkVal . pred . val
-    toEnum = mkVal . toEnum
-    fromEnum = fromEnum . val
+deriving instance (Enum f) => Enum (Value a b f)
 
 deriving instance (Eq f) => Eq (Value a b f)
 
 instance Functor (Value a b) where
+    {-# INLINE fmap #-}
     fmap f = mkVal . f . val
 
 instance Monad (Value a b) where
@@ -433,21 +456,27 @@ cubic :: (Fractional f, MapMerge a c u, MapMerge b d s, MapMerge c c a, MapMerge
 {-# INLINE cubic #-}
 cubic x = x |*| x |*| x
 
-wrapB :: (Convertible' a b, Convertible' c d, MapEq c a True) => (Rational -> Rational -> Bool) -> Value a b Rational -> Value c d Rational -> Bool
+wrapB :: (Convertible' a b, Convertible' c d, MapEq c a) => (Rational -> Rational -> Bool) -> Value a b Rational -> Value c d Rational -> Bool
+{-# INLINE wrapB #-}
 wrapB op a b = op (val a) (val $ coerce b a)
 
 infixl 4 |==|, |<|, |>|, |<=|, |>=|
 
-(|==|), (|<|), (|>|), (|<=|), (|>=|) :: (Convertible' a b, Convertible' c d, MapEq c a True) => Value a b Rational -> Value c d Rational -> Bool
+(|==|), (|<|), (|>|), (|<=|), (|>=|) :: (Convertible' a b, Convertible' c d, MapEq c a) => Value a b Rational -> Value c d Rational -> Bool
 -- |'==' for values. Only defined for values with rational contents. Can be used on any two values with the same dimension.
+{-# INLINE (|==|) #-}
 (|==|) = wrapB (==)
 -- |'<' on values. Only defined for values with rational contents. Can be used on any two values with the same dimension.
+{-# INLINE (|<|) #-}
 (|<|) = wrapB (<)
 -- |'<=' on values. Only defined for values with rational contents. Can be used on any two values with the same dimension.
+{-# INLINE (|<=|) #-}
 (|<=|) = wrapB (<=)
 -- |'>' on values. Only defined for values with rational contents. Can be used on any two values with the same dimension.
+{-# INLINE (|>|) #-}
 (|>|) = wrapB (>)
 -- |'>=' on values. Only defined for values with rational contents. Can be used on any two values with the same dimension.
+{-# INLINE (|>=|) #-}
 (|>=|) = wrapB (>=)
 
 ----

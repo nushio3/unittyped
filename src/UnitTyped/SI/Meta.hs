@@ -280,14 +280,17 @@ instance (Convertible a b) => MetaUnit Yobi a b where
 
 -- |Take a unit and return one deca(unit).
 deca :: (Convertible a b, Fractional f) => Value a (U b) f -> Value a (U (Deca b)) f
+{-# INLINE deca #-}
 deca (Value x) = (Value x)
 
 -- |Take a unit and return one hecto(unit).
 hecto :: (Convertible a b, Fractional f) => Value a (U b) f -> Value a (U (Hecto b)) f
+{-# INLINE hecto #-}
 hecto (Value x) = (Value x)
 
 -- |Take a unit and return one kilo(unit).
 kilo :: (Convertible a b, Fractional f) => Value a (U b) f -> Value a (U (Kilo b)) f
+{-# INLINE kilo #-}
 kilo (Value x) = (Value x)
 
 -- |Take a unit and return one mega(unit).
