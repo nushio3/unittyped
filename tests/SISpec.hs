@@ -17,60 +17,56 @@ import UnitTyped.SI.Show
 
 import           Control.Monad (foldM, unless)
 import qualified Prelude
-import           Prelude (zip, show, (++), IO, Bool(..), Integer, return, error, putStrLn, ($))
+import           Prelude (zip, show, const, (++), IO, Bool(..), Integer, return, error, putStrLn, ($), Rational)
 import           Test.Hspec
 import           Test.Hspec.QuickCheck (prop)
 import           Test.QuickCheck
 import           System.Exit (exitFailure)
 
+infix 4 `isoquant`
+
+
+isoquant a b = a == b `shouldBe` True
+
+shouldTypeCheck a = a `shouldSatisfy` const True
+
 spec :: Spec
 spec = do
   describe "SI units equivalence Test" $ do
-    return ()
+    it "converts equivalent units." $ do
+      hertz `isoquant` 1 /| second
+      rad `isoquant` meter / meter
+      newton `isoquant` kilo gram * meter / square second
+      pascal `isoquant` newton / square meter
+      joule `isoquant` newton * meter
+      watt `isoquant` joule / second
+      coulomb `isoquant` second * ampere
+      volt `isoquant` watt / ampere
+      farad `isoquant` coulomb / volt
+      ohm `isoquant` volt / ampere
+      siemens `isoquant` count / ohm
+      weber `isoquant` joule / ampere
+      tesla `isoquant` volt * second / square meter
+      henry `isoquant` volt * second / ampere
 
-t1 = hertz == (1 /| second)
-t2 = rad == (meter / meter)
-t3 = newton == kilo gram * meter / square second
-t4 = pascal == newton / square meter
-t5 = joule == newton * meter
-t6 = watt == joule / second
-t7 = coulomb == second * ampere
-t8 = volt == watt / ampere
-t9 = farad == coulomb / volt
-t10 = ohm == volt / ampere
-t11 = siemens == count / ohm
-t12 = weber == joule / ampere
-t13 = tesla == volt * second / square meter
-t14 = henry == volt * second / ampere
 
-t15 = 3.6 *| kilo meter / hour == 1 *| meter / second
-t16 = 3.6 *| mega joule == 1 *| kilo watt * hour
-t17 = 1 *| cubic (deci meter) == 1 *| liter
-t18 = 1 *| square meter == 10000 *| square (centi meter)
+      3.6 *| kilo meter / hour `isoquant` 1 *| meter / second
+      3.6 *| mega joule `isoquant` 1 *| kilo watt * hour
+      1 *| cubic (deci meter) `isoquant` 1 *| liter
+      1 *| square meter `isoquant` 10000 *| square (centi meter)
+      (1 *| meter / second) * (1 *| second) `isoquant` 1 *| meter
 
-t19 = (1 *| meter / second) * (1 *| second) == 1 *| meter
+    it "handles addition between different units of the same dimension." $ do
+      shouldTypeCheck $ mile + inch + yard + foot + ångström + nautical_mile + meter 
+      shouldTypeCheck $ UnitTyped.SI.Derived.Mass.pound + kilo gram
+      shouldTypeCheck $ minute + hour + day + year + julian_year + month + second 
+      shouldTypeCheck $ percent + permil + ppm + ppb + ppt 
 
--- These should just typecheck
-t20 = mile + inch + yard + foot + ångström + nautical_mile + meter == mile + inch + yard + foot + ångström + nautical_mile + meter
-t21 = UnitTyped.SI.Derived.Mass.pound + kilo gram == UnitTyped.SI.Derived.Mass.pound + kilo gram
 
-t22 = minute + hour + day + year + julian_year + month + second == minute + hour + day + year + julian_year + month + second
-t23 = second * hertz == count
+    it "has well-defined constants." $ do
+      second * hertz `isoquant` count
+      hbar `isoquant` (h / (2 *| pi))
+      let appleMass = 2.49 *| kilo gram 
+      2.49e9 *| gram `isoquant` mega appleMass
 
-t24 = percent + permil + ppm + ppb + ppt == percent + permil + ppm + ppb + ppt
 
-t25 = hbar == (h / (2 *| pi))
-
-t26 = 3e9 *| gram == mega solarMass
-  where
-    solarMass = 3 *| kilo gram
-
-runTest :: Bool -> (Bool, Integer) -> IO Bool
-runTest b (True, _) = return b
-runTest b (False, i) = do { putStrLn ("Test " ++ show i ++ " failed.")
-                                                  ; return False
-                                                  }
-
-main = do { b <- foldM runTest True (zip [t1, t2, t3, t4, t5, t6, t7, t8, t9, t10, t11, t12, t13, t14, t15, t16, t17, t18, t19, t20, t21, t22, t23, t24, t25, t26] [1..])
-                  ; unless b exitFailure
-                  }
