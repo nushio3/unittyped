@@ -17,7 +17,7 @@ import UnitTyped.SI.Show
 
 import           Control.Monad (foldM, unless)
 import qualified Prelude
-import           Prelude (zip, show, const, (++), IO, Bool(..), Integer, return, error, putStrLn, ($), Rational)
+import           Prelude (zip, show, const, (++), IO, Bool(..), Integer, return, error, putStrLn, ($), Rational, print)
 import           Test.Hspec
 import           Test.Hspec.QuickCheck (prop)
 import           Test.QuickCheck
@@ -57,16 +57,15 @@ spec = do
       (1 *| meter / second) * (1 *| second) `isoquant` 1 *| meter
 
     it "handles addition between different units of the same dimension." $ do
-      shouldTypeCheck $ mile + inch + yard + foot + ångström + nautical_mile + meter 
+      shouldTypeCheck $ mile + inch + yard + foot + ångström + nautical_mile + meter
       shouldTypeCheck $ UnitTyped.SI.Derived.Mass.pound + kilo gram
-      shouldTypeCheck $ minute + hour + day + year + julian_year + month + second 
-      shouldTypeCheck $ percent + permil + ppm + ppb + ppt 
+      shouldTypeCheck $ minute + hour + day + year + julian_year + month + second
+      shouldTypeCheck $ percent + permil + ppm + ppb + ppt
+
 
 
     it "has well-defined constants." $ do
       second * hertz `isoquant` count
       hbar `isoquant` (h / (2 *| pi))
-      let appleMass = 2.49 *| kilo gram 
+      let appleMass = 2.49 *| kilo gram
       2.49e9 *| gram `isoquant` mega appleMass
-
-
