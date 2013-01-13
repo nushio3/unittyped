@@ -35,16 +35,25 @@ module UnitTyped (
         square, cubic
 ) where
 
-import Control.Applicative
-import Data.Monoid
-import Data.Foldable
-import Data.Traversable
+import           Control.Applicative
+import           Data.Monoid
+import           Data.Foldable
+import           Data.Traversable
 import qualified Data.Vector.Generic as VG
 import qualified Data.Vector.Generic.Mutable as VGM
 import qualified Data.Vector.Unboxed as VU
 
 import qualified Data.Map as M
-import Data.Typeable
+import           Data.Typeable
+
+-- $setup
+-- >>> :l UnitTyped.NoPrelude
+-- >>> :l UnitTyped.NoPrelude
+-- >>> :l UnitTyped.SI
+-- >>> :l UnitTyped.SI.Meta
+-- >>> :l UnitTyped.SI.Derived
+-- >>> :l UnitTyped.SI.Derived.Time
+-- >>> :l UnitTyped.SI.Derived.Length
 
 -- |Type level natural numbers (excluding zero, though).
 data Nat = One | Suc Nat
@@ -299,8 +308,10 @@ instance (Fractional f, Show f, Convertible' a b) => Show (Value a b f) where
 -- |coerce something of a specific dimension into any other unit in the same dimension.
 -- The second argument is only used for its type, but it allows nice syntax like:
 --
--- >>> coerce (120 *| meter / second) (kilo meter / hour)
--- 432.0 km/h
+-- >>> :m +UnitTyped.SI.Derived.Time
+-- >>> coerce (120 *| meter |/| second) (kilo meter |/| hour)
+-- 432.0 km⋅h⁻¹
+
 coerce :: (Convertible' a b, Convertible' c d, Fractional f, MapEq a c) => Value a b f -> Value c d f -> Value c d f
 {-# INLINE[1] coerce #-}
 coerce u into = mkVal (factor' (proxy' u) * val u / factor' (proxy' into))
@@ -443,7 +454,7 @@ one = mkVal 1
 -- |Calculate the square of a value. Identical to pow2, reads better on units:
 --
 -- >>> 100 *| square meter `as` square yard
--- 119.59900463010803 yd⋅yd⋅#
+-- 119.59900463010803 yd²
 square :: (Fractional f, MapMerge c c u, MapMerge d d s, Convertible' c d) => Value c d f -> Value u s f
 {-# INLINE square #-}
 square x = x |*| x

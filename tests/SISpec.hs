@@ -1,5 +1,6 @@
 {-# LANGUAGE KindSignatures, DataKinds, MultiParamTypeClasses, FunctionalDependencies, ExistentialQuantification, TypeFamilies #-}
-module Main where
+
+module SISpec where
 
 import UnitTyped
 import UnitTyped.SI
@@ -14,10 +15,18 @@ import UnitTyped.Bytes
 import UnitTyped.NoPrelude
 import UnitTyped.SI.Show
 
+import           Control.Monad (foldM, unless)
 import qualified Prelude
-import Control.Monad (foldM, unless)
-import Prelude (zip, show, (++), IO, Bool(..), Integer, return, error, putStrLn)
-import System.Exit (exitFailure)
+import           Prelude (zip, show, (++), IO, Bool(..), Integer, return, error, putStrLn, ($))
+import           Test.Hspec
+import           Test.Hspec.QuickCheck (prop)
+import           Test.QuickCheck
+import           System.Exit (exitFailure)
+
+spec :: Spec
+spec = do
+  describe "SI units equivalence Test" $ do
+    return ()
 
 t1 = hertz == (1 /| second)
 t2 = rad == (meter / meter)

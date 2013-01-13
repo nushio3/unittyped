@@ -2,7 +2,7 @@
 {-# LANGUAGE GeneralizedNewtypeDeriving #-}
 {-# LANGUAGE StandaloneDeriving #-}
 
-module Main where
+module UnboxSpec where
 
 import UnitTyped
 import UnitTyped.SI
@@ -17,15 +17,25 @@ import UnitTyped.Bytes
 import UnitTyped.NoPrelude
 import UnitTyped.SI.Show
 
-import qualified Prelude
-import Control.Monad (foldM, unless)
-import Data.Ratio
+
+import           Control.Monad (foldM, unless)
+import           Data.Ratio
 import qualified Data.Array.Repa as Repa
 import qualified Data.Array.Repa.Eval as Repa
 import qualified Data.Vector as V
 import qualified Data.Vector.Unboxed as VU
-import Prelude (zip, show, (++), IO, Bool(..), Integer, Double, return, error, putStrLn, fromIntegral)
-import System.Exit (exitFailure)
+import qualified Prelude
+import           Prelude (zip, show, (++), IO, Bool(..), Integer, Double, return, error, putStrLn, fromIntegral, ($))
+import           Test.Hspec
+import           Test.Hspec.QuickCheck (prop)
+import           Test.QuickCheck
+import           System.Exit (exitFailure)
+
+spec :: Spec
+spec = do
+  describe "Giving dimensional units to unboxed types." $ do
+    return ()
+
 
 x1 :: Value LengthDimension (U Meter) Rational
 x1 = 1 *| meter
