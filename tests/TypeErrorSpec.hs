@@ -33,8 +33,8 @@ shouldTypeCheck a = a `shouldSatisfy` const True
 
 spec :: Spec
 spec = do
-  describe "SI units typecheck Test" $ do
-    it "detects addition between wrong units." $ do
---      print (meter+second) `shouldThrow` anyException
---      This doesn't work as expected...
+--  describe "SI units typecheck Test" $ do
+--    it "detects addition between wrong units." $ do
+----      print (meter+second) `shouldThrow` anyException
+----      This doesn't work as expected...
       return ()
