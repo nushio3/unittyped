@@ -68,9 +68,11 @@ Test-Suite spec
   Main-Is:              Spec.hs
   Other-Modules:        SISpec
                       , UnboxSpec
+                      , TypeableSpec
   Build-Depends:        base
                       , ghc
                       , hspec >= 1.3
+                      , hspec-expectations >= 0.3
                       , QuickCheck
                       , repa >= 3.2.3
                       , unittyped
