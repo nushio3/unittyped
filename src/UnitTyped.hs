@@ -1,18 +1,19 @@
-{-# LANGUAGE FlexibleInstances #-}
-{-# LANGUAGE UndecidableInstances #-}
-{-# LANGUAGE FunctionalDependencies #-}
-{-# LANGUAGE KindSignatures #-}
-{-# LANGUAGE ScopedTypeVariables #-}
-{-# LANGUAGE FlexibleContexts #-}
-{-# LANGUAGE OverlappingInstances #-}
-{-# LANGUAGE GADTs #-}
-{-# LANGUAGE EmptyDataDecls #-}
-{-# LANGUAGE TypeOperators #-}
-{-# LANGUAGE RankNTypes #-}
 {-# LANGUAGE DataKinds #-}
-{-# LANGUAGE InstanceSigs #-}
+{-# LANGUAGE DeriveDataTypeable #-}
+{-# LANGUAGE EmptyDataDecls #-}
+{-# LANGUAGE FlexibleContexts #-}
+{-# LANGUAGE FlexibleInstances #-}
+{-# LANGUAGE FunctionalDependencies #-}
+{-# LANGUAGE GADTs #-}
 {-# LANGUAGE GeneralizedNewtypeDeriving #-}
+{-# LANGUAGE InstanceSigs #-}
+{-# LANGUAGE KindSignatures #-}
+{-# LANGUAGE OverlappingInstances #-}
+{-# LANGUAGE RankNTypes #-}
+{-# LANGUAGE ScopedTypeVariables #-}
 {-# LANGUAGE StandaloneDeriving #-}
+{-# LANGUAGE TypeOperators #-}
+{-# LANGUAGE UndecidableInstances #-}
 
 -- |Module defining values with dimensions and units, and mathematical operations on those.
 module UnitTyped (
@@ -440,11 +441,11 @@ instance Foldable (Value a b) where
 instance Traversable (Value a b) where
     traverse f x = mkVal <$> (f $ val x)
 
-deriving instance VG.Vector VU.Vector f => VG.Vector VU.Vector (Value a b f) 
-deriving instance VGM.MVector VU.MVector f => VGM.MVector VU.MVector (Value a b f) 
-deriving instance VU.Unbox f => VU.Unbox (Value a b f) 
+deriving instance VG.Vector VU.Vector f => VG.Vector VU.Vector (Value a b f)
+deriving instance VGM.MVector VU.MVector f => VGM.MVector VU.MVector (Value a b f)
+deriving instance VU.Unbox f => VU.Unbox (Value a b f)
 
-    
+
 
 -- |A wrapped value with scalar value 1.
 one :: (Fractional f, Convertible' a b) => Value a b f
