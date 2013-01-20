@@ -40,12 +40,13 @@ import           Control.Applicative
 import           Data.Monoid
 import           Data.Foldable
 import           Data.Traversable
+import           Data.Typeable
+import           Data.Typeable.Internal (mkTyCon3, TypeRep(..))
 import qualified Data.Vector.Generic as VG
 import qualified Data.Vector.Generic.Mutable as VGM
 import qualified Data.Vector.Unboxed as VU
-
 import qualified Data.Map as M
-import           Data.Typeable
+import           GHC.Fingerprint (fingerprintString)
 
 -- $setup
 -- >>> :l UnitTyped.NoPrelude
@@ -445,6 +446,11 @@ deriving instance VG.Vector VU.Vector f => VG.Vector VU.Vector (Value a b f)
 deriving instance VGM.MVector VU.MVector f => VGM.MVector VU.MVector (Value a b f)
 deriving instance VU.Unbox f => VU.Unbox (Value a b f)
 
+instance (Convertible' a b) => Typeable1 (Value a b) where
+  typeOf1 x = let
+      tyCon = mkTyCon3 "unittyped" "UnitTyped" ("Value " ++ showunit' (proxy' x))
+      fp = fingerprintString $ show tyCon
+    in TypeRep fp tyCon []
 
 
 -- |A wrapped value with scalar value 1.
