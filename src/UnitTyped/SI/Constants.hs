@@ -28,7 +28,8 @@ pi :: (Fractional f) => Value '[] '[] f
 pi = mkVal 3.1415926535897932384626433832795028841971
 
 -- |The speed of light
-c :: (Fractional f) => Value Speed '[ '(Second, NOne), '(Meter, POne)] f
+-- c :: (Fractional f) => Value Speed '[ '(Second, NOne), '(Meter, POne)] f
+c :: (Fractional f) => f :*|  '[ '(Second, NOne), '(Meter, POne)] 
 c = mkVal 299792458
 
 -- |Planck constant
