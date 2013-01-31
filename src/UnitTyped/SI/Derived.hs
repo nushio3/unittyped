@@ -38,6 +38,11 @@ instance Convertible Speed Knot where
 
 --
 
+
+-- |Momentum. @Length^1 Time^-1 Mass^1@.
+type Momentum = '[ '(Time, NOne), '(Mass, POne), '(Length, POne) ]
+
+
 -- |Force. @Length^1 Time^-2 Mass^1@.
 type Force = '[ '(Time, NTwo), '(Mass, POne), '(Length, POne) ]
 -- |Unit of force (N).
