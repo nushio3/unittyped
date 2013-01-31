@@ -17,7 +17,7 @@
 
 -- |Module defining values with dimensions and units, and mathematical operations on those.
 module UnitTyped (
-        Convertible(..), Convertible'(..), U(..),
+        Convertible(..), Convertible'(..), U(..), (:|),
         Value(..), ValueProxy, ValueProxy', proxy',
 
         Count,
@@ -249,8 +249,12 @@ class Convertible (a :: [(*, Number)]) b | b -> a where
         -- |String representation of a base unit.
         showunit :: ValueProxy a b -> String
 
--- |Shorthand to create a composed unit containing just one base unit.
+-- | Shorthand to create a composed unit containing just one base unit.
 type U a = '[ '(a, POne) ]
+
+-- | Shorthand to create a 'Value' type from one base unit.
+type (x :| b) = (Convertible a b) => Value a (U b) x
+
 
 -- |Convertible' is a class that models the fact that the composed unit 'b' has dimension 'a'.
 class Convertible' (a :: [(*, Number)]) (b :: [(*, Number)]) where
@@ -415,6 +419,11 @@ mkVal = Value
 val :: Value a b f -> f
 {-# INLINE val #-}
 val (Value f) = f
+
+
+
+
+
 
 deriving instance (Enum f) => Enum (Value a b f)
 

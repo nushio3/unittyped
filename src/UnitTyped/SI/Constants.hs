@@ -40,20 +40,22 @@ hbar :: Fractional f => Value '[ '(Time, NOne), '(Length, PTwo), '(Mass, POne)] 
 hbar = coerce (h |/| (2 *| UnitTyped.SI.Constants.pi)) (joule |*| second)
 
 -- |Atomic unit of charge (elementary charge)
-e :: (Fractional f) => Value Charge (U Coulomb) f
+e :: (Fractional f) => f :| Coulomb
 e = mkVal 1.6021765314e-19
 
 -- |Atomic unit of mass (electron mass)
-m_e :: (Fractional f) => Value MassDimension (U (Kilo Gram)) f
+m_e :: (Fractional f) => f :| Kilo Gram
 m_e = mkVal 9.109382616e-31
 
 -- |Atomic unit of length
-a_0 :: (Fractional f) => Value LengthDimension (U Meter) f
+a_0 :: (Fractional f) => f :| Meter
 a_0 = mkVal 0.529177210818e-10
 
 -- |Atomic unit of energy
-e_h :: (Fractional f) => Value Energy (U Joule) f
+-- e_h :: (Fractional f) => Value Energy (U Joule) f
+e_h :: (Fractional f) => f :| Joule
 e_h = mkVal 4.3597441775e-18
+
 
 -- |Gas constant.
 r :: (Fractional f) => Value '[ '(Temperature, NOne), '(Length, PTwo), '(Mass, POne), '(Time, NTwo) ] '[ '(Mole, NOne), '(Kelvin, NOne), '(Joule, POne) ] f
