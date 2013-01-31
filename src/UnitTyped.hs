@@ -253,7 +253,7 @@ class Convertible (a :: [(*, Number)]) b | b -> a where
 type U a = '[ '(a, POne) ]
 
 -- | Shorthand to create a 'Value' type from just one base unit.
-type (x :| b) = (Convertible a b) => x :*| (U b) 
+type (x :| b) = (Convertible a b) => Value a (U b) x 
 
 -- | Shorthand to Create a 'Value' type from a compound unit.
 type (x :*| b) = (Convertible' a b) => Value a b x
