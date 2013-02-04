@@ -1,4 +1,5 @@
 {-# LANGUAGE DataKinds #-}
+{-# LANGUAGE TypeFamilies #-}
 -- |A module for working with amounts of bytes and bits.
 module UnitTyped.Bytes where
 
@@ -23,18 +24,19 @@ type DataDimension = U Data
 data Byte
 	deriving Typeable
 
-instance Convertible DataDimension Byte where
+instance Convertible Byte where
 	factor _ = 1
 	showunit _ = "B"
+        type DimensionOf Byte = DataDimension 
 
 -- |A bit of data.
 data Bit
 	deriving Typeable
 
-instance Convertible DataDimension Bit where
+instance Convertible Bit where
 	factor _ = 0.125
 	showunit _ = "b"
-
+        type DimensionOf Bit = DataDimension 
 --
 
 -- |One byte.

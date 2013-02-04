@@ -245,29 +245,29 @@ instance (Typeable uni, FromNumber value, Unit rest) => Unit ('(uni, value) ': r
     unit _ = M.insert (typeOf (error "typeOf" :: uni)) (fromNumber (error "fromNumber" :: NumberProxy value)) (unit (undefined :: Value a rest f))
 
 -- |Convertible is a class that models the fact that the base unit 'b'
--- has dimension 'DimType b'. c.f. the original class declaration used
+-- has dimension 'DimensionOf b'. c.f. the original class declaration used
 -- to be
 --
 -- > class Convertible (a :: [(*, Number)]) b | b -> a where
 --
--- the type 'a' now became 'DimType b' .
+-- the type 'a' now became 'DimensionOf b' .
 
 
 class Convertible b where
         -- |The multiplication factor to convert this base unit between other units in the same dimension.
         -- Only the ratio matters, which one is '1' is not important, as long as all are consistent.
-        factor :: (Fractional f) => ValueProxy (DimType b) b -> f
+        factor :: (Fractional f) => ValueProxy (DimensionOf b) b -> f
         -- |String representation of a base unit.
-        showunit :: ValueProxy (DimType b) b -> String
+        showunit :: ValueProxy (DimensionOf b) b -> String
 
-        type DimType b ::  [(*, Number)]
+        type DimensionOf b ::  [(*, Number)]
 
 
 -- | Shorthand to create a composed unit containing just one base unit.
 type U a = '[ '(a, POne) ]
 
 -- | Shorthand to create a 'Value' type from just one base unit.
-type (x :| b) = (Convertible b) => Value (DimType b) (U b) x
+type (x :| b) = (Convertible b) => Value (DimensionOf b) (U b) x
 
 
 
@@ -286,17 +286,17 @@ instance (MapNull a True) => Convertible' a '[] where
         {-# INLINE showunit' #-}
         showunit' _ = ""
 
-instance (Convertible b, MapEq a a') => Convertible' a' ('(b, POne) ': '[]) where
+instance (Convertible b, MapEq (DimensionOf b) a') => Convertible' a' ('(b, POne) ': '[]) where
         {-# INLINE factor' #-}
-        factor' _ = factor (undefined :: ValueProxy (DimType b) b)
+        factor' _ = factor (undefined :: ValueProxy (DimensionOf b) b)
         {-# INLINE showunit' #-}
-        showunit' _ = showunit (undefined :: ValueProxy (DimType b) b)
+        showunit' _ = showunit (undefined :: ValueProxy (DimensionOf b) b)
 
 instance (FromNumber value, Convertible' rec_dimension rest, MapNeg unit_dimension neg_unit_dimension,
           MapTimes value neg_unit_dimension times_neg_unit_dimension,
           MapMerge times_neg_unit_dimension dimension rec_dimension,
           Convertible unit,
-          unit_dimension ~ DimType unit
+          unit_dimension ~ DimensionOf unit
           ) => Convertible' dimension ('(unit, value) ': rest) where
         factor' _ = let
                         rec = factor' (undefined :: ValueProxy' rec_dimension rest)
@@ -537,4 +537,4 @@ data Count
 instance Convertible Count where
         factor _ = 1
         showunit _ = "#"
-        type DimType Count =  '[]
+        type DimensionOf Count =  '[]

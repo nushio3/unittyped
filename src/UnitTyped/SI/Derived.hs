@@ -7,6 +7,7 @@
 {-# LANGUAGE OverlappingInstances #-}
 {-# LANGUAGE GADTs #-}
 {-# LANGUAGE EmptyDataDecls #-}
+{-# LANGUAGE TypeFamilies #-}
 {-# LANGUAGE TypeOperators #-}
 {-# LANGUAGE RankNTypes #-}
 {-# LANGUAGE DataKinds #-}
@@ -32,10 +33,10 @@ type Acceleration = '[ '(Time, NTwo), '(Length, POne) ]
 data Knot
 	deriving Typeable
 
-instance Convertible Speed Knot where
+instance Convertible Knot where
 	factor _ = 1852 / 3600
 	showunit _ = "kn"
-
+        type DimensionOf Knot = Speed
 --
 
 
@@ -49,10 +50,10 @@ type Force = '[ '(Time, NTwo), '(Mass, POne), '(Length, POne) ]
 data Newton
 	deriving Typeable
 
-instance Convertible Force Newton where
+instance Convertible Newton where
 	factor _ = 1
 	showunit _ = "N"
-
+        type DimensionOf Newton = Force 
 --
 
 -- |Energy. @Length^2 Time^-2 Mass^1@.
@@ -62,18 +63,19 @@ type Energy = '[ '(Time, NTwo), '(Mass, POne), '(Length, PTwo) ]
 data Joule
 	deriving Typeable
 
-instance Convertible Energy Joule where
+instance Convertible Joule where
 	factor _ = 1
 	showunit _ = "J"
+        type DimensionOf Joule = Energy 
 
 -- |Unit of energy (eV).
 data Ev
 	deriving Typeable
 
-instance Convertible Energy Ev where
+instance Convertible Ev where
 	factor _ = 1.60217656535e-19
 	showunit _ = "eV"
-
+        type DimensionOf Ev = Energy 
 --
 
 -- |Energy. @Length^2 Time^-3 Mass^1@.
@@ -83,10 +85,10 @@ type Power = '[ '(Time, NThree), '(Length, PTwo), '(Mass, POne) ]
 data Watt
 	deriving Typeable
 
-instance Convertible Power Watt where
+instance Convertible Watt where
 	factor _ = 1
 	showunit _ = "W"
-
+        type DimensionOf Watt = Power
 --
 
 -- |Energy. @Length^-1 Time^-2 Mass^1@.
@@ -96,26 +98,28 @@ type Pressure = '[ '(Time, NTwo), '(Mass, POne), '(Length, NOne) ]
 data Pascal
 	deriving Typeable
 
-instance Convertible Pressure Pascal where
+instance Convertible Pascal where
 	factor _ = 1
 	showunit _ = "Pa"
+        type DimensionOf Pascal = Pressure
 
 -- |Unit of pressure (bar).
 data Bar
 	deriving Typeable
 
-instance Convertible Pressure Bar where
+instance Convertible Bar where
 	factor _ = 1e5
 	showunit _ = "bar"
+        type DimensionOf Bar = Pressure
 
 -- |Unit of pressure (mmHg).
 data MmHg
 	deriving Typeable
 
-instance Convertible Pressure MmHg where
+instance Convertible MmHg where
 	factor _ = 133.322
 	showunit _ = "mmHg"
-
+        type DimensionOf MmHg = Pressure 
 --
 
 -- |Electric charge. @Time^1 Current^1@.
@@ -125,23 +129,23 @@ type Charge = '[ '(Time, POne), '(Current, POne) ]
 data Coulomb
 	deriving Typeable
 
-instance Convertible Charge Coulomb where
+instance Convertible Coulomb where
 	factor _ = 1
 	showunit _ = "C"
-
+        type DimensionOf Coulomb = Charge
 --
 
 -- |Electric potential. @Time^-3 Current^-1 Mass^1 Length^2@.
-type Potential = '[ '(Current, NOne), '(Mass, POne), '(Length, PTwo), '(Time, NThree) ]
+type ElectricPotential = '[ '(Current, NOne), '(Mass, POne), '(Length, PTwo), '(Time, NThree) ]
 
 -- |Unit of potential (V).
 data Volt
 	deriving Typeable
 
-instance Convertible Potential Volt where
+instance Convertible Volt where
 	factor _ = 1
 	showunit _ = "V"
-
+        type DimensionOf Volt = ElectricPotential 
 --
 
 -- |Electric capacitance. @Current^2 Mass^-1 Length^2 Time^4@.
@@ -151,10 +155,10 @@ type Capacitance = '[ '(Current, PTwo), '(Mass, NOne), '(Length, NTwo), '(Time, 
 data Farad
 	deriving Typeable
 
-instance Convertible Capacitance Farad where
+instance Convertible Farad where
 	factor _ = 1
 	showunit _ = "F"
-
+        type DimensionOf Farad = Capacitance 
 --
 
 -- |Electric resistance. @Current^-2 Time^-3 Length^2 Mass^1@.
@@ -164,10 +168,10 @@ type Resistance = '[ '(Current, NTwo), '(Time, NThree), '(Length, PTwo), '(Mass,
 data Ohm
 	deriving Typeable
 
-instance Convertible Resistance Ohm where
+instance Convertible Ohm where
 	factor _ = 1
 	showunit _ = "Ω"
-
+        type DimensionOf Ohm = Resistance 
 --
 
 -- |Electric conductance. @Current^2 Mass^-1 Length^-2 Time^3@.
@@ -177,36 +181,37 @@ type Conductance = '[ '(Current, PTwo), '(Mass, NOne), '(Length, NTwo), '(Time, 
 data Siemens
 	deriving Typeable
 
-instance Convertible Conductance Siemens where
+instance Convertible Siemens where
 	factor _ = 1
 	showunit _ = "S"
-
+        type DimensionOf Siemens = Conductance 
 --
 
 -- |Magnetic flux. @Current^-1 Length^2 Mass^1 Time^-2@.
-type Flux = '[ '(Current, NOne), '(Length, PTwo), '(Mass, POne), '(Time, NTwo) ]
+type MagneticFlux = '[ '(Current, NOne), '(Length, PTwo), '(Mass, POne), '(Time, NTwo) ]
 
 -- |Unit of magnetic flux (Wb).
 data Weber
 	deriving Typeable
 
-instance Convertible Flux Weber where
+instance Convertible Weber where
 	factor _ = 1
 	showunit _ = "Wb"
+        type DimensionOf Weber = MagneticFlux
 
 --
 
 -- |Magnetic field strength. @Time^-2 Mass^1 Current^-1@.
-type FluxDensity = '[ '(Time, NTwo), '(Mass, POne), '(Current, NOne) ]
+type MagneticFluxDensity = '[ '(Time, NTwo), '(Mass, POne), '(Current, NOne) ]
 
 -- |Unit of magnetic field strength (T).
 data Tesla
 	deriving Typeable
 
-instance Convertible FluxDensity Tesla where
+instance Convertible Tesla where
 	factor _ = 1
 	showunit _ = "T"
-
+        type DimensionOf Tesla = MagneticFluxDensity 
 --
 
 -- |Inductance. @Current^-2 Time^-2 Mass^1 Length^2@.
@@ -216,10 +221,10 @@ type Inductance = '[ '(Current, NTwo), '(Time, NTwo), '(Mass, POne), '(Length, P
 data Henry
 	deriving Typeable
 
-instance Convertible Inductance Henry where
+instance Convertible Henry where
 	factor _ = 1
 	showunit _ = "H"
-
+        type DimensionOf Henry = Inductance
 --
 
 -- |One knot.
@@ -263,7 +268,7 @@ coulomb :: (Fractional f) => Value Charge (U Coulomb) f
 coulomb = one
 
 -- |One volt.
-volt :: (Fractional f) => Value Potential (U Volt) f
+volt :: (Fractional f) => Value ElectricPotential (U Volt) f
 volt = one
 
 -- |One farad.
@@ -279,11 +284,11 @@ siemens :: (Fractional f) => Value Conductance (U Siemens) f
 siemens = one
 
 -- |One weber.
-weber :: (Fractional f) => Value Flux (U Weber) f
+weber :: (Fractional f) => Value MagneticFlux (U Weber) f
 weber = one
 
 -- |One tesla.
-tesla :: (Fractional f) => Value FluxDensity (U Tesla) f
+tesla :: (Fractional f) => Value MagneticFluxDensity (U Tesla) f
 tesla = one
 
 -- |One henry.

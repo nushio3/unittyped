@@ -7,6 +7,7 @@
 {-# LANGUAGE OverlappingInstances #-}
 {-# LANGUAGE GADTs #-}
 {-# LANGUAGE EmptyDataDecls #-}
+{-# LANGUAGE TypeFamilies #-}
 {-# LANGUAGE TypeOperators #-}
 {-# LANGUAGE RankNTypes #-}
 {-# LANGUAGE DataKinds #-}
@@ -27,10 +28,10 @@ import Data.Typeable
 data Pound
 	deriving Typeable
 
-instance Convertible MassDimension Pound where
+instance Convertible Pound where
 	factor _ = 0.45359237
 	showunit _ = "lb"
-
+        type DimensionOf Pound = MassDimension 
 --
 
 -- |One pound (lb).

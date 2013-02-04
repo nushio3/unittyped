@@ -7,6 +7,7 @@
 {-# LANGUAGE OverlappingInstances #-}
 {-# LANGUAGE GADTs #-}
 {-# LANGUAGE EmptyDataDecls #-}
+{-# LANGUAGE TypeFamilies #-}
 {-# LANGUAGE TypeOperators #-}
 {-# LANGUAGE RankNTypes #-}
 {-# LANGUAGE DataKinds #-}
@@ -35,23 +36,23 @@ import UnitTyped
 -- Meta-units
 ----
 
-data MetaProxy (m :: * -> *) (a :: [(*, Number)]) b
+data MetaProxy (m :: * -> *) {-(a :: [(*, Number)])-} b
 
-class (Convertible a b) => MetaUnit (m :: * -> *) a b where
-	metafactor :: (Fractional f) => MetaProxy m a b -> f
-	metashow :: (Fractional f) => MetaProxy m a b -> String
+class (Convertible b) => MetaUnit (m :: * -> *) b where
+	metafactor :: (Fractional f) => MetaProxy m b -> f
+	metashow :: (Fractional f) => MetaProxy m b -> String
 
-instance (MetaUnit m a b, Convertible a b) => Convertible a (m b) where
-	factor _ = metafactor (undefined :: MetaProxy m a b) * factor (undefined :: ValueProxy a b)
-	showunit v = metashow (undefined :: MetaProxy m a b) ++ showunit (undefined :: ValueProxy a b)
-
+instance (MetaUnit m b, Convertible b) => Convertible (m b) where
+	factor _ = metafactor (undefined :: MetaProxy m b) * factor (undefined :: ValueProxy (DimensionOf b) b)
+	showunit v = metashow (undefined :: MetaProxy m b) ++ showunit (undefined :: ValueProxy (DimensionOf b) b)
+        type DimensionOf (m b) = DimensionOf b
 --
 
 -- |Create a unit 10^1 times an existing unit.
 data Deca a
 	deriving Typeable
 
-instance (Convertible a b) => MetaUnit Deca a b where
+instance (Convertible b) => MetaUnit Deca {-a-} b where
 	metafactor _ = 10
 	metashow _ = "da"
 
@@ -59,7 +60,7 @@ instance (Convertible a b) => MetaUnit Deca a b where
 data Hecto a
 	deriving Typeable
 
-instance (Convertible a b) => MetaUnit Hecto a b where
+instance (Convertible b) => MetaUnit Hecto {-a-} b where
 	metafactor _ = 10^2
 	metashow _ = "h"
 
@@ -67,7 +68,7 @@ instance (Convertible a b) => MetaUnit Hecto a b where
 data Kilo a
 	deriving Typeable
 
-instance (Convertible a b) => MetaUnit Kilo a b where
+instance (Convertible b) => MetaUnit Kilo {-a-} b where
 	metafactor _ = 10^3
 	metashow _ = "k"
 
@@ -75,7 +76,7 @@ instance (Convertible a b) => MetaUnit Kilo a b where
 data Mega a
 	deriving Typeable
 
-instance (Convertible a b) => MetaUnit Mega a b where
+instance (Convertible b) => MetaUnit Mega {-a-} b where
 	metafactor _ = 10^6
 	metashow _ = "M"
 
@@ -83,7 +84,7 @@ instance (Convertible a b) => MetaUnit Mega a b where
 data Giga a
 	deriving Typeable
 
-instance (Convertible a b) => MetaUnit Giga a b where
+instance (Convertible b) => MetaUnit Giga {-a-} b where
 	metafactor _ = 10^9
 	metashow _ = "G"
 
@@ -91,7 +92,7 @@ instance (Convertible a b) => MetaUnit Giga a b where
 data Tera a
 	deriving Typeable
 
-instance (Convertible a b) => MetaUnit Tera a b where
+instance (Convertible b) => MetaUnit Tera {-a-} b where
 	metafactor _ = 10^12
 	metashow _ = "T"
 
@@ -99,7 +100,7 @@ instance (Convertible a b) => MetaUnit Tera a b where
 data Peta a
 	deriving Typeable
 
-instance (Convertible a b) => MetaUnit Peta a b where
+instance (Convertible b) => MetaUnit Peta {-a-} b where
 	metafactor _ = 10^15
 	metashow _ = "P"
 
@@ -107,7 +108,7 @@ instance (Convertible a b) => MetaUnit Peta a b where
 data Exa a
 	deriving Typeable
 
-instance (Convertible a b) => MetaUnit Exa a b where
+instance (Convertible b) => MetaUnit Exa {-a-} b where
 	metafactor _ = 10^18
 	metashow _ = "E"
 
@@ -115,7 +116,7 @@ instance (Convertible a b) => MetaUnit Exa a b where
 data Zetta a
 	deriving Typeable
 
-instance (Convertible a b) => MetaUnit Zetta a b where
+instance (Convertible b) => MetaUnit Zetta {-a-} b where
 	metafactor _ = 10^21
 	metashow _ = "Z"
 
@@ -123,7 +124,7 @@ instance (Convertible a b) => MetaUnit Zetta a b where
 data Yotta a
 	deriving Typeable
 
-instance (Convertible a b) => MetaUnit Yotta a b where
+instance (Convertible b) => MetaUnit Yotta {-a-} b where
 	metafactor _ = 10^24
 	metashow _ = "Y"
 
@@ -131,7 +132,7 @@ instance (Convertible a b) => MetaUnit Yotta a b where
 data Deci a
 	deriving Typeable
 
-instance (Convertible a b) => MetaUnit Deci a b where
+instance (Convertible b) => MetaUnit Deci {-a-} b where
 	metafactor _ = 0.1
 	metashow _ = "d"
 
@@ -139,7 +140,7 @@ instance (Convertible a b) => MetaUnit Deci a b where
 data Centi a
 	deriving Typeable
 
-instance (Convertible a b) => MetaUnit Centi a b where
+instance (Convertible b) => MetaUnit Centi {-a-} b where
 	metafactor _ = 0.1^2
 	metashow _ = "c"
 
@@ -147,7 +148,7 @@ instance (Convertible a b) => MetaUnit Centi a b where
 data Mili a
 	deriving Typeable
 
-instance (Convertible a b) => MetaUnit Mili a b where
+instance (Convertible b) => MetaUnit Mili {-a-} b where
 	metafactor _ = 0.1^3
 	metashow _ = "m"
 
@@ -155,7 +156,7 @@ instance (Convertible a b) => MetaUnit Mili a b where
 data Micro a
 	deriving Typeable
 
-instance (Convertible a b) => MetaUnit Micro a b where
+instance (Convertible b) => MetaUnit Micro {-a-} b where
 	metafactor _ = 0.1^6
 	metashow _ = "µ"
 
@@ -163,7 +164,7 @@ instance (Convertible a b) => MetaUnit Micro a b where
 data Nano a
 	deriving Typeable
 
-instance (Convertible a b) => MetaUnit Nano a b where
+instance (Convertible b) => MetaUnit Nano {-a-} b where
 	metafactor _ = 0.1^9
 	metashow _ = "n"
 
@@ -171,7 +172,7 @@ instance (Convertible a b) => MetaUnit Nano a b where
 data Pico a
 	deriving Typeable
 
-instance (Convertible a b) => MetaUnit Pico a b where
+instance (Convertible b) => MetaUnit Pico {-a-} b where
 	metafactor _ = 0.1^12
 	metashow _ = "p"
 
@@ -179,7 +180,7 @@ instance (Convertible a b) => MetaUnit Pico a b where
 data Femto a
 	deriving Typeable
 
-instance (Convertible a b) => MetaUnit Femto a b where
+instance (Convertible b) => MetaUnit Femto {-a-} b where
 	metafactor _ = 0.1^15
 	metashow _ = "f"
 
@@ -187,7 +188,7 @@ instance (Convertible a b) => MetaUnit Femto a b where
 data Atto a
 	deriving Typeable
 
-instance (Convertible a b) => MetaUnit Atto a b where
+instance (Convertible b) => MetaUnit Atto {-a-} b where
 	metafactor _ = 0.1^18
 	metashow _ = "a"
 
@@ -195,7 +196,7 @@ instance (Convertible a b) => MetaUnit Atto a b where
 data Zepto a
 	deriving Typeable
 
-instance (Convertible a b) => MetaUnit Zepto a b where
+instance (Convertible b) => MetaUnit Zepto {-a-} b where
 	metafactor _ = 0.1^21
 	metashow _ = "z"
 
@@ -203,7 +204,7 @@ instance (Convertible a b) => MetaUnit Zepto a b where
 data Yocto a
 	deriving Typeable
 
-instance (Convertible a b) => MetaUnit Yocto a b where
+instance (Convertible b) => MetaUnit Yocto {-a-} b where
 	metafactor _ = 0.1^24
 	metashow _ = "y"
 
@@ -215,7 +216,7 @@ instance (Convertible a b) => MetaUnit Yocto a b where
 data Kibi a
 	deriving Typeable
 
-instance (Convertible a b) => MetaUnit Kibi a b where
+instance (Convertible b) => MetaUnit Kibi {-a-} b where
 	metafactor _ = 2 ^ 10
 	metashow _ = "Ki"
 
@@ -223,7 +224,7 @@ instance (Convertible a b) => MetaUnit Kibi a b where
 data Mebi a
 	deriving Typeable
 
-instance (Convertible a b) => MetaUnit Mebi a b where
+instance (Convertible b) => MetaUnit Mebi {-a-} b where
 	metafactor _ = 2 ^ 20
 	metashow _ = "Mi"
 
@@ -231,7 +232,7 @@ instance (Convertible a b) => MetaUnit Mebi a b where
 data Gibi a
 	deriving Typeable
 
-instance (Convertible a b) => MetaUnit Gibi a b where
+instance (Convertible b) => MetaUnit Gibi {-a-} b where
 	metafactor _ = 2 ^ 30
 	metashow _ = "Gi"
 
@@ -239,7 +240,7 @@ instance (Convertible a b) => MetaUnit Gibi a b where
 data Tebi a
 	deriving Typeable
 
-instance (Convertible a b) => MetaUnit Tebi a b where
+instance (Convertible b) => MetaUnit Tebi {-a-} b where
 	metafactor _ = 2 ^ 40
 	metashow _ = "Ti"
 
@@ -247,7 +248,7 @@ instance (Convertible a b) => MetaUnit Tebi a b where
 data Pebi a
 	deriving Typeable
 
-instance (Convertible a b) => MetaUnit Pebi a b where
+instance (Convertible b) => MetaUnit Pebi {-a-} b where
 	metafactor _ = 2 ^ 50
 	metashow _ = "Pi"
 
@@ -255,7 +256,7 @@ instance (Convertible a b) => MetaUnit Pebi a b where
 data Exbi a
 	deriving Typeable
 
-instance (Convertible a b) => MetaUnit Exbi a b where
+instance (Convertible b) => MetaUnit Exbi {-a-} b where
 	metafactor _ = 2 ^ 60
 	metashow _ = "Ei"
 
@@ -263,7 +264,7 @@ instance (Convertible a b) => MetaUnit Exbi a b where
 data Zebi a
 	deriving Typeable
 
-instance (Convertible a b) => MetaUnit Zebi a b where
+instance (Convertible b) => MetaUnit Zebi {-a-} b where
 	metafactor _ = 2 ^ 70
 	metashow _ = "Zi"
 
@@ -271,7 +272,7 @@ instance (Convertible a b) => MetaUnit Zebi a b where
 data Yobi a
 	deriving Typeable
 
-instance (Convertible a b) => MetaUnit Yobi a b where
+instance (Convertible b) => MetaUnit Yobi {-a-} b where
 	metafactor _ = 2 ^ 80
 	metashow _ = "Yi"
 
@@ -279,118 +280,118 @@ instance (Convertible a b) => MetaUnit Yobi a b where
 ----
 
 -- |Take a unit and return one deca(unit).
-deca :: (Convertible a b, Fractional f) => Value a (U b) f -> Value a (U (Deca b)) f
+deca :: (Convertible b, Fractional f) => Value a (U b) f -> Value a (U (Deca b)) f
 {-# INLINE deca #-}
 deca (Value x) = (Value x)
 
 -- |Take a unit and return one hecto(unit).
-hecto :: (Convertible a b, Fractional f) => Value a (U b) f -> Value a (U (Hecto b)) f
+hecto :: (Convertible b, Fractional f) => Value a (U b) f -> Value a (U (Hecto b)) f
 {-# INLINE hecto #-}
 hecto (Value x) = (Value x)
 
 -- |Take a unit and return one kilo(unit).
-kilo :: (Convertible a b, Fractional f) => Value a (U b) f -> Value a (U (Kilo b)) f
+kilo :: (Convertible b, Fractional f) => Value a (U b) f -> Value a (U (Kilo b)) f
 {-# INLINE kilo #-}
 kilo (Value x) = (Value x)
 
 -- |Take a unit and return one mega(unit).
-mega :: (Convertible a b, Fractional f) => Value a (U b) f -> Value a (U (Mega b)) f
+mega :: (Convertible b, Fractional f) => Value a (U b) f -> Value a (U (Mega b)) f
 mega (Value x) = (Value x)
 
 -- |Take a unit and return one giga(unit).
-giga :: (Convertible a b, Fractional f) => Value a (U b) f -> Value a (U (Giga b)) f
+giga :: (Convertible b, Fractional f) => Value a (U b) f -> Value a (U (Giga b)) f
 giga (Value x) = (Value x)
 
 -- |Take a unit and return one tera(unit).
-tera :: (Convertible a b, Fractional f) => Value a (U b) f -> Value a (U (Tera b)) f
+tera :: (Convertible b, Fractional f) => Value a (U b) f -> Value a (U (Tera b)) f
 tera (Value x) = (Value x)
 
 -- |Take a unit and return one peta(unit).
-peta :: (Convertible a b, Fractional f) => Value a (U b) f -> Value a (U (Peta b)) f
+peta :: (Convertible b, Fractional f) => Value a (U b) f -> Value a (U (Peta b)) f
 peta (Value x) = (Value x)
 
 -- |Take a unit and return one exa(unit).
-exa :: (Convertible a b, Fractional f) => Value a (U b) f -> Value a (U (Exa b)) f
+exa :: (Convertible b, Fractional f) => Value a (U b) f -> Value a (U (Exa b)) f
 exa (Value x) = (Value x)
 
 -- |Take a unit and return one zetta(unit).
-zetta :: (Convertible a b, Fractional f) => Value a (U b) f -> Value a (U (Zetta b)) f
+zetta :: (Convertible b, Fractional f) => Value a (U b) f -> Value a (U (Zetta b)) f
 zetta (Value x) = (Value x)
 
 -- |Take a unit and return one yotta(unit).
-yotta :: (Convertible a b, Fractional f) => Value a (U b) f -> Value a (U (Yotta b)) f
+yotta :: (Convertible b, Fractional f) => Value a (U b) f -> Value a (U (Yotta b)) f
 yotta (Value x) = (Value x)
 
 -- |Take a unit and return one deci(unit).
-deci :: (Convertible a b, Fractional f) => Value a (U b) f -> Value a (U (Deci b)) f
+deci :: (Convertible b, Fractional f) => Value a (U b) f -> Value a (U (Deci b)) f
 deci (Value x) = (Value x)
 
 -- |Take a unit and return one centi(unit).
-centi :: (Convertible a b, Fractional f) => Value a (U b) f -> Value a (U (Centi b)) f
+centi :: (Convertible b, Fractional f) => Value a (U b) f -> Value a (U (Centi b)) f
 centi (Value x) = (Value x)
 
 -- |Take a unit and return one mili(unit).
-mili :: (Convertible a b, Fractional f) => Value a (U b) f -> Value a (U (Mili b)) f
+mili :: (Convertible b, Fractional f) => Value a (U b) f -> Value a (U (Mili b)) f
 mili (Value x) = (Value x)
 
 -- |Take a unit and return one micro(unit).
-micro :: (Convertible a b, Fractional f) => Value a (U b) f -> Value a (U (Micro b)) f
+micro :: (Convertible b, Fractional f) => Value a (U b) f -> Value a (U (Micro b)) f
 micro (Value x) = (Value x)
 
 -- |Take a unit and return one nano(unit).
-nano :: (Convertible a b, Fractional f) => Value a (U b) f -> Value a (U (Nano b)) f
+nano :: (Convertible b, Fractional f) => Value a (U b) f -> Value a (U (Nano b)) f
 nano (Value x) = (Value x)
 
 -- |Take a unit and return one pico(unit).
-pico :: (Convertible a b, Fractional f) => Value a (U b) f -> Value a (U (Pico b)) f
+pico :: (Convertible b, Fractional f) => Value a (U b) f -> Value a (U (Pico b)) f
 pico (Value x) = (Value x)
 
 -- |Take a unit and return one femto(unit).
-femto :: (Convertible a b, Fractional f) => Value a (U b) f -> Value a (U (Femto b)) f
+femto :: (Convertible b, Fractional f) => Value a (U b) f -> Value a (U (Femto b)) f
 femto (Value x) = (Value x)
 
 -- |Take a unit and return one atto(unit).
-atto :: (Convertible a b, Fractional f) => Value a (U b) f -> Value a (U (Atto b)) f
+atto :: (Convertible b, Fractional f) => Value a (U b) f -> Value a (U (Atto b)) f
 atto (Value x) = (Value x)
 
 -- |Take a unit and return one zepto(unit).
-zepto :: (Convertible a b, Fractional f) => Value a (U b) f -> Value a (U (Zepto b)) f
+zepto :: (Convertible b, Fractional f) => Value a (U b) f -> Value a (U (Zepto b)) f
 zepto (Value x) = (Value x)
 
 -- |Take a unit and return one yocto(unit).
-yocto :: (Convertible a b, Fractional f) => Value a (U b) f -> Value a (U (Yocto b)) f
+yocto :: (Convertible b, Fractional f) => Value a (U b) f -> Value a (U (Yocto b)) f
 yocto (Value x) = (Value x)
 
 --
 
 -- |Take a unit and return one kibi(unit).
-kibi :: (Convertible a b, Fractional f) => Value a (U b) f -> Value a (U (Kibi b)) f
+kibi :: (Convertible b, Fractional f) => Value a (U b) f -> Value a (U (Kibi b)) f
 kibi (Value x) = (Value x)
 
 -- |Take a unit and return one mebi(unit).
-mebi :: (Convertible a b, Fractional f) => Value a (U b) f -> Value a (U (Mebi b)) f
+mebi :: (Convertible b, Fractional f) => Value a (U b) f -> Value a (U (Mebi b)) f
 mebi (Value x) = (Value x)
 
 -- |Take a unit and return one gibi(unit).
-gibi :: (Convertible a b, Fractional f) => Value a (U b) f -> Value a (U (Gibi b)) f
+gibi :: (Convertible b, Fractional f) => Value a (U b) f -> Value a (U (Gibi b)) f
 gibi (Value x) = (Value x)
 
 -- |Take a unit and return one tebi(unit).
-tebi :: (Convertible a b, Fractional f) => Value a (U b) f -> Value a (U (Tebi b)) f
+tebi :: (Convertible b, Fractional f) => Value a (U b) f -> Value a (U (Tebi b)) f
 tebi (Value x) = (Value x)
 
 -- |Take a unit and return one pebi(unit).
-pebi :: (Convertible a b, Fractional f) => Value a (U b) f -> Value a (U (Pebi b)) f
+pebi :: (Convertible b, Fractional f) => Value a (U b) f -> Value a (U (Pebi b)) f
 pebi (Value x) = (Value x)
 
 -- |Take a unit and return one exbi(unit).
-exbi :: (Convertible a b, Fractional f) => Value a (U b) f -> Value a (U (Exbi b)) f
+exbi :: (Convertible b, Fractional f) => Value a (U b) f -> Value a (U (Exbi b)) f
 exbi (Value x) = (Value x)
 
 -- |Take a unit and return one zebi(unit).
-zebi :: (Convertible a b, Fractional f) => Value a (U b) f -> Value a (U (Zebi b)) f
+zebi :: (Convertible b, Fractional f) => Value a (U b) f -> Value a (U (Zebi b)) f
 zebi (Value x) = (Value x)
 
 -- |Take a unit and return one yobi(unit).
-yobi :: (Convertible a b, Fractional f) => Value a (U b) f -> Value a (U (Yobi b)) f
+yobi :: (Convertible b, Fractional f) => Value a (U b) f -> Value a (U (Yobi b)) f
 yobi (Value x) = (Value x)

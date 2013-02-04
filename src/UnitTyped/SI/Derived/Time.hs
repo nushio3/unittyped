@@ -7,6 +7,7 @@
 {-# LANGUAGE OverlappingInstances #-}
 {-# LANGUAGE GADTs #-}
 {-# LANGUAGE EmptyDataDecls #-}
+{-# LANGUAGE TypeFamilies #-}
 {-# LANGUAGE TypeOperators #-}
 {-# LANGUAGE RankNTypes #-}
 {-# LANGUAGE DataKinds #-}
@@ -35,57 +36,65 @@ import qualified System.Locale as SL
 data Hour
 	deriving Typeable
 
-instance Convertible TimeDimension Hour where
+instance Convertible Hour where
 	factor _ = 3600
 	showunit _ = "h"
+        type DimensionOf Hour = TimeDimension 
 
 -- |Minute (min.).
 data Minute
 	deriving Typeable
 
-instance Convertible TimeDimension Minute where
+instance Convertible Minute where
 	factor _ = 60
 	showunit _ = "min."
+        type DimensionOf Minute = TimeDimension 
 
 -- |Day (day).
 data Day
 	deriving Typeable
 
-instance Convertible TimeDimension Day where
+instance Convertible Day where
 	factor _ = 86400
 	showunit _ = "day"
+        type DimensionOf Day = TimeDimension 
+
 
 -- |Year (yr). This is an average year in the Gregorian calender (so 365.2425 days).
 data Year
 	deriving Typeable
 
-instance Convertible TimeDimension Year where
+instance Convertible Year where
 	factor _ = 365.2425 * 24 * 60 * 60
 	showunit _ = "yr"
+        type DimensionOf Year = TimeDimension 
 
 -- |Month (month). Average length of a month (365.2425 / 12).
 data Month
 	deriving Typeable
 
-instance Convertible TimeDimension Month where
+instance Convertible Month where
 	factor _ = (365.2425 * 24 * 60 * 60) / 12
 	showunit _ = "month"
+        type DimensionOf Month = TimeDimension 
 
 -- |Julian year (a). This is an average year in the Julian calender (so 365.25 days). Still used in astronomy.
 data JulianYear
 	deriving Typeable
 
-instance Convertible TimeDimension JulianYear where
+instance Convertible JulianYear where
 	factor _ = 31557600
 	showunit _ = "a"
+        type DimensionOf JulianYear = TimeDimension 
 
 -- |Frequency in Hertz. (Hz)
 data Hertz
 	deriving Typeable
 
-instance Convertible '[ '(Time, Neg One) ] Hertz where
+instance Convertible Hertz where
 	factor _ = 1
 	showunit _ = "Hz"
+        type DimensionOf Hertz = '[ '(Time, Neg One) ]
 
 --
 

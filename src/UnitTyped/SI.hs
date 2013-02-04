@@ -7,6 +7,7 @@
 {-# LANGUAGE OverlappingInstances #-}
 {-# LANGUAGE GADTs #-}
 {-# LANGUAGE EmptyDataDecls #-}
+{-# LANGUAGE TypeFamilies #-}
 {-# LANGUAGE TypeOperators #-}
 {-# LANGUAGE RankNTypes #-}
 {-# LANGUAGE DataKinds #-}
@@ -23,7 +24,7 @@ data Mole
 instance Convertible Mole where
 	factor _ = 6.0221417930e23
 	showunit _ = "mole"
-        type DimType Mole = '[]
+        type DimensionOf Mole = '[]
 ----
 -- Length
 ----
@@ -40,10 +41,10 @@ type LengthDimension = '[ '(Length, (Pos One)) ]
 data Meter
 	deriving Typeable
 
-instance Convertible LengthDimension Meter where
+instance Convertible Meter where
 	factor _ = 1
 	showunit _ = "m"
-
+        type DimensionOf Meter = LengthDimension
 ----
 -- Time
 ----
@@ -60,10 +61,10 @@ type TimeDimension = '[ '(Time, (Pos One)) ]
 data Second
 	deriving Typeable
 
-instance Convertible TimeDimension Second where
+instance Convertible Second where
 	factor _ = 1
 	showunit _ = "s"
-
+        type DimensionOf Second = TimeDimension
 ----
 -- Mass
 ----
@@ -80,10 +81,10 @@ type MassDimension = '[ '(Mass, (Pos One)) ]
 data Gram
 	deriving Typeable
 
-instance Convertible MassDimension Gram where
+instance Convertible Gram where
 	factor _ = 0.001
 	showunit _ = "g"
-
+        type DimensionOf Gram = MassDimension
 ----
 -- Temperature
 ----
@@ -100,10 +101,10 @@ type TemperatureDimension = '[ '(Temperature, (Pos One)) ]
 data Kelvin
 	deriving Typeable
 
-instance Convertible TemperatureDimension Kelvin where
+instance Convertible Kelvin where
 	factor _ = 1
 	showunit _ = "K"
-
+        type DimensionOf Kelvin = TemperatureDimension
 ----
 -- Current
 ----
@@ -120,10 +121,10 @@ type CurrentDimension = '[ '(Current, (Pos One)) ]
 data Ampere
 	deriving Typeable
 
-instance Convertible CurrentDimension Ampere where
+instance Convertible Ampere where
 	factor _ = 1
 	showunit _ = "A"
-
+        type DimensionOf Ampere = CurrentDimension 
 ----
 -- Luminous
 ----
@@ -140,10 +141,10 @@ type LuminousDimension = '[ '(Luminous, (Pos One)) ]
 data Candela
 	deriving Typeable
 
-instance Convertible LuminousDimension Candela where
+instance Convertible Candela where
 	factor _ = 1
 	showunit _ = "cd"
-
+        type DimensionOf Candela = LuminousDimension
 ----
 
 -- |One thing (#).
