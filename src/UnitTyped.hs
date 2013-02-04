@@ -263,11 +263,11 @@ class Convertible3  b where
 type U a = '[ '(a, POne) ]
 
 -- | Shorthand to create a 'Value' type from just one base unit.
-type (x :| b) = (Convertible a b) => Value a (U b) x 
+type (x :| b) = (Convertible a b) => Value a (U b) x
 
 
-type family TF b
-type instance TF b = Value (DimType b) (U b) Double
+-- type family TF b
+-- type instance TF b = Value (DimType b) (U b) Double
 
 -- | Shorthand to Create a 'Value' type from a compound unit.
 type (x :*| b) = (Convertible' a b) => Value a b x
