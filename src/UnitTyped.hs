@@ -222,6 +222,7 @@ instance (FromNumber (Neg a)) => FromNumber (Neg (Suc a)) where
         {-# INLINE fromNumber #-}
         fromNumber _ = -1 + (fromNumber (undefined :: NumberProxy (Neg a)))
 
+-- | Convert dimension to value-level information
 class Dimension a where
     dimension :: Value a b f -> M.Map TypeRep Integer
 
@@ -232,6 +233,7 @@ instance (Typeable dim, FromNumber value, Dimension rest) => Dimension ('(dim, v
     dimension :: forall (b :: [(*, Number)]) f . Value ('(dim, value) ': rest) b f -> M.Map TypeRep Integer
     dimension _ = M.insert (typeOf (error "typeOf" :: dim)) (fromNumber (error "fromNumber" :: NumberProxy value)) (dimension (undefined :: Value rest b f))
 
+-- | Convert unit to value-level information
 class Unit b where
     unit :: Value a b f -> M.Map TypeRep Integer
 
