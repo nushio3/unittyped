@@ -271,7 +271,6 @@ type (x :| b) = (Convertible b) => Value (DimensionOf b) (U b) x
 
 
 
-
 -- |Convertible' is a class that models the fact that the composed unit 'b' has dimension 'a'.
 class Convertible' (a :: [(*, Number)]) (b :: [(*, Number)]) where
         -- |The multiplication factor to convert this unit between other units in the same dimension.
