@@ -14,6 +14,7 @@
 {-# LANGUAGE StandaloneDeriving #-}
 {-# LANGUAGE TypeOperators #-}
 {-# LANGUAGE UndecidableInstances #-}
+{-# LANGUAGE TypeFamilies #-}
 
 -- |Module defining values with dimensions and units, and mathematical operations on those.
 module UnitTyped (
@@ -249,11 +250,24 @@ class Convertible (a :: [(*, Number)]) b | b -> a where
         -- |String representation of a base unit.
         showunit :: ValueProxy a b -> String
 
+class Convertible3  b where
+        -- |The multiplication factor to convert this base unit between other units in the same dimension.
+        -- Only the ratio matters, which one is '1' is not important, as long as all are consistent.
+        factor3 :: (Fractional f) => ValueProxy (DimType b) b -> f
+        -- |String representation of a base unit.
+        showunit3 :: ValueProxy (DimType b) b -> String
+
+        type DimType b ::  [(*, Number)]
+
 -- | Shorthand to create a composed unit containing just one base unit.
 type U a = '[ '(a, POne) ]
 
 -- | Shorthand to create a 'Value' type from just one base unit.
 type (x :| b) = (Convertible a b) => Value a (U b) x 
+
+
+type family TF b
+type instance TF b = Value (DimType b) (U b) Double
 
 -- | Shorthand to Create a 'Value' type from a compound unit.
 type (x :*| b) = (Convertible' a b) => Value a b x
