@@ -18,7 +18,7 @@
 
 -- |Module defining values with dimensions and units, and mathematical operations on those.
 module UnitTyped (
-        Convertible(..), Convertible'(..), U(..), (:|),(:*|),
+        Convertible(..), Convertible'(..), U(..), (:|),
         Value(..), ValueProxy, ValueProxy', proxy',
 
         Count,
@@ -242,35 +242,32 @@ instance (Typeable uni, FromNumber value, Unit rest) => Unit ('(uni, value) ': r
     unit :: forall (a :: [(*, Number)]) f . Value a ('(uni, value) ': rest) f -> M.Map TypeRep Integer
     unit _ = M.insert (typeOf (error "typeOf" :: uni)) (fromNumber (error "fromNumber" :: NumberProxy value)) (unit (undefined :: Value a rest f))
 
--- |Convertible is a class that models the fact that the base unit 'b' has dimension 'a'.
-class Convertible (a :: [(*, Number)]) b | b -> a where
-        -- |The multiplication factor to convert this base unit between other units in the same dimension.
-        -- Only the ratio matters, which one is '1' is not important, as long as all are consistent.
-        factor :: (Fractional f) => ValueProxy a b -> f
-        -- |String representation of a base unit.
-        showunit :: ValueProxy a b -> String
+-- |Convertible is a class that models the fact that the base unit 'b'
+-- has dimension 'DimType b'. c.f. the original class declaration used
+-- to be
+--
+-- > class Convertible (a :: [(*, Number)]) b | b -> a where
+--
+-- the type 'a' now became 'DimType b' .
 
-class Convertible3  b where
+
+class Convertible b where
         -- |The multiplication factor to convert this base unit between other units in the same dimension.
         -- Only the ratio matters, which one is '1' is not important, as long as all are consistent.
-        factor3 :: (Fractional f) => ValueProxy (DimType b) b -> f
+        factor :: (Fractional f) => ValueProxy (DimType b) b -> f
         -- |String representation of a base unit.
-        showunit3 :: ValueProxy (DimType b) b -> String
+        showunit :: ValueProxy (DimType b) b -> String
 
         type DimType b ::  [(*, Number)]
+
 
 -- | Shorthand to create a composed unit containing just one base unit.
 type U a = '[ '(a, POne) ]
 
 -- | Shorthand to create a 'Value' type from just one base unit.
-type (x :| b) = (Convertible a b) => Value a (U b) x
+type (x :| b) = (Convertible b) => Value (DimType b) (U b) x
 
 
--- type family TF b
--- type instance TF b = Value (DimType b) (U b) Double
-
--- | Shorthand to Create a 'Value' type from a compound unit.
-type (x :*| b) = (Convertible' a b) => Value a b x
 
 
 -- |Convertible' is a class that models the fact that the composed unit 'b' has dimension 'a'.
@@ -287,15 +284,18 @@ instance (MapNull a True) => Convertible' a '[] where
         {-# INLINE showunit' #-}
         showunit' _ = ""
 
-instance (Convertible a b, MapEq a a') => Convertible' a' ('(b, POne) ': '[]) where
+instance (Convertible b, MapEq a a') => Convertible' a' ('(b, POne) ': '[]) where
         {-# INLINE factor' #-}
-        factor' _ = factor (undefined :: ValueProxy a b)
+        factor' _ = factor (undefined :: ValueProxy (DimType b) b)
         {-# INLINE showunit' #-}
-        showunit' _ = showunit (undefined :: ValueProxy a b)
+        showunit' _ = showunit (undefined :: ValueProxy (DimType b) b)
 
 instance (FromNumber value, Convertible' rec_dimension rest, MapNeg unit_dimension neg_unit_dimension,
-                  MapTimes value neg_unit_dimension times_neg_unit_dimension, MapMerge times_neg_unit_dimension dimension rec_dimension,
-                  Convertible unit_dimension unit) => Convertible' dimension ('(unit, value) ': rest) where
+          MapTimes value neg_unit_dimension times_neg_unit_dimension,
+          MapMerge times_neg_unit_dimension dimension rec_dimension,
+          Convertible unit,
+          unit_dimension ~ DimType unit
+          ) => Convertible' dimension ('(unit, value) ': rest) where
         factor' _ = let
                         rec = factor' (undefined :: ValueProxy' rec_dimension rest)
                     in rec * ((factor (undefined :: ValueProxy unit_dimension unit)) ^^ (fromNumber (undefined :: NumberProxy value)))
@@ -532,6 +532,7 @@ infixl 4 |==|, |<|, |>|, |<=|, |>=|
 -- |One thing.
 data Count
 
-instance Convertible '[] Count where
+instance Convertible Count where
         factor _ = 1
         showunit _ = "#"
+        type DimType Count =  '[]

@@ -20,10 +20,10 @@ import UnitTyped
 data Mole
 	deriving Typeable
 
-instance Convertible '[] Mole where
+instance Convertible Mole where
 	factor _ = 6.0221417930e23
 	showunit _ = "mole"
-
+        type DimType Mole = '[]
 ----
 -- Length
 ----
