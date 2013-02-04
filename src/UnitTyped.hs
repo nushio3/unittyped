@@ -267,7 +267,7 @@ class Convertible b where
 type U a = '[ '(a, POne) ]
 
 -- | Shorthand to create a 'Value' type from just one base unit.
-type (x :| b) = (Convertible b) => Value (DimensionOf b) (U b) x
+type (x :| b) = Value (DimensionOf b) (U b) x
 
 
 
