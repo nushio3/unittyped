@@ -92,14 +92,14 @@ instance Convertible Watt where
 --
 
 -- |Density.  @Length^-3 Mass^1@.
-type Density = '[ '(Mass, POne), '(Length, NThree) ]
+type Density = '[ '(Length, NThree), '(Mass, POne) ]
 
 
 --
 
 -- | Gravitational potential.  @Length^2 Time^-2@.
 
-type GravitationalPotential = '[ '(Length, PTwo), '(Time, NTwo) ]
+type GravitationalPotential = '[ '(Time, NTwo),  '(Length, PTwo) ]
 
 
 
