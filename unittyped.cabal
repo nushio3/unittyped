@@ -39,6 +39,8 @@ library
                    RankNTypes
                    DeriveDataTypeable            
   exposed-modules: UnitTyped
+                   UnitTyped.Bytes
+                   UnitTyped.NoPrelude
                    UnitTyped.SI
                    UnitTyped.SI.Derived
                    UnitTyped.SI.Derived.Time
@@ -48,8 +50,7 @@ library
                    UnitTyped.SI.Meta
                    UnitTyped.SI.Show
                    UnitTyped.SI.Constants
-                   UnitTyped.Bytes
-                   UnitTyped.NoPrelude
+                   UnitTyped.Type
   hs-source-dirs:  src
 
 Test-Suite doctest
