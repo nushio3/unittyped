@@ -36,11 +36,11 @@ infixl 6 +, -
 infixl 7 *, /
 
 -- |See '|*|'
-(*) :: (Fractional f, Convertible' a b, Convertible' c d, MapMerge a c u, MapMerge b d s) => Value a b f -> Value c d f -> Value u s f
+(*) :: (Fractional f, Convertible' a b, Convertible' c d, MapMerge a c u, MapMerge b d s, Convertible' u s) => Value a b f -> Value c d f -> Value u s f
 (*) = (|*|)
 
 -- |See '|/|'
-(/) :: (Fractional f, Convertible' a b, Convertible' c d, MapMerge a c' u, MapNeg c c', MapNeg d d', MapMerge b d' s) => Value a b f -> Value c d f -> Value u s f
+(/) :: (Fractional f, Convertible' a b, Convertible' c d, MapMerge a c' u, MapNeg c c', MapNeg d d', MapMerge b d' s, Convertible' u s) => Value a b f -> Value c d f -> Value u s f
 (/) = (|/|)
 
 -- |See '|+|'

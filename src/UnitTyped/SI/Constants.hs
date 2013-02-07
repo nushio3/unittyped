@@ -65,6 +65,12 @@ r = mkVal 8.314462175
 g :: (Fractional f) => Value '[ '(Time, NTwo), '(Length, PThree), '(Mass, NOne) ] '[ '(Second, NTwo), '(Meter, PThree), '((Kilo Gram), NOne) ] f
 g = mkVal 6.6738480e-11
 
+-- | Generic Gravitational constant
+g' :: (Fractional f, Convertible' '[ '(Time, NTwo), '(Length, PThree), '(Mass, NOne) ] b ) 
+   => Value '[ '(Time, NTwo), '(Length, PThree), '(Mass, NOne) ] b f
+g' = let ret = coerce g ret in ret
+
+
 ---- |Planck mass
 --m_P :: (Fractional f, Floating f) => Value f MassDimension (U (Kilo Gram))
 --m_P = mkVal (sqrt (val $ hbar |*| c |/| g))
