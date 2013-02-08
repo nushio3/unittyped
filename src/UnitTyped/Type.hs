@@ -483,13 +483,14 @@ cubic :: (Fractional f, MapMerge a c u, MapMerge b d s, MapMerge c c a, MapMerge
 {-# INLINE cubic #-}
 cubic x = x |*| x |*| x
 
-wrapB :: (Convertible' a b, Convertible' c d, MapEq c a) => (Rational -> Rational -> Bool) -> Value a b Rational -> Value c d Rational -> Bool
+wrapB :: (Fractional f, Convertible' a b, Convertible' c d, MapEq c a) => (f -> f -> Bool) -> Value a b f -> Value c d f -> Bool
 {-# INLINE wrapB #-}
 wrapB op a b = op (val a) (val $ coerce b a)
 
 infixl 4 |==|, |<|, |>|, |<=|, |>=|
 
-(|==|), (|<|), (|>|), (|<=|), (|>=|) :: (Convertible' a b, Convertible' c d, MapEq c a) => Value a b Rational -> Value c d Rational -> Bool
+(|==|) :: (Eq f, Fractional f, Convertible' a b, Convertible' c d, MapEq c a) => Value a b f -> Value c d f -> Bool
+(|<|), (|>|), (|<=|), (|>=|) :: (Ord f, Fractional f, Convertible' a b, Convertible' c d, MapEq c a) => Value a b f -> Value c d f -> Bool
 -- |'==' for values. Only defined for values with rational contents. Can be used on any two values with the same dimension.
 {-# INLINE (|==|) #-}
 (|==|) = wrapB (==)
