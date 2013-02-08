@@ -345,13 +345,13 @@ infixl 6 |+|, |-|
 
 -- |Multiply two values, constructing a value with as dimension the product of the dimensions,
 -- and as unit the multplication of the units.
-(|*|) :: (Fractional f, Convertible' a b, Convertible' c d, MapMerge a c u, MapMerge b d s, Convertible' u s) => Value a b f -> Value c d f -> Value u s f
+(|*|) :: (Fractional f, Convertible' a b, Convertible' c d, MapMerge a c u, MapMerge b d s) => Value a b f -> Value c d f -> Value u s f
 {-# INLINE (|*|) #-}
 a |*| b = mkVal (val a * val b)
 
 -- |Divide two values, constructing a value with as dimension the division of the dimension of the lhs by the dimension of the rhs,
 -- and the same for the units.
-(|/|), per :: (Fractional f, Convertible' a b, Convertible' c d, MapMerge a c' u, MapNeg c c', MapNeg d d', MapMerge b d' s, Convertible' u s) => Value a b f -> Value c d f -> Value u s f
+(|/|), per :: (Fractional f, Convertible' a b, Convertible' c d, MapMerge a c' u, MapNeg c c', MapNeg d d', MapMerge b d' s) => Value a b f -> Value c d f -> Value u s f
 {-# INLINE (|/|) #-}
 a |/| b = mkVal (val a / val b)
 {-# INLINE per #-}
@@ -471,7 +471,7 @@ one = mkVal 1
 --
 -- >>> 100 *| square meter `as` square yard
 -- 119.59900463010803 yd²
-square :: (Fractional f, MapMerge c c u, MapMerge d d s, Convertible' c d, Convertible' u s) => Value c d f -> Value u s f
+square :: (Fractional f, MapMerge c c u, MapMerge d d s, Convertible' c d) => Value c d f -> Value u s f
 {-# INLINE square #-}
 square x = x |*| x
 
@@ -479,7 +479,7 @@ square x = x |*| x
 --
 -- >>> 1 *| cubic inch `as` mili liter
 -- 16.387063999999995 mL
-cubic :: (Fractional f, MapMerge a c u, MapMerge b d s, MapMerge c c a, MapMerge d d b, Convertible' a b, Convertible' c d, Convertible' u s) => Value c d f -> Value u s f
+cubic :: (Fractional f, MapMerge a c u, MapMerge b d s, MapMerge c c a, MapMerge d d b, Convertible' a b, Convertible' c d) => Value c d f -> Value u s f
 {-# INLINE cubic #-}
 cubic x = x |*| x |*| x
 
