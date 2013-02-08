@@ -82,6 +82,37 @@ instance Convertible NauticalMile where
 	showunit _ = "M"
         type DimensionOf NauticalMile = LengthDimension
 
+-- |The Astronomical Unit (au).
+data AU
+	deriving Typeable
+
+instance Convertible AU where
+	factor _ = 149597870700
+	showunit _ = "au"
+        type DimensionOf AU = LengthDimension
+
+
+-- |The Light Year (ly).
+data LightYear
+	deriving Typeable
+
+instance Convertible LightYear where
+	factor _ = 9460730472580800 
+	showunit _ = "ly"
+        type DimensionOf LightYear = LengthDimension
+
+
+-- |The Parsec (pc).
+data Parsec
+	deriving Typeable
+
+instance Convertible Parsec where
+	factor _ = 3.08568e16
+	showunit _ = "pc"
+        type DimensionOf Parsec = LengthDimension
+
+
+
 ----
 -- 2 dimensional
 ----
