@@ -83,13 +83,13 @@ instance Convertible NauticalMile where
         type DimensionOf NauticalMile = LengthDimension
 
 -- |The Astronomical Unit (au).
-data AU
+data AstronomicalUnit
 	deriving Typeable
 
-instance Convertible AU where
+instance Convertible AstronomicalUnit where
 	factor _ = 149597870700
 	showunit _ = "au"
-        type DimensionOf AU = LengthDimension
+        type DimensionOf AstronomicalUnit = LengthDimension
 
 
 -- |The Light Year (ly).
@@ -190,6 +190,21 @@ angstrom = one
 -- |One nautical mile (M).
 nautical_mile :: (Fractional f) => Value LengthDimension (U NauticalMile) f
 nautical_mile = one
+
+
+-- |One astronomical uint (au).
+astronomicalUnit :: (Fractional f) => Value LengthDimension (U AstronomicalUnit) f
+astronomicalUnit = one
+
+-- |One light year (ly).
+lightYear :: (Fractional f) => Value LengthDimension (U LightYear) f
+lightYear = one
+
+-- |One parsec (pc).
+parsec :: (Fractional f) => Value LengthDimension (U Parsec) f
+parsec = one
+
+
 
 --
 
