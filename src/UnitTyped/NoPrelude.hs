@@ -98,3 +98,11 @@ diff x = x |-| (floor x)
 -- |Obtain the 'Prelude.abs' of a value.
 abs :: (Fractional f) => Value a b f -> Value a b f
 abs = fmap Prelude.abs
+
+
+-- |Square root of a unit-typed value.
+sqrt :: (Floating f, MapMerge c c u, MapMerge d d s, Convertible' c d) => Value u s f -> Value c d f 
+sqrt  = mkVal . Prelude.sqrt . val 
+{-# INLINE sqrt #-}
+
+
