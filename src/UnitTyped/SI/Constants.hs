@@ -39,6 +39,11 @@ h = mkVal 6.6260695729e-34
 hbar :: Fractional f => Value '[ '(Time, NOne), '(Length, PTwo), '(Mass, POne)] '[ '(Second, POne), '(Joule, POne) ] f
 hbar = coerce (h |/| (2 *| UnitTyped.SI.Constants.pi)) (joule |*| second)
 
+-- |Boltzmann's constant
+kB :: Fractional f => Value '[ '(Temperature, NOne),  '(Time, NTwo), '(Mass, POne), '(Length, PTwo) ]
+                            '[ '(Kelvin, NOne), '(Joule, POne) ] f
+kB = mkVal 1.3806488e-23
+
 -- |Atomic unit of charge (elementary charge)
 e :: (Fractional f) => f :| Coulomb
 e = mkVal 1.6021765314e-19
@@ -46,6 +51,11 @@ e = mkVal 1.6021765314e-19
 -- |Atomic unit of mass (electron mass)
 m_e :: (Fractional f) => f :| Kilo Gram
 m_e = mkVal 9.109382616e-31
+
+-- |Atomic unit of mass (proton mass)
+m_p :: (Fractional f) => f :| Kilo Gram
+m_p = mkVal 1.672621778e-27
+
 
 -- |Atomic unit of length
 a_0 :: (Fractional f) => f :| Meter
