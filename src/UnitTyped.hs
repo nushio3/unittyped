@@ -10,7 +10,8 @@ module UnitTyped (
         POne, PTwo, PThree, PFour, PFive, PSix,
         NOne, NTwo, NThree, NFour,
 
-        coerce, as, to, one, mkVal, val, (|*|), (|/|), (|+|), (|-|),
+        coerce, as, to, one, mkVal, val, 
+        (|*|), (|/|), per, (|+|), (|-|),
         (*|), (|*), (|/), (/|), (|+), (+|), (|-), (-|),
         (|==|), (|<=|), (|<|), (|>=|), (|>|),
 
