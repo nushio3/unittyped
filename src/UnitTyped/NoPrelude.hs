@@ -20,7 +20,7 @@ module UnitTyped.NoPrelude ((*), (/), (+), (-),
 	asin, acos, atan,
 
 	(==), (<=), (<), (>=), (>),
-	abs, floor, diff
+	abs, floor, diff, sqrt
 
 ) where
 
@@ -101,7 +101,7 @@ abs = fmap Prelude.abs
 
 
 -- |Square root of a unit-typed value.
-sqrt :: (Floating f, MapMerge c c u, MapMerge d d s, Convertible' c d) => Value u s f -> Value c d f 
+sqrt :: (Floating f, MapMerge c c u, MapMerge d d s, Convertible' u s) => Value u s f -> Value c d f 
 sqrt  = mkVal . Prelude.sqrt . val 
 {-# INLINE sqrt #-}
 
