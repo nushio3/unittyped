@@ -30,6 +30,7 @@ import qualified Data.Vector.Generic.Mutable as VGM
 import qualified Data.Vector.Unboxed as VU
 import qualified Data.Map as M
 import           GHC.Fingerprint (fingerprintString)
+import qualified Test.QuickCheck.Arbitrary as QC
 
 -- $setup
 -- >>> :l UnitTyped.NoPrelude
@@ -461,6 +462,9 @@ instance (Convertible' a b) => Typeable1 (Value a b) where
       fp = fingerprintString $ show tyCon
     in TypeRep fp tyCon []
 
+instance (QC.Arbitrary f) => QC.Arbitrary (Value a b f) where
+  arbitrary = fmap pure QC.arbitrary
+  shrink = traverse QC.shrink 
 
 -- |A wrapped value with scalar value 1.
 one :: (Fractional f, Convertible' a b) => Value a b f

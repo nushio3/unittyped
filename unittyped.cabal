@@ -25,7 +25,14 @@ source-repository this
   tag: 0.2
 
 library
-  build-depends:   base >= 4.6 && < 4.7, vector >= 0.10, time, old-locale, containers
+  build-depends:   base >= 4.6 && < 4.7, 
+                   containers,
+                   old-locale,
+                   QuickCheck >= 2,
+                   vector >= 0.10,
+                   time
+
+
   extensions:      FlexibleInstances
                    UndecidableInstances
                    FunctionalDependencies
