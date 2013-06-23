@@ -1,3 +1,5 @@
+[![Build Status](https://travis-ci.org/nushio3/unittyped.png?branch=master)](https://travis-ci.org/nushio3/unittyped)
+
 UnitTyped is a Haskell library for type-safe calculations on numbers with units.
 
 It comes with all SI units and a large number of units derived from them, but it also makes it very easy to add new dimensions and units. It can give new definitions of `*`, `/`, `+`, `-`, `==`, `<`, `<=`, `>` and `>=` to make notation as natural as possible. To define a new unit, only the multiplication factor and a string to display it is required. From just that, all other conversions can be inferred.
