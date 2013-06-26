@@ -253,7 +253,6 @@ type U a = '[ '(a, POne) ]
 type (x :| b) = Value (DimensionOf b) (U b) x
 
 
-
 -- |Convertible' is a class that models the fact that the composed unit 'b' has dimension 'a'.
 class Convertible' (a :: [(*, Number)]) (b :: [(*, Number)]) where
         -- |The multiplication factor to convert this unit between other units in the same dimension.
@@ -328,6 +327,14 @@ coerce u into = mkVal (factor' (proxy' u) * val u / factor' (proxy' into))
 "coerce/twice" [10] forall (x :: Value a b f) (y :: Value a d f) (u :: Value a i f) . coerce (coerce u y) x = coerce u x
 "coerce/twice2" [10] forall (x :: Value a b f) (y :: Value a d f) (u :: Value a i f) . coerce u (coerce y x) = coerce u x
   #-}
+
+
+-- | automated coercing.
+autoc :: (Convertible' a b, Convertible' c d, Fractional f, MapEq a c) => Value a b f -> Value c d f
+{-# INLINE[1] autoc #-}
+autoc u = coerce u (autoc u)
+
+
 
 infixl 5 `as`
 
