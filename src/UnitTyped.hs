@@ -15,7 +15,7 @@ module UnitTyped (
         (*|), (|*), (|/), (/|), (|+), (+|), (|-), (-|),
         (|==|), (|<=|), (|<|), (|>=|), (|>|),
 
-        dimension, unit,
+        dimension, unit, autoc,
 
         square, cubic
 ) where
