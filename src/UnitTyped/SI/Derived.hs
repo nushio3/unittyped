@@ -240,6 +240,19 @@ instance Convertible Henry where
         type DimensionOf Henry = Inductance
 --
 
+-- |Electric Dipole Moment. @Length^1 Time^1 Current^1@.
+type ElectricDipoleMoment = '[ '(Length, POne), '(Time, POne), '(Current, POne) ]
+-- |Unit of EDP
+data Debye
+        deriving Typeable
+
+instance Convertible Debye where
+        factor _ = 3.33564e-30
+        showunit _ = "D"
+        type DimensionOf Debye = ElectricDipoleMoment
+--
+
+
 -- |One knot.
 knot :: (Fractional f) => Value Speed (U Knot) f
 knot = one
