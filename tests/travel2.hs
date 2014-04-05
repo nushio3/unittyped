@@ -14,22 +14,22 @@ import UnitTyped.SI.Derived.Time
 import qualified UnitTyped.NoPrelude as D
 
 -- The distance
-fromPUtoWH :: Double :| Mile
-fromPUtoWH = 137 *| mile
+fromGLtoED :: Float :| Mile
+fromGLtoED = 46.5 *| mile
 
-fuelEfficiency :: Value '[ '(Length, NTwo) ] '[  '(Gallon, NOne), '(Mile, POne) ] Double
+fuelEfficiency :: Value '[ '(Length, NTwo) ] '[  '(Gallon, NOne), '(Mile, POne) ] Float
 fuelEfficiency = autoc $ 40 *| mile |/| gallon
 
-gasolineDensity :: Value '[ '(Mass, POne), '(Length, NThree) ] '[  '(Gallon, NOne), '(Pound, POne) ] Double
+gasolineDensity :: Value '[ '(Mass, POne), '(Length, NThree) ] '[  '(Gallon, NOne), '(Pound, POne) ] Float
 gasolineDensity = autoc $ 7.29 *| pound |/| gallon
 
-fromPUtoWHMetric :: Double :| Kilo Meter
-fromPUtoWHMetric = autoc $ fromPUtoWH
+fromGLtoEDMetric :: Float :| Kilo Meter
+fromGLtoEDMetric = autoc $ fromGLtoED
 
-fuelEfficiencyMetric :: Value '[ '(Length, NTwo) ] '[  '(Liter, NOne), '(Kilo Meter, POne) ] Double 
+fuelEfficiencyMetric :: Value '[ '(Length, NTwo) ] '[  '(Liter, NOne), '(Kilo Meter, POne) ] Float 
 fuelEfficiencyMetric = autoc $ fuelEfficiency
 
-gasolineDensityMetric :: Value '[ '(Mass, POne), '(Length, NThree) ] '[  '(Liter, NOne), '(Kilo Gram, POne) ] Double
+gasolineDensityMetric :: Value '[ '(Mass, POne), '(Length, NThree) ] '[  '(Liter, NOne), '(Kilo Gram, POne) ] Float
 gasolineDensityMetric = autoc $ gasolineDensity
 
 
@@ -55,30 +55,31 @@ gasolineWeight len0 ef0 den0 = len0 |/| ef0 |*| den0
 
 main :: IO ()
 main = do
-  putStrLn $ "The distance between University of Pennsylvania and The White House is " ++ show fromPUtoWH
-  putStrLn $ "The fuel economy of our car is " ++ show fuelEfficiency
-  putStrLn $ "The density of gasoline is " ++ show gasolineDensity
-  putStrLn $ "The mass of gasoline we need is " ++ show (gasolineWeight fromPUtoWH fuelEfficiency gasolineDensity)
+  putStrLn $ "distance: " ++ show fromGLtoED
+  putStrLn $ "economy: " ++ show fuelEfficiency
+  putStrLn $ "density: " ++ show gasolineDensity
+  putStrLn $ "mass: " ++ show (gasolineWeight fromGLtoED fuelEfficiency gasolineDensity)
 
   putStrLn ""
 
-  putStrLn $ "The distance between University of Pennsylvania and The White House is " ++ show fromPUtoWHMetric
-  putStrLn $ "The fuel economy of our car is " ++ show fuelEfficiencyMetric
-  putStrLn $ "The density of gasoline is " ++ show gasolineDensityMetric
-  putStrLn $ "The mass of gasoline we need is " ++ 
-    show (gasolineWeight fromPUtoWHMetric fuelEfficiencyMetric gasolineDensityMetric)
+  putStrLn $ "distance: " ++ show fromGLtoEDMetric
+  putStrLn $ "economy: " ++ show fuelEfficiencyMetric
+  putStrLn $ "density: " ++ show gasolineDensityMetric
+  putStrLn $ "mass: " ++ 
+    show (gasolineWeight fromGLtoEDMetric fuelEfficiencyMetric gasolineDensityMetric)
 
 
 {--- execution result ---
 
-The distance between University of Pennsylvania and The White House is 137.0 mile
-The fuel economy of our car is 40.0 mile⋅gallon⁻¹
-The density of gasoline is 7.29 lb⋅gallon⁻¹
-The mass of gasoline we need is 24.968249999999998 lb
+distance: 46.5 mile
+economy: 40.0 mile⋅gallon⁻¹
+density: 7.29 lb⋅gallon⁻¹
+mass: 8.474626 lb
 
-The distance between University of Pennsylvania and The White House is 220.480128 km
-The fuel economy of our car is 14.160247597385885 km⋅L⁻¹
-The density of gasoline is 0.7273697567140114 kg⋅L⁻¹
-The mass of gasoline we need is 11.3254076922525 kg
+distance: 74.834496 km
+economy: 14.160249 km⋅L⁻¹
+density: 0.7273698 kg⋅L⁻¹
+mass: 3.8440251 kg
+
 
 -}
