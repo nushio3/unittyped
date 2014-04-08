@@ -67,3 +67,18 @@ main = do
   putStrLn $ "The density of gasoline is " ++ show gasolineDensityMetric
   putStrLn $ "The mass of gasoline we need is " ++ 
     show (gasolineWeight fromPUtoWHMetric fuelEfficiencyMetric gasolineDensityMetric)
+
+
+{--- execution result ---
+
+The distance between University of Pennsylvania and The White House is 137.0 mile
+The fuel economy of our car is 40.0 mile⋅gallon⁻¹
+The density of gasoline is 7.29 lb⋅gallon⁻¹
+The mass of gasoline we need is 24.968249999999998 lb
+
+The distance between University of Pennsylvania and The White House is 220.480128 km
+The fuel economy of our car is 14.160247597385885 km⋅L⁻¹
+The density of gasoline is 0.7273697567140114 kg⋅L⁻¹
+The mass of gasoline we need is 11.3254076922525 kg
+
+-}
